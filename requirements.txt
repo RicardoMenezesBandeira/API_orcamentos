@@ -1,6 +1,6 @@
 flask
 weasyprint
 pyjwt
-electron
 flask-cors
+tinydb
 
