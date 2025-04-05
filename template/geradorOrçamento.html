@@ -89,7 +89,7 @@
       <div class="section-title">Campos extras</div>
       <div class="form-group"><label>Prazo para entrega?:</label><input type="text" name="celular"></div>
       <div class="form-group"><label>Forma de Pagamento:</label><input type="text" name="Prazo??"></div>
-      <div class="form-group"><label>N° do orçamento:</label><input type="email" name="NdOrçamento"></div>
+      <div class="form-group"><label>N° do orçamento:</label><input type="number" name="NdOrçamento"></div>
 
       <div class="section-title">Produtos</div>
       <div class="form-group"><label>Produto:</label><input type="text" name="Produto"></div>
@@ -126,5 +126,37 @@
       </div>
     </form>
   </div>
+  <script>
+    document.querySelector('.form-grid').addEventListener('submit', function (e) {
+      e.preventDefault(); // evita envio padrão
+  
+      const formData = new FormData(e.target);
+      const data = {};
+  
+      // Transforma os campos em chave: valor
+      formData.forEach((value, key) => {
+        data[key] = value;
+      });
+  
+      // Agora você tem todas as variáveis organizadas no objeto `data`
+      console.log("Dados do formulário:", data);
+  
+      // Exemplo: acessar valores individuais
+      const numero = data.nome;
+      const cliente = data.endereco;
+      const vendedor = data.bairro;
+      const dataOrcamento = data.data;
+      const prazoEntrega = data.prazo;
+      const canalVenda = data.canalVenda;
+      const produto = data.Produto;
+      const qtdProduto = data.qtdP;
+      const valorProduto = data.ValorP;
+  
+      console.log("Número:", numero);
+      console.log("Cliente:", cliente);
+      console.log("Produto:", produto);
+      // Adicione outros campos conforme necessidade
+    });
+  </script>
 </body>
 </html>
