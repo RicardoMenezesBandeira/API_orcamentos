@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha de Cadastro</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+    .form-container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 1000px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .form-group {
+      flex: 1 1 calc(33.333% - 20px);
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group.full-width {
+      flex: 1 1 100%;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    input[type="text"], input[type="email"], input[type="date"],input[type="number"] {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .section-title {
+      flex: 1 1 100%;
+      margin-top: 30px;
+      margin-bottom: 10px;
+      font-size: 1.2em;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+    }
+    .form-actions {
+      flex: 1 1 100%;
+      text-align: center;
+      margin-top: 30px;
+    }
+    .form-actions button {
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 4px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    .form-actions button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Adicionar orçamento</h2>
+    <form class="form-grid">
+
+      <div class="section-title">Dados Gerais</div>
+      <div class="form-group"><label>Numero:</label><input type="number" name="nome"></div>
+      <div class="form-group"><label>Cliente:</label><input type="text" name="endereco"></div>
+      <div class="form-group"><label>Vendedor/resposanvel:</label><input type="text" name="bairro"></div>
+      <div class="form-group"><label>Data:</label><input type="date" name="data"></div>
+      <div class="form-group"><label>Prazo de entrega:</label><input type="date" name="prazo"></div>
+      <div class="form-group"><label>Aos cuidados de:</label><input type="text" name="resposanvel"></div>
+      <div class="form-group"><label>Canal de venda:</label><input type="email" placeholder="Via e-mail" name="canalVenda"></div>
+      <div class="form-group"><label>Centro de custo:</label><input type="text" name="CentroCusto"></div>
+      <div class="section-title">Campos extras</div>
+      <div class="form-group"><label>Prazo para entrega?:</label><input type="text" name="celular"></div>
+      <div class="form-group"><label>Forma de Pagamento:</label><input type="text"  placeholder="Fazer um seletor entre pix,din..." name="Prazo??"></div>
+      <div class="form-group"><label>N° do orçamento:</label><input type="number" name="NdOrçamento"></div>
+
+      <div class="section-title">Produtos</div>
+      <div class="form-group"><label>Produto:</label><input type="text" name="Produto"></div>
+      <div class="form-group"><label>Detalhes:</label><input type="text" name="detalhesP"></div>
+      <div class="form-group"><label>Quantidade:</label><input type="number" name="qtdP"></div>
+      <div class="form-group"><label>Valor:</label><input type="number" name="ValorP"></div>
+      
+      <div class="section-title">Serviços</div>
+      <div class="form-group"><label>Serviço:</label><input type="text" name="serviço"></div>
+      <div class="form-group"><label>Detalhes:</label><input type="text" name="detalhesS"></div>
+      <div class="form-group"><label>Quantidade:</label><input type="number" name="qtdS"></div>
+      <div class="form-group"><label>Valor:</label><input type="number" name="ValorS"></div>
+
+      <div class="section-title">Transporte</div>
+      <div class="form-group"><label>Nome do frete:</label><input type="text" name="NomeFrete"></div>
+      <div class="form-group"><label>Transportadora:</label><input type="text" name="Transportadora"></div>
+      
+
+      <div class="section-title">Endereço de entrega</div>
+      <div class="form-group"><label>Endereço:</label><input type="text" name="ref_endereco"></div>
+
+      <div class="section-title">Total</div>
+        <div class="form-group"><label>Produtos:</label><input type="text" name="ProdutosT"></div>
+        <div class="form-group"><label>Serviços:</label><input type="text" name="ServiçosT"></div>
+        <div class="form-group"><label>Desconto(R$):</label><input type="text" name="DescontoTFlat"></div>
+        <div class="form-group"><label>Desconto(%):</label><input type="text" name="DescontoTPercent"></div>
+
+      <div class="section-title">Pagamento</div>
+        <div class="form-group"><label>A vista:</label><input type="number" name="Avista"></div>
+        <div class="form-group"><label>Parcelado:</label><input type="number" name="Parcelado"></div>
+        <div class="form-group"><label>Forma de pagamento:</label><input type="text" name="FormaPagamento"></div>
+      <div class="form-actions">
+        <button type="submit">Enviar</button>
+      </div>
+    </form>
+  </div>
+  <script>
+    document.querySelector('.form-grid').addEventListener('submit', function (e) {
+      e.preventDefault(); // evita envio padrão
+  
+      const formData = new FormData(e.target);
+      const data = {};
+  
+      // Transforma os campos em chave: valor
+      formData.forEach((value, key) => {
+        data[key] = value;
+      });
+  
+      // Agora você tem todas as variáveis organizadas no objeto `data`
+      console.log("Dados do formulário:", data);
+  
+      // Exemplo: acessar valores individuais
+      const numero = data.nome;
+      const cliente = data.endereco;
+      const vendedor = data.bairro;
+      const dataOrcamento = data.data;
+      const prazoEntrega = data.prazo;
+      const canalVenda = data.canalVenda;
+      const produto = data.Produto;
+      const qtdProduto = data.qtdP;
+      const valorProduto = data.ValorP;
+  
+      console.log("Número:", numero);
+      console.log("Cliente:", cliente);
+      console.log("Produto:", produto);
+      // Adicione outros campos conforme necessidade
+    });
+  </script>
+</body>
+</html>
