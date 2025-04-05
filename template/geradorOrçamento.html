@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha de Cadastro</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+    .form-container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      flex: 1 0 150px;
+      font-weight: bold;
+      padding-right: 10px;
+    }
+    .form-group input {
+      flex: 2 0 300px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .section-title {
+      margin-top: 30px;
+      margin-bottom: 10px;
+      font-size: 1.2em;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+    }
+    .form-actions {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .form-actions button {
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 4px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    .form-actions button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Ficha de Cadastro</h2>
+
+    <div class="section-title">Dados Pessoais</div>
+    <div class="form-group"><label>Nome:</label><input type="text" name="nome"></div>
+    <div class="form-group"><label>Endereço:</label><input type="text" name="endereco"></div>
+    <div class="form-group"><label>Bairro:</label><input type="text" name="bairro"></div>
+    <div class="form-group"><label>Cidade:</label><input type="text" name="cidade"></div>
+    <div class="form-group"><label>CEP:</label><input type="text" name="cep"></div>
+    <div class="form-group"><label>Telefone:</label><input type="text" name="telefone"></div>
+    <div class="form-group"><label>Celular:</label><input type="text" name="celular"></div>
+    <div class="form-group"><label>E-mail:</label><input type="email" name="email"></div>
+
+    <div class="section-title">Documentos e Profissão</div>
+    <div class="form-group"><label>RG:</label><input type="text" name="rg"></div>
+    <div class="form-group"><label>CPF:</label><input type="text" name="cpf"></div>
+    <div class="form-group"><label>Data de Nascimento:</label><input type="date" name="nascimento"></div>
+    <div class="form-group"><label>Estado Civil:</label><input type="text" name="estado_civil"></div>
+    <div class="form-group"><label>Profissão:</label><input type="text" name="profissao"></div>
+    <div class="form-group"><label>Empresa:</label><input type="text" name="empresa"></div>
+    <div class="form-group"><label>Cargo:</label><input type="text" name="cargo"></div>
+    <div class="form-group"><label>Tempo na Empresa:</label><input type="text" name="tempo_empresa"></div>
+
+    <div class="section-title">Referências Pessoais</div>
+    <div class="form-group"><label>Nome:</label><input type="text" name="ref_nome"></div>
+    <div class="form-group"><label>Telefone:</label><input type="text" name="ref_telefone"></div>
+    <div class="form-group"><label>Endereço:</label><input type="text" name="ref_endereco"></div>
+
+    <div class="form-group"><label>Data:</label><input type="date" name="data"></div>
+    <div class="form-group"><label>Assinatura:</label><input type="text" name="assinatura"></div>
+
+    <div class="form-actions">
+      <button type="submit">Enviar</button>
+    </div>
+  </div>
+</body>
+</html>
