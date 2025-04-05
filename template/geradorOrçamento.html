@@ -155,8 +155,29 @@
       console.log("Número:", numero);
       console.log("Cliente:", cliente);
       console.log("Produto:", produto);
+      formDataToJson(formData);
+      console.log("JSON:", formDataToJson(formData));
       // Adicione outros campos conforme necessidade
     });
+
+    function formDataToJson(formData) {
+        const jsonObject = {};
+
+        formData.forEach((value, key) => {
+            // Se a chave já existe, transforma em array para múltiplos valores (caso futuro)
+            if (jsonObject.hasOwnProperty(key)) {
+            if (!Array.isArray(jsonObject[key])) {
+                jsonObject[key] = [jsonObject[key]];
+            }
+            jsonObject[key].push(value);
+            } else {
+            jsonObject[key] = value;
+            }
+        });
+
+        return JSON.stringify(jsonObject, null, 2); // Retorna JSON formatado
+        }
+        
   </script>
 </body>
 </html>
