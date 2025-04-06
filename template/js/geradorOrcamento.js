@@ -1,4 +1,3 @@
-const axios = require('axios');
 
 document.querySelector('.form-grid').addEventListener('submit', function (e) {
     e.preventDefault(); // evita envio padrão
@@ -15,19 +14,7 @@ document.querySelector('.form-grid').addEventListener('submit', function (e) {
     console.log("Dados do formulário:", data);
 
     // Exemplo: acessar valores individuais
-    const numero = data.nome;
-    const cliente = data.endereco;
-    const vendedor = data.bairro;
-    const dataOrcamento = data.data;
-    const prazoEntrega = data.prazo;
-    const canalVenda = data.canalVenda;
-    const produto = data.Produto;
-    const qtdProduto = data.qtdP;
-    const valorProduto = data.ValorP;
-
-    console.log("Número:", numero);
-    console.log("Cliente:", cliente);
-    console.log("Produto:", produto);
+    
     dataTratada = formDataToJson(formData);
     console.log("JSON:", formDataToJson(formData));
     enviarOrcamento(dataTratada);
@@ -54,11 +41,3 @@ function formDataToJson(formData) {
     return JSON.stringify(jsonObject, null, 2); // Retorna JSON formatado
 }
 
-async function enviarOrcamento(data) {
-    try {
-    const response = await axios.post("http://127.0.0.1:8000/postTemplate", data);
-    console.log("Resposta da API:", response.data);
-    } catch (error) {
-    console.error("Erro ao enviar:", error.response?.data || error.message);
-    }
-}
