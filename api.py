@@ -40,6 +40,25 @@ def generate_pdf():
     
     return send_file(pdf_path, as_attachment=True)
 
+@app.route("/postTemplate, methods=['POST']")
+def receber_orcamento():
+    try:
+        dados = request.get_json()
+        if not dados:
+            return jsonify({"erro": "JSON não fornecido"}), 400
+        print("Dados recebidos:", dados)
+        # Verifica se o JSON contém os campos necessários
+
+        # Aqui você pode fazer o que quiser com os dados — salvar, processar, etc.
+        print("Orçamento recebido:")
+        for chave, valor in dados.items():
+            print(f"{chave}: {valor}")
+
+        return jsonify({"mensagem": "Orçamento recebido com sucesso!", "dadosRecebidos": dados}), 200
+
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
 if __name__ == "__main__":
     app.config.from_mapping(SECRET_KEY='meusegredosecreto')
     app.run(host="0.0.0.0", port=8000, debug=True)
