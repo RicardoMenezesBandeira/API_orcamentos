@@ -1,8 +1,12 @@
 from flask import Flask, request, jsonify, send_file
 from weasyprint import HTML
 from login import token_required, create_token, USERS
+from flask_cors import CORS
+
+#teste
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['SECRET_KEY'] = 'meusegredosecreto'
 
 @app.route("/login", methods=["POST"])
@@ -40,9 +44,12 @@ def generate_pdf():
     
     return send_file(pdf_path, as_attachment=True)
 
-@app.route("/postTemplate, methods=['POST']")
+@app.route("/postTemplate, methods=['POST', 'OPTIONS']")
 def receber_orcamento():
+    
     try:
+        if request.method == 'OPTIONS':
+            return '', 200  # resposta rápida pro preflight
         dados = request.get_json()
         if not dados:
             return jsonify({"erro": "JSON não fornecido"}), 400
