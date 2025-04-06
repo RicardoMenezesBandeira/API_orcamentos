@@ -3,7 +3,7 @@ from weasyprint import HTML
 from login import token_required, create_token, USERS
 from flask_cors import CORS
 
-#teste
+#testeee
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -48,6 +48,8 @@ def generate_pdf():
 def receber_orcamento():
     
     try:
+        if True:
+            pass 
         if request.method == 'OPTIONS':
             return '', 200  # resposta rápida pro preflight
         dados = request.get_json()
