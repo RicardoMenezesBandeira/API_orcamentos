@@ -3,96 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <title>Proposta Comercial</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            font-size: 11px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 20px;
-        }
-        .header .dados_empresa{
-            font-size: 9px;
-            text-align: right;
-        }
-        .header img {
-            max-width: 200px;
-        }
-        
-        .endereco {
-            border-color: #000000;
-            border-style: solid;
-            border-width: 1px;
-            padding: 5px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        table, th, td {
-            border: 1px solid #444;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        .assinatura {
-            margin-top: 50px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/pc_asallas.css">
 </head>
 <body>
     <div class="header">
-        <div class="Logo">
+        <div class="logo">
             <img src="../static/img/PC_asallas.png" alt="Logo da Empresa">
         </div>
         <div class="dados_empresa">
             <b>PCASALLAS CÓMERCIO E SERVIÇOS LTDA</b><br>
-            CNPJ: 00.000.000/0001-00<br>
+            CNPJ: {{cnpj}}<br>
             Rua Natal, 108<br>
             Novo Horizonte, Macaé - RJ<br>
             27.935-170<br>
             79012971<br>
-
         </div>
     </div>
     
-    <h4 style="text-align: center; font-size: 16px;">Proposta Comercial Nº{{id}}</h4>
+    <h4 class="titulo-proposta">Proposta Comercial Nº{{id}}</h4>
+
     <div class="dados_cliente">
         <div>
-            Para</br>
-            {{cliente}}</br>
-            Aos cuidados de {{responsavel}}</br>
-            
+            Para<br>
+            {{cliente}}<br>
+            Aos cuidados de {{responsavel}}<br>
         </div>
         <div class="endereco">
-            Endereço do Cliente</br>
-            {{cnpj}}</br>
-            {{endereco}}</br>
+            <b>Endereço do Cliente</b><br>
+            {{cnpj}}<br>
+            {{endereco}}, {{bairro}}<br>
             {{cidade}}<br>
-
-
         </div>
         <div class="extras_empresa">
-            {{status da empresa}}</br>
-            {{impostos}}</br>
-            {{frete}}</br>
-
+            EMPRESA SIMPLES NACIONAL<br>
+            IMPOSTOS INCLUSOS<br>
+            FRETE CIF<br>
         </div>
     </div>
     
     <div id="produtos">
-        Itens de produto
-        <table>
+        <b class="titulo">Itens de produto</b>
+        <table class="tabela-produtos">
             <thead>
                 <tr>
-                    <th>Data</th>
+                    <th>Nº</th>
                     <th>Item</th>
                     <th>QTD</th>
                     <th>Valor Unitário</th>
@@ -107,59 +62,76 @@
                     <th>{{0000}}</th>
                     <th>{{0000}}</th>
                 </tr>
-               
             </tbody>
+        </table>
+
+        <table class="tabela-resumo">
             <tbody>
                 <tr>
-                    <th>
-                        Numero de itens: {{0000}}
-                        Soma das quantidades: {{0000}}
-
-                    </th>
-                    <th>
-                        Valor Total: {{0000}}
-                    </th>
+                    <th>Numero de itens: {{0000}}</th>
+                    <th>Soma das quantidades: {{0000}}</th>
+                    <th>Valor Total: {{0000}}</th>
                 </tr>
             </tbody>
         </table>
     </div>
+
     <div>
-        Condições comerciais
+        <table>
+            <thead>
+                <th>Data</th>
+                <th>Total de itens</th>
+                <th>Total de produtos</th>
+            </thead>
+            <tbody>
+                <th>{{data}}</th>
+                <th>{{T_itens}}</th>
+                <th>{{T_proposta}}</th>
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <b class="titulo">Condições comerciais</b>
         <table>
             <thead>
                 <tr>
-                    <th>Forma de Pagamento</th>
-                    <th>Parcelas</th>
-                    <th>Vencimento</th>
+                    <th>Dias</th>
                     <th>Valor</th>
+                    <th>Obs</th>
                 </tr>
             </thead>
             <tbody>
+                <tr>
+                    <th>00</th>
+                    <th>R$00,00</th>
+                    <th>texto</th>
+                </tr>
+            </tbody>
         </table>
     </div>
-    <div>
 
-    </div>
-    Condições Gerais
-    <table>
+    <div>
+        <b class="titulo">Condições Gerais</b>
+    <table id="condicoes_gerais">
         <thead>
             <tr>
-                <th>Data</th>
-                <th>Valor</th>
-                <th>QTD</th>
-                <th>Valor Unitário</th>
-                <th>Valor Total</th>
+                <th>Prazo de entrega</th>
+                <th>Validade da proposta</th>
             </tr>
         </thead>
+        <tbody>
+            <tr>
+                <th>{{dias_entrega}}</th>
+                <th>{{dias_validade}}</th>
+            </tr>
+        </tbody>
     </table>
+</div>
+
     <div class="assinatura">
         <p>______________________________</p>
         <p>Responsável</p>
-    </div>
-
-    <div class="footer">
-        <p>Nome da Empresa - CNPJ: 00.000.000/0001-00</p>
-        <p>Endereço - Telefone - E-mail</p>
     </div>
 
 </body>
