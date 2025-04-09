@@ -9,6 +9,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['SECRET_KEY'] = 'meusegredosecreto'
 
+
 @app.route("/login", methods=["POST"])
 def login():
     auth = request.get_json()
@@ -45,6 +46,7 @@ def generate_pdf():
     return send_file(pdf_path, as_attachment=True)
 
 @app.route("/postTemplate, methods=['POST', 'OPTIONS']")
+@token_required
 def receber_orcamento():
     
     try:
