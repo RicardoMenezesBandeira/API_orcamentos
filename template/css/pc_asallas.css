@@ -102,18 +102,15 @@ table tbody tr:last-child th {
     border-top:none;
    
 }
-
-
-
-
-
-
-
 .assinatura {
     left: 50%;
     text-align: center;
     margin-top: 50px;
 }
 
-
-
+#produtos table.tabela-produtos  thead  tr  th:nth-child(1){
+    width: 5%;
+}
+#produtos  table.tabela-produtos  thead  tr  th:nth-child(2){
+    width: 65%;
+}
