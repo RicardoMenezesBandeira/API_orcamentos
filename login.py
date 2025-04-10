@@ -9,12 +9,13 @@ USERS_TOKENS=[]
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        if request.method == 'OPTIONS':
+            return '', 200  # Deixa o navegador feliz no preflight
         token = request.headers.get('Authorization')
         if not token:
             return jsonify({'message': 'Token é necessário'}), 401
 
         try:
-            token = token.split()[1]  # Remove 'Bearer '
             jwt.decode(token, 'meusegredosecreto', algorithms=["HS256"])
         except Exception as e:
             return jsonify({'message': 'Token inválido ou expirado'}), 401
