@@ -28,3 +28,8 @@ def create_token(username, secret_key):
         'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
     }, secret_key, algorithm='HS256')
     return token
+def logon(username, password,secret_key):
+    if USERS.get(username) == password:
+        token = create_token(username,secret_key)
+        return jsonify({'token': token})
+    return jsonify({'message': 'Credenciais inválidas'}), 401

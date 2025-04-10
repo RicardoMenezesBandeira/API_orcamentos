@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, send_file
 from weasyprint import HTML
-from login import token_required, create_token, USERS
+from login import token_required, create_token, logon
 from flask_cors import CORS
 
 #testeee
@@ -15,11 +15,8 @@ def login():
     auth = request.get_json()
     username = auth.get("username")
     password = auth.get("password")
+    return logon(username, password, app.config['SECRET_KEY'])
 
-    if USERS.get(username) == password:
-        token = create_token(username, app.config['SECRET_KEY'])
-        return jsonify({'token': token})
-    return jsonify({'message': 'Credenciais inválidas'}), 401
 
 @app.route("/", methods=["GET"])
 @token_required
