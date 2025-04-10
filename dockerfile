@@ -1,5 +1,6 @@
 # Imagem base com Python e dependências do WeasyPrint
 FROM python:3.11-slim
+ENV PYTHONUNBUFFERED=1
 
 # Instala dependências do sistema necessárias para o WeasyPrint
 RUN apt-get update && apt-get install -y \
