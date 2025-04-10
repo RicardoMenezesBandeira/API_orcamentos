@@ -6,7 +6,7 @@ from flask_cors import CORS
 #testeee
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 app.config['SECRET_KEY'] = 'meusegredosecreto'
 
 
@@ -17,41 +17,12 @@ def login():
     password = auth.get("password")
     return logon(username, password, app.config['SECRET_KEY'])
 
-
-@app.route("/", methods=["GET"])
-@token_required
-def read_root():
-    return jsonify({"message": "Bem-vindo à API protegida!"})
-
-@app.route("/items/<int:item_id>", methods=["GET"])
-@token_required
-def read_item(item_id):
-    return jsonify({"item_id": item_id})
-
-@app.route("/generate_pdf", methods=["GET"])
-@token_required
-def generate_pdf():
-    html_content = """
-    <html>
-    <head><title>PDF Example</title></head>
-    <body><h1>Este é um PDF gerado pela API!</h1></body>
-    </html>
-    """
-    pdf_path = "output.pdf"
-    HTML(string=html_content).write_pdf(pdf_path)
-    
-    return send_file(pdf_path, as_attachment=True)
-
-@app.route("/postTemplate, methods=['POST', 'OPTIONS']")
-@token_required
+@app.route("/postTemplate", methods=['POST'])
 def receber_orcamento():
-    
+    if request.method == 'OPTIONS':
+        return '', 200
     try:
-        if True:
-            pass 
-        if request.method == 'OPTIONS':
-            return '', 200  # resposta rápida pro preflight
-        dados = request.get_json()
+        dados = request.get_json(force=True)  # force=True para garantir que o JSON seja analisado mesmo se o cabeçalho não estiver definido
         if not dados:
             return jsonify({"erro": "JSON não fornecido"}), 400
         print("Dados recebidos:", dados)
@@ -66,7 +37,11 @@ def receber_orcamento():
 
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
-
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,x-access-token')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+    return response
 if __name__ == "__main__":
     app.config.from_mapping(SECRET_KEY='meusegredosecreto')
     app.run(host="0.0.0.0", port=8000, debug=True)
