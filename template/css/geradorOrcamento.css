@@ -84,3 +84,14 @@ body {
     font-weight: bold;
     cursor: pointer;
   }
+
+  .flex-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .flex-row .form-group {
+    flex: 1;
+    min-width: 180px;
+  }
