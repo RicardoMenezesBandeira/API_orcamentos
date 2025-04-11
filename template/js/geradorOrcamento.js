@@ -61,6 +61,23 @@ async function enviarOrcamento(data) {
   let produtoCount = 1;
   let servicoCount = 1;
   
+  function criarBotaoRemover(parentElement) {
+    const btn = document.createElement("button");
+    btn.innerHTML = "×";
+    btn.className = "remove-btn";
+    btn.type = "button";
+    btn.onclick = () => {
+      if (parentElement.classList.contains("produto")) {
+        produtoCount--;
+      } else if (parentElement.classList.contains("servico")) {
+        servicoCount--;
+      }
+      parentElement.remove();
+    };
+    parentElement.appendChild(btn);
+  }
+
+  
   document.getElementById("add-produto").addEventListener("click", () => {
     produtoCount++;
     const container = document.getElementById("produtos-container");
@@ -72,6 +89,7 @@ async function enviarOrcamento(data) {
       <div class="form-group"><label>Quantidade:</label><input type="number" name="qtdP_${produtoCount}"></div>
       <div class="form-group"><label>Valor:</label><input type="number" name="ValorP_${produtoCount}"></div>
     `;
+    criarBotaoRemover(novoProduto);
     container.appendChild(novoProduto);
   });
   
@@ -86,5 +104,6 @@ async function enviarOrcamento(data) {
       <div class="form-group"><label>Quantidade:</label><input type="number" name="qtdS_${servicoCount}"></div>
       <div class="form-group"><label>Valor:</label><input type="number" name="ValorS_${servicoCount}"></div>
     `;
+    criarBotaoRemover(novoServico);
     container.appendChild(novoServico);
   });
