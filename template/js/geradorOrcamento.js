@@ -56,3 +56,35 @@ async function enviarOrcamento(data) {
       console.error("Erro ao enviar:", error.message);
     }
   }
+
+
+  let produtoCount = 1;
+  let servicoCount = 1;
+  
+  document.getElementById("add-produto").addEventListener("click", () => {
+    produtoCount++;
+    const container = document.getElementById("produtos-container");
+    const novoProduto = document.createElement("div");
+    novoProduto.classList.add("produto", "form-group-set");
+    novoProduto.innerHTML = `
+      <div class="form-group"><label>Produto ${produtoCount}:</label><input type="text" name="Produto_${produtoCount}"></div>
+      <div class="form-group"><label>Detalhes:</label><input type="text" name="detalhesP_${produtoCount}"></div>
+      <div class="form-group"><label>Quantidade:</label><input type="number" name="qtdP_${produtoCount}"></div>
+      <div class="form-group"><label>Valor:</label><input type="number" name="ValorP_${produtoCount}"></div>
+    `;
+    container.appendChild(novoProduto);
+  });
+  
+  document.getElementById("add-servico").addEventListener("click", () => {
+    servicoCount++;
+    const container = document.getElementById("servicos-container");
+    const novoServico = document.createElement("div");
+    novoServico.classList.add("servico", "form-group-set");
+    novoServico.innerHTML = `
+      <div class="form-group"><label>Serviço ${servicoCount}:</label><input type="text" name="servico_${servicoCount}"></div>
+      <div class="form-group"><label>Detalhes:</label><input type="text" name="detalhesS_${servicoCount}"></div>
+      <div class="form-group"><label>Quantidade:</label><input type="number" name="qtdS_${servicoCount}"></div>
+      <div class="form-group"><label>Valor:</label><input type="number" name="ValorS_${servicoCount}"></div>
+    `;
+    container.appendChild(novoServico);
+  });
