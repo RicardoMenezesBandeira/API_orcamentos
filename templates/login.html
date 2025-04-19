@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Página de Login</title>
+  <link rel="stylesheet" href="../static/css/login.css">
+</head>
+<body>
+
+  <div class="login-container">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="usuario">Usuário</label>
+        <input type="text" id="usuario" name="usuario" required>
+      </div>
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" name="senha" required>
+      </div>
+      <button type="submit" class="login-button">Entrar</button>
+      <div class="error" id="mensagemErro"></div>
+    </form>
+  </div>
+
+  <script src="../static/js/login.js"></script>
+  
+
+</body>
+</html>

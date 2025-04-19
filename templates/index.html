@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orçamentos</title>
+  <link rel="stylesheet" href="./templates/css/login.css" />
+  <style>
+    body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .top-bar {
+    width: 90%;
+    max-width: 1000px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .info-box {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+    min-width: 200px;
+    text-align: center;
+  }
+  
+  .btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .main-content {
+    background-color: white;
+    width: 90%;
+    max-width: 1000px;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .item-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 25px;
+    padding: 15px 20px;
+    background-color: #e9ecef;
+    margin-bottom: 20px;
+  }
+  
+  .id-label {
+    font-weight: bold;
+    margin-right: 20px;
+  }
+  
+  .inputs {
+    display: flex;
+    gap: 10px;
+    flex-grow: 1;
+    justify-content: center;
+  }
+  
+  .inputs input {
+    width: 40px;
+    height: 35px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    text-align: center;
+  }
+  
+  .circle {
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    border: 2px solid black;
+    border-radius: 50%;
+  }
+  
+  .arrow {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 20px solid black;
+    margin-left: 10px;
+  }
+  .info-box{
+    max-width: 300px;
+    text-align: center;
+  }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div class="info-box">{{info}}</div>
+    <button class="btn">gerar novo orçamento</button>
+  </div>
+
+  <div class="main-content">
+    <div class="item-bar">
+      <span class="id-label">id</span>
+      <div class="inputs">
+        <b>BOSS-BR</b>
+        <b>CONSTRUCOM</b>
+        <b>PC-ASALLAS</b>
+        <b>BLING  </b>
+      </div>
+      <div class="circle"></div>
+      <div class="arrow"></div>
+    </div>
+    
+    <!-- Conteúdo abaixo pode crescer dinamicamente -->
+  </div>
+
+  <script src="./templates/js/index.js"></script>
+</body>
+</html>
