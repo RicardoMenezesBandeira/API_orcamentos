@@ -80,7 +80,7 @@ table td {
     text-align: left;
 }
 
-table th {
+table thead th {
     background-color: #f0f0f0;
 }
 
