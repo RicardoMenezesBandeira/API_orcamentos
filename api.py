@@ -36,6 +36,10 @@ def login():
     )
     return response
 
+@app.route("/preencher")
+@token_required
+def preencher(user_data):
+    return render_template("geradorOrcamento.html")
 
 @app.route("/postTemplate", methods=['POST'])
 def receber_orcamento():
@@ -63,6 +67,7 @@ def get_dashboard(user_data):  # Recebe user_data do decorador
         return template, 200
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
+
 @app.route("/getPDF", methods=['POST']) 
 def get_pdf():
     if request.method == 'OPTIONS':
