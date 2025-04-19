@@ -4,23 +4,47 @@ from functools import wraps
 import jwt
 import datetime
 import json
+import os 
+
 USERS = json.load(open('bd/funcionarios.json', 'r'))  # Load users from a JSON file
 USERS_TOKENS=[]
+
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if request.method == 'OPTIONS':
-            return '', 200  # Deixa o navegador feliz no preflight
-        token = request.headers.get('Authorization')
+            return '', 200
+
+        token = request.headers.get('Authorization') or request.cookies.get('auth_token')
+
         if not token:
             return jsonify({'message': 'Token é necessário'}), 401
 
         try:
-            jwt.decode(token, 'meusegredosecreto', algorithms=["HS256"])
-        except Exception as e:
-            return jsonify({'message': 'Token inválido ou expirado'}), 401
+            decoded_token = jwt.decode(token, 'meusegredosecreto', algorithms=["HS256"])
+            username = decoded_token['user']
+            
+            # Verifica se o usuário existe no arquivo principal
+            if username not in USERS:
+                return jsonify({'message': 'Usuário não encontrado'}), 401
+                
+            user_id = USERS[username]["id"]
+            user_file_path = f'bd/funcionarios/{user_id}.json'
 
-        return f(*args, **kwargs)
+            # Carrega os dados adicionais do usuário
+            if os.path.exists(user_file_path):
+                with open(user_file_path, 'r') as file:
+                    user_data = json.load(file)
+            else:
+                user_data = {"erro": "Arquivo de usuário não encontrado", "id": user_id, "nome": username}
+            
+            # Passa os dados do usuário para a função decorada
+            return f(user_data=user_data, *args, **kwargs)
+            
+        except jwt.ExpiredSignatureError:
+            return jsonify({'message': 'Token expirado'}), 401
+        except Exception as e:
+            return jsonify({'message': f'Erro na autenticação: {str(e)}'}), 401
     return decorated
 
 def create_token(username, secret_key):
@@ -29,16 +53,17 @@ def create_token(username, secret_key):
         'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
     }, secret_key, algorithm='HS256')
     return token
-def logon(username, password,secret_key):
-    global USERS
-    if USERS.get(username)[0] == password:
-        token = create_token(username,secret_key)
-        USERS_TOKENS.append(USERS.get(username[1], token))
-        return jsonify({'token': token,'user':USERS.get(username)[1]})
-    else:
-        USERS = json.load(open('bd/funcionarios.json', 'r'))
-        if USERS.get(username)[0] == password:
-            USERS_TOKENS.append(USERS.get(username[1], token))
-            return jsonify({'token': token,'user':USERS.get(username)[1]})
 
-    return jsonify({'message': 'Credenciais inválidas'}), 401
+def logon(username, password, secret_key):
+    user_data = USERS.get(username)
+    if user_data and user_data["senha"] == password:  # Verifica usuário e senha
+        token = create_token(username, secret_key)
+        # Se quiser armazenar tokens (opcional, mas geralmente tokens JWT são stateless)
+        USERS_TOKENS.append({"username": username, "token": token})
+        return {
+            "token": token, 
+            "user": username
+        }
+    return jsonify({"message": "Credenciais inválidas"}), 401
+def clean_tolkens():
+    USERS_TOKENS.clear()  # Limpa a lista de tokens armazenados
