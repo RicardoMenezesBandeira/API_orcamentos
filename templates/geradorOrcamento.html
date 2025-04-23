@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ficha de Cadastro</title>
-  <link rel="stylesheet" href = "../static/css/geradorOrcamento.css">
+  <link rel="stylesheet" href="../static/css/geradorOrcamento.css">
+  <!-- Adicionado defer para garantir que o script execute após o carregamento do DOM -->
   <script src="../static/js/geradorOrcamento.js" defer></script>
 </head>
 <body>
@@ -21,13 +22,14 @@
         <div class="form-group"><label>Aos cuidados de:</label><input type="text" name="resposanvel"></div>
         <div class="form-group"><label>Canal de venda:</label><input type="email" placeholder="Via e-mail" name="canalVenda"></div>
         <div class="form-group"><label>Centro de custo:</label><input type="text" name="CentroCusto"></div>
+      
         <div class="section-title">Campos extras</div>
         <div class="form-group"><label>Prazo para entrega:</label><input type="date" name="prazoParaEntrega"></div>
         <div class="form-group"><label>Validade da proposta:</label><input type="date" name="validadeProposta"></div>
         <div class="form-group"><label>Forma de Pagamento:</label><input type="text"  placeholder="Fazer um seletor entre pix,din..." name="Prazo??"></div>
         <div class="form-group"><label>N° do orçamento:</label><input type="number" name="NdOrçamento"></div>
 
-        <div class="section-title">Produtos
+        <div class="section-title">Produtos</div>
         <div id="produtos-container">
           <div class="produto form-group-set">
             <div class="flex-row">
@@ -40,11 +42,9 @@
             </div>
           </div>
         </div>
-      </div>
         <button type="button" id="add-produto">+ Adicionar Produto</button>
         
-        <!-- Serviços -->
-        <div class="section-title">Serviços
+        <div class="section-title">Serviços</div>
         <div id="servicos-container">
           <div class="servico form-group-set">
             <div class="flex-row">
@@ -57,7 +57,6 @@
             </div>
           </div>
         </div>
-      </div>
         <button type="button" id="add-servico">+ Adicionar Serviço</button>
 
       <div class="section-title">Transporte</div>
@@ -83,6 +82,5 @@
       </div>
     </form>
   </div>
-  
 </body>
 </html>
