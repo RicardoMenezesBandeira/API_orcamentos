@@ -95,3 +95,18 @@ body {
     flex: 1;
     min-width: 180px;
   }
+
+#produtos-container,
+#servicos-container {
+  flex: 1 1 100%;
+}
+
+/* 2) faz o botão “+ Adicionar” ficar em tamanho automático,
+   sempre numa nova linha e alinhado à esquerda */
+#add-produto,
+#add-servico {
+  flex: 0 1 auto;       /* não crescer, mas poder encolher se precisar */
+  width: auto;          /* largura mínima, conforme o texto */
+  margin: 10px 0 0 0;   /* separação vertical do container */
+  align-self: flex-start; /* alinha à esquerda */
+}
