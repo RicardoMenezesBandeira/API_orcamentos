@@ -24,35 +24,49 @@ document.querySelector('.form-grid').addEventListener('submit', function (e) {
 });
 
 function formDataToJson(formData) {
-    const jsonObject = {};
+  const jsonObject = {};
 
-    formData.forEach((value, key) => {
-        // Se a chave já existe, transforma em array para múltiplos valores (caso futuro)
-        if (jsonObject.hasOwnProperty(key)) {
-        if (!Array.isArray(jsonObject[key])) {
-            jsonObject[key] = [jsonObject[key]];
-        }
-        jsonObject[key].push(value);
-        } else {
-        jsonObject[key] = value;
-        }
-    });
+  formData.forEach((value, key) => {
+      if (key === "templates") {
+          // Sempre transforma em array, mesmo que tenha só um elemento
+          if (!jsonObject[key]) {
+              jsonObject[key] = [];
+          }
+          jsonObject[key].push(value);
+      } else {
+          // Se a chave já existe, transforma em array (casos raros, fora 'templates')
+          if (jsonObject.hasOwnProperty(key)) {
+              if (!Array.isArray(jsonObject[key])) {
+                  jsonObject[key] = [jsonObject[key]];
+              }
+              jsonObject[key].push(value);
+          } else {
+              jsonObject[key] = value;
+          }
+      }
+  });
 
-    return JSON.stringify(jsonObject, null, 2); // Retorna JSON formatado
+  return JSON.stringify(jsonObject, null, 2);
 }
 
 async function enviarOrcamento(data) {
-    try {
-      const response = await fetch("http://127.0.0.1:8000/postTemplate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: data,
-      });
+  try {
+    const response = await fetch("http://127.0.0.1:8000/postTemplate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: data,
+    });
+
+    if (response.ok) {
+      // Redireciona manualmente para a página de verificação
+      window.location.href = "http://127.0.0.1:8000/verification";
+    } else {
       const result = await response.json();
-      console.log("Resposta da API:", result);
-    } catch (error) {
-      console.error("Erro ao enviar:", error.message);
+      console.error("Erro na resposta da API:", result);
     }
+  } catch (error) {
+    console.error("Erro ao enviar:", error.message);
   }
+}
