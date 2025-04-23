@@ -68,11 +68,12 @@ def get_dashboard(user_data):  # Recebe user_data do decorador
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 
-@app.route("/getPDF", methods=['POST']) 
-def get_pdf():
+@app.route("/getTemplate", methods=['POST']) 
+def get_template():
     if request.method == 'OPTIONS':
         return '', 200
     try:
+        dados = request.get_json(force=True) 
         return send_file('orcamento.pdf', as_attachment=True)
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
@@ -83,18 +84,6 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
     return response
 
-@app.route("/clear", methods=["POST"])
-def clear():
-    clean_tolkens()
-    # Limpa os tokens armazenados (opcional, dependendo de como você está gerenciando os tokens)
-    return "Limpeza realizada com sucesso", 200
-    pass
-@app.route('/debug', methods=['GET'])
-def debug():
-    return {
-        "template_exists": os.path.exists(os.path.join(app.template_folder, 'index.html')),
-        "static_exists": os.path.exists(os.path.join(app.static_folder, 'index.html'))
-    }
 if __name__ == "__main__":
     app.config.from_mapping(SECRET_KEY='meusegredosecreto')
     app.run(host="0.0.0.0", port=8000, debug=True)
