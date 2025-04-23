@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ficha de Cadastro</title>
-  <link rel="stylesheet" href = "css/geradorOrcamento.css">
+  <link rel="stylesheet" href="css/geradorOrcamento.css">
+  <!-- Adicionado defer para garantir que o script execute após o carregamento do DOM -->
+  <script src="js/geradorOrcamento.js" defer></script>
 </head>
 <body>
   <div class="form-container">
@@ -20,22 +22,42 @@
         <div class="form-group"><label>Aos cuidados de:</label><input type="text" name="resposanvel"></div>
         <div class="form-group"><label>Canal de venda:</label><input type="email" placeholder="Via e-mail" name="canalVenda"></div>
         <div class="form-group"><label>Centro de custo:</label><input type="text" name="CentroCusto"></div>
+      
         <div class="section-title">Campos extras</div>
-        <div class="form-group"><label>Prazo para entrega?:</label><input type="text" name="celular"></div>
+        <div class="form-group"><label>Prazo para entrega:</label><input type="date" name="prazoParaEntrega"></div>
+        <div class="form-group"><label>Validade da proposta:</label><input type="date" name="validadeProposta"></div>
         <div class="form-group"><label>Forma de Pagamento:</label><input type="text"  placeholder="Fazer um seletor entre pix,din..." name="Prazo??"></div>
         <div class="form-group"><label>N° do orçamento:</label><input type="number" name="NdOrçamento"></div>
 
-      <div class="section-title">Produtos</div>
-        <div class="form-group"><label>Produto:</label><input type="text" name="Produto"></div>
-        <div class="form-group"><label>Detalhes:</label><input type="text" name="detalhesP"></div>
-        <div class="form-group"><label>Quantidade:</label><input type="number" name="qtdP"></div>
-        <div class="form-group"><label>Valor:</label><input type="number" name="ValorP"></div>
-      
-      <div class="section-title">Serviços</div>
-        <div class="form-group"><label>Serviço:</label><input type="text" name="serviço"></div>
-        <div class="form-group"><label>Detalhes:</label><input type="text" name="detalhesS"></div>
-        <div class="form-group"><label>Quantidade:</label><input type="number" name="qtdS"></div>
-        <div class="form-group"><label>Valor:</label><input type="number" name="ValorS"></div>
+        <div class="section-title">Produtos</div>
+        <div id="produtos-container">
+          <div class="produto form-group-set">
+            <div class="flex-row">
+              <div class="form-group"><label>Produto 1:</label><input type="text" name="Produto_1"></div>
+              <div class="form-group"><label>Detalhes:</label><input type="text" name="detalhesP_1"></div>
+            </div>
+            <div class="flex-row">
+              <div class="form-group"><label>Quantidade:</label><input type="number" name="qtdP_1"></div>
+              <div class="form-group"><label>Valor:</label><input type="number" name="ValorP_1"></div>
+            </div>
+          </div>
+        </div>
+        <button type="button" id="add-produto">+ Adicionar Produto</button>
+        
+        <div class="section-title">Serviços</div>
+        <div id="servicos-container">
+          <div class="servico form-group-set">
+            <div class="flex-row">
+              <div class="form-group"><label>Serviço 1:</label><input type="text" name="servico_1"></div>
+              <div class="form-group"><label>Detalhes:</label><input type="text" name="detalhesS_1"></div>
+            </div>
+            <div class="flex-row">
+              <div class="form-group"><label>Quantidade:</label><input type="number" name="qtdS_1"></div>
+              <div class="form-group"><label>Valor:</label><input type="number" name="ValorS_1"></div>
+            </div>
+          </div>
+        </div>
+        <button type="button" id="add-servico">+ Adicionar Serviço</button>
 
       <div class="section-title">Transporte</div>
         <div class="form-group"><label>Nome do frete:</label><input type="text" name="NomeFrete"></div>
@@ -61,12 +83,10 @@
           <label><input type="checkbox" name="templates" value="Bling"> Bling</label>
           <label><input type="checkbox" name="templates" value="PCasallas"> PCasallas</label>
         </div>
-
       <div class="form-actions">
         <button type="submit">Enviar</button>
       </div>
     </form>
   </div>
-  <script src="js/geradorOrcamento.js"></script>
 </body>
 </html>
