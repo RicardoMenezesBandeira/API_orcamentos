@@ -1,9 +1,9 @@
-from flask import Flask, request, jsonify, redirect, render_template, send_from_directory, url_for
+from flask import Flask, request, jsonify, redirect, render_template,send_file, send_from_directory, url_for
 from werkzeug.utils import secure_filename  # sanitiza nomes de arquivos
 from flask_cors import CORS
 import os
 import json
-from login import token_required, create_token, logon
+from login import token_required,clean_tolkens, create_token, logon
 #testeee
 
 app = Flask(__name__)
@@ -42,10 +42,12 @@ def login():
 def preencher(user_data):
     return render_template("geradorOrcamento.html")
 
-@app.route("/postTemplate", methods=['POST'])
+@app.route("/postTemplate", methods=['GET','POST'])
 def receber_orcamento():
     if request.method == 'OPTIONS':
         return '', 200
+    if request.method == 'GET':
+        return render_template("geradorOrcamento.html")
     try:
         dados = request.get_json(force=True)
         # Salvamento incremental de JSONs de orçamentos
