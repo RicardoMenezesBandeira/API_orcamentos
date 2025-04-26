@@ -1,22 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-    <link rel="stylesheet"  href="./css/bootstrap5.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="./css/modelo1.css">
     <title>Document</title>
 </head>
 <body >
-  <div class="container bg-white p-4 my-4 shadow rounded orçamento-com-barra" >
+  <div class="container orçamento-com-barra">
     <div class="barra-lateral"></div>
-    <header class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
-      <div class="d-flex align-items-center">
+    <header >
+      <div class="align-items-center">
         <div class="me-3"><img class="logo-placeholder" src="./img/boss-br.png" alt=""></div>
-        <div>
+        <div class="empresa-info">
           <h2 class="mb-0">BOSSBR</h2>
-          <div class="empresa-info">
+          <div >
             <div>CNPJ: 25.100.007/0001-06</div>
             <div>Endereço: Rua Secretario Salo Brand, 411 - Visconde de Araújo,</br> Macaé/RJ - CEP: 27940-380 </div>
             <div>Telefone: (22) 2020-4284 - (22) 97404-8186</div>
@@ -32,23 +31,20 @@
     </header>
     <section>
       <h1 class="h4 mb-3">Proposta Comercial</h1>
-      <div class="row">
+      <div class="box">
 
         <div  class="imposto">
           EMPRESA OPTANTE PELO LUCRO PRESUMIDO</br>
           DDP INCOTERMS 2020 (CIF)
         </div>
-   
-        <h5 class="mt-4">Cliente</h5>
-        <div class="row col-md-12 proposta-box ">
-          <div class="col-md-6">
+        <div class="infos">
+          <div class="proposta-box" >
             <strong>Razão social:</strong> {razao-social}<br>
             <strong>Endereço:</strong> {endereco}<br>
             <strong>CPF/CNPJ:</strong> {CPF-CNPJ}<br>
             <strong>Telefone:</strong> {telefone}<br>
           </div>
-
-          <div class="col-md-6">
+          <div class="proposta-box b2" >
             
           <strong>Email:</strong> {email}<br>
           <strong>Nome fantasia:</strong> {nome}<br>
@@ -58,42 +54,61 @@
           </div>
         
         </div>
-        <h5 class="mt-4">Dados da proposta</h5>
-        <div class="col-md-6 proposta-box">
-          <p><strong>Vendedor:</strong> {vendendor}<br></p>
-        
-          <p><strong>Canal de venda:</strong>{email_vendedor} <br></p>
-        </div>
-        <div class="col-md-6 proposta-box">
-            
-          <p>
-            <strong>Prazo para pagamento:</strong> {prazo_pagamento}<br>
-            <strong>Previsão de entrega:</strong> {previsao_entrega}<br>
-          <strong>Validade da proposta:</strong> {validade_proposta}
-        </p>
+        <div class="l2">
+          <div class="proposta-box">
+            <p><strong>Vendedor:</strong> {vendendor}<br></p>
+          
+            <p><strong>Canal de venda:</strong>{email_vendedor} <br></p>
+          </div>
+          <div class="proposta-box b2">
+              
+            <p>
+              <strong>Prazo para pagamento:</strong> {prazo_pagamento}<br>
+              <strong>Previsão de entrega:</strong> {previsao_entrega}<br>
+            <strong>Validade da proposta:</strong> {validade_proposta}
+          </p>
+          </div>
         </div>
       </div>
-      <h5 class="mt-4">Itens</h5>
-      <table class="table table-bordered mt-3">
-        <thead class="table-light">
-          <tr>
-            <th>Item</th><th>Descrição</th><th>Qtd</th><th>Un</th><th>Preço Unit.</th><th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{numero}</td><td>{produto}</td><td>{qtd}</td><td>{Un}</td><td>R$ {valor_unitario}</td><td>R$ {total_local}</td>
-          </tr>
-        </tbody>
-      </table>
-      <p class="total mt-3">Total do orçamento: <strong>R$ {total}</strong></p>
-      Atensiosamente, <br>Departamento de vendas
-    </section>
-    <div class="mt-5" style="text-align: center;">
+     
 
+      <div class="intens">
+        <h5 class="mt-4">Itens</h5>
+        <table class="table table-bordered mt-3">
+          <thead class="table-light">
+            <tr>
+              <th>Item</th><th>Descrição</th><th>Qtd</th><th>Un</th><th>Preço Unit.</th><th>Total</th>
+              
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{numero}</td><td>{produto}</td><td>{qtd}</td><td>{Un}</td><td>R$ {valor_unitario}</td><td>R$ {total_local}</td>
+
+            </tr>
+            <tr>
+              <td>{numero}</td><td>{produto}</td><td>{qtd}</td><td>{Un}</td><td>R$ {valor_unitario}</td><td>R$ {total_local}</td>
+              
+            </tr>
+            <tr>
+              <td>{numero}</td><td>{produto}</td><td>{qtd}</td><td>{Un}</td><td>R$ {valor_unitario}</td><td>R$ {total_local}</td>
+              
+            </tr>
+          </tbody>
+        </table>
+        <p class="total mt-3">Total do orçamento: <strong>R$ {total}</strong></p>
+        Atensiosamente, <br>Departamento de vendas
+    </div>
+    <div class="assin">
       <p>Assinatura do cliente<br><br>_____________________________________________________</p>
-      </div>
+    
+    </div>
+    </section>
+   
+    
+      
   </div>
-
+  
 </body>
+
 </html>
