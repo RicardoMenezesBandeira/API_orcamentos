@@ -13,7 +13,7 @@
         </div>
         <div class="dados_empresa">
             <b>PCASALLAS CÓMERCIO E SERVIÇOS LTDA</b><br>
-            CNPJ: {{cnpj}}<br>
+            CNPJ: 11.712.921/0001-01<br>
             Rua Natal, 108<br>
             Novo Horizonte, Macaé - RJ<br>
             27.935-170<br>
@@ -27,12 +27,12 @@
         <div>
             Para<br>
             {{cliente}}<br>
+            {{cnpj}}<br>
             Aos cuidados de {{responsavel}}<br>
         </div>
         <div class="endereco">
             <b>Endereço do Cliente</b><br>
-            {{cnpj}}<br>
-            {{endereco}}, {{bairro}}<br>
+            {{endereco}},<br>
             {{cidade}}<br>
         </div>
         <div class="extras_empresa">
@@ -47,29 +47,14 @@
         <table class="tabela-produtos">
             <thead>
                 <tr>
-                    <th>Nº</th>
-                    <th>Item</th>
-                    <th>QTD</th>
-                    <th>Valor Unitário</th>
+                    <th>Nº</th><th>Item</th><th>QTD</th><th>Un</th>  <th>Valor Unitário</th>
                     <th>Valor Total</th>
-                    <th>validade da proposta</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <th>{{0000}}></th>
-                    <th>{{0000}}</th>
-                    <th>{{0000}}</th>
-                    <th>{{0000}}</th>
-                    <th>{{0000}}</th>
-                </tr>
-                <tr>
-                    <th>{{0000}}</th>
-                    <th>{{subs}}</th>
-                    <th>{{0000}}</th>
-                    <th>{{0000}}</th>
-                    <th>{{0000}}</th>
-                </tr>
+                    <td>{numero}</td><td>{produto}</td><td>{qtd}</td><td>{Un}</td><td>R$ {valor_unitario}</td><td>R$ {total_local}</td>
+                  </tr>             
             </tbody>
         </table>
 
@@ -90,6 +75,7 @@
                 <th>Data</th>
                 <th>Total de itens</th>
                 <th>Total de produtos</th>
+                
             </thead>
             <tbody>
                 <th>{{data}}</th>
@@ -124,14 +110,16 @@
     <table id="condicoes_gerais">
         <thead>
             <tr>
-                <th>Prazo de entrega</th>
+                <th>previsão de entrega</th>
                 <th>Validade da proposta</th>
+                <th>prazo de pagamento</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <th>{{dias_entrega}}</th>
                 <th>{{dias_validade}}</th>
+                <th>{{dias_pagamento}}</th>
             </tr>
         </tbody>
     </table>

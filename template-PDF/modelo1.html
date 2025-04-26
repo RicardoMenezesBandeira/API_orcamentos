@@ -3,55 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+    <link rel="stylesheet"  href="./css/bootstrap5.css">
   <link rel="stylesheet" href="./css/modelo1.css">
     <title>Document</title>
 </head>
 <body >
-    <!-- Template 1 -->
   <div class="container bg-white p-4 my-4 shadow rounded orçamento-com-barra" >
     <div class="barra-lateral"></div>
     <header class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
       <div class="d-flex align-items-center">
-        <div class="logo-placeholder me-3">LOGO EMPRESA</div>
+        <div class="me-3"><img class="logo-placeholder" src="./img/boss-br.png" alt=""></div>
         <div>
-          <h2 class="mb-0">BOSS-BR</h2>
+          <h2 class="mb-0">BOSSBR</h2>
           <div class="empresa-info">
-            <div>Razão Social: Boss-br LTDA</div>
-            <div>Inscrição Estadual: 000.000.000.000</div>
-            <div>CNPJ: 00.000.000/0000-00</div>
-            <div>Endereço: Rua Exemplo, 123 - Bairro - Cidade - Estado</div>
-            <div>Telefone: (00) 0000-0000</div>
-            <div>Email: exemplo@email.com</div>
-            <div>Site: www.empresaexemplo.com</div>
+            <div>CNPJ: 25.100.007/0001-06</div>
+            <div>Endereço: Rua Secretario Salo Brand, 411 - Visconde de Araújo,</br> Macaé/RJ - CEP: 27940-380 </div>
+            <div>Telefone: (22) 2020-4284 - (22) 97404-8186</div>
+            <div>Email: comercial@bossbr.com</div>
+            <div>Site: WWW.BOSSBR.COM</div>
           </div>
         </div>
       </div>
       <div class="text-end">
-        <strong>Orçamento Nº:</strong> 0001<br>
-        <strong>Data:</strong> 01/01/2025
+        <strong>Orçamento Nº:</strong> {orcamento}<br>
+        <strong>Data:</strong> {hoje}
       </div>
     </header>
     <section>
       <h1 class="h4 mb-3">Proposta Comercial</h1>
       <div class="row">
-        <div class="col-md-6 proposta-box">
-          <p><strong>Cliente:</strong> NOME DO CLIENTE<br>
-          <strong>Endereço:</strong> Endereço do cliente<br>
-          <strong>CNPJ:</strong> 00.000.000/0000-00</p>
+
+        <div  class="imposto">
+          EMPRESA OPTANTE PELO LUCRO PRESUMIDO</br>
+          DDP INCOTERMS 2020 (CIF)
         </div>
-        <div class="col-md-6 proposta-box">
-          <p><strong>Vendedor:</strong> Nome do vendedor<br></p>
+   
+        <h5 class="mt-4">Cliente</h5>
+        <div class="row col-md-12 proposta-box ">
+          <div class="col-md-6">
+            <strong>Razão social:</strong> {razao-social}<br>
+            <strong>Endereço:</strong> {endereco}<br>
+            <strong>CPF/CNPJ:</strong> {CPF-CNPJ}<br>
+            <strong>Telefone:</strong> {telefone}<br>
+          </div>
+
+          <div class="col-md-6">
+            
+          <strong>Email:</strong> {email}<br>
+          <strong>Nome fantasia:</strong> {nome}<br>
+          <strong>Cidade/UF:</strong> {cidade-uf}<br>
+          <strong>CEP:</strong> {cep}<br>
         
-          <p><strong>Canal de venda:</strong> E-mail<br></p>
+          </div>
+        
+        </div>
+        <h5 class="mt-4">Dados da proposta</h5>
+        <div class="col-md-6 proposta-box">
+          <p><strong>Vendedor:</strong> {vendendor}<br></p>
+        
+          <p><strong>Canal de venda:</strong>{email_vendedor} <br></p>
         </div>
         <div class="col-md-6 proposta-box">
             
-          <p><strong>Prazo para pagamento:</strong> 10 dias úteis<br>
-            <strong>Prazo de entrega:</strong> 10 dias úteis<br>
-          <strong>Validade da proposta:</strong> 25 dias</p>
+          <p>
+            <strong>Prazo para pagamento:</strong> {prazo_pagamento}<br>
+            <strong>Previsão de entrega:</strong> {previsao_entrega}<br>
+          <strong>Validade da proposta:</strong> {validade_proposta}
+        </p>
         </div>
       </div>
+      <h5 class="mt-4">Itens</h5>
       <table class="table table-bordered mt-3">
         <thead class="table-light">
           <tr>
@@ -59,11 +81,18 @@
           </tr>
         </thead>
         <tbody>
-          <tr><td>1</td><td>Produto A</td><td>10</td><td>Un</td><td>R$ 100,00</td><td>R$ 1.000,00</td></tr>
+          <tr>
+            <td>{numero}</td><td>{produto}</td><td>{qtd}</td><td>{Un}</td><td>R$ {valor_unitario}</td><td>R$ {total_local}</td>
+          </tr>
         </tbody>
       </table>
-      <p class="total mt-3">Total do orçamento: <strong>R$ 1.000,00</strong></p>
+      <p class="total mt-3">Total do orçamento: <strong>R$ {total}</strong></p>
+      Atensiosamente, <br>Departamento de vendas
     </section>
+    <div class="mt-5" style="text-align: center;">
+
+      <p>Assinatura do cliente<br><br>_____________________________________________________</p>
+      </div>
   </div>
 
 </body>

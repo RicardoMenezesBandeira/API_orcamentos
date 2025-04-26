@@ -21,4 +21,4 @@ def html_para_pdf(caminho_html, caminho_pdf):
 
 
 # Exemplo de uso
-html_para_pdf("template/pc_asallas.html", "template.pdf")
+html_para_pdf("template-PDF/modelo1.html", "template-1.pdf")
