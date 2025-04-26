@@ -21,19 +21,19 @@
         </div>
     </div>
     
-    <h4 class="titulo-proposta">Proposta Comercial Nº{{id}}</h4>
+    <h4 class="titulo-proposta">Proposta Comercial Nº {id}</h4>
 
     <div class="dados_cliente">
         <div>
             Para<br>
-            {{cliente}}<br>
-            {{cnpj}}<br>
-            Aos cuidados de {{responsavel}}<br>
+            {cliente}<br>
+            {cnpj}<br>
+            Aos cuidados de {responsavel}<br>
         </div>
         <div class="endereco">
             <b>Endereço do Cliente</b><br>
-            {{endereco}},<br>
-            {{cidade}}<br>
+            {endereco},<br>
+            {cidade}<br>
         </div>
         <div class="extras_empresa">
             EMPRESA SIMPLES NACIONAL<br>
@@ -47,23 +47,22 @@
         <table class="tabela-produtos">
             <thead>
                 <tr>
-                    <th>Nº</th><th>Item</th><th>QTD</th><th>Un</th>  <th>Valor Unitário</th>
-                    <th>Valor Total</th>
+                    <th>Nº</th><th>Item</th><th>QTD</th><th>Un</th><th>Valor Unitário</th><th>Valor Total</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>{numero}</td><td>{produto}</td><td>{qtd}</td><td>{Un}</td><td>R$ {valor_unitario}</td><td>R$ {total_local}</td>
-                  </tr>             
+                    <td>{numero}</td><td>{produto}</td><td>{qtd}</td><td>{un}</td><td>R$ {valor_unitario}</td><td>R$ {total_local}</td>
+                </tr>             
             </tbody>
         </table>
 
         <table class="tabela-resumo">
             <tbody>
                 <tr>
-                    <th>Numero de itens: {{0000}}</th>
-                    <th>Soma das quantidades: {{0000}}</th>
-                    <th>Valor Total: {{0000}}</th>
+                    <th>Numero de itens: {numero_itens}</th>
+                    <th>Soma das quantidades: {soma_quantidades}</th>
+                    <th>Valor Total: {valor_total}</th>
                 </tr>
             </tbody>
         </table>
@@ -72,15 +71,18 @@
     <div>
         <table>
             <thead>
-                <th>Data</th>
-                <th>Total de itens</th>
-                <th>Total de produtos</th>
-                
+                <tr>
+                    <th>Data</th>
+                    <th>Total de itens</th>
+                    <th>Total de produtos</th>
+                </tr>
             </thead>
             <tbody>
-                <th>{{data}}</th>
-                <th>{{T_itens}}</th>
-                <th>{{T_proposta}}</th>
+                <tr>
+                    <td>{data}</td>
+                    <td>{T_itens}</td>
+                    <td>{T_proposta}</td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -97,9 +99,9 @@
             </thead>
             <tbody>
                 <tr>
-                    <th>00</th>
-                    <th>R$00,00</th>
-                    <th>texto</th>
+                    <td>{dias_pagamento_comercial}</td>
+                    <td>R$ {valor_pagamento_comercial}</td>
+                    <td>{obs_pagamento_comercial}</td>
                 </tr>
             </tbody>
         </table>
@@ -107,23 +109,23 @@
 
     <div>
         <b class="titulo">Condições Gerais</b>
-    <table id="condicoes_gerais">
-        <thead>
-            <tr>
-                <th>previsão de entrega</th>
-                <th>Validade da proposta</th>
-                <th>prazo de pagamento</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th>{{dias_entrega}}</th>
-                <th>{{dias_validade}}</th>
-                <th>{{dias_pagamento}}</th>
-            </tr>
-        </tbody>
-    </table>
-</div>
+        <table id="condicoes_gerais">
+            <thead>
+                <tr>
+                    <th>Previsão de entrega</th>
+                    <th>Validade da proposta</th>
+                    <th>Prazo de pagamento</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{dias_entrega}</td>
+                    <td>{dias_validade}</td>
+                    <td>{dias_pagamento}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     <div class="assinatura">
         <p>______________________________</p>
