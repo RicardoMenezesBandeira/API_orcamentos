@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ficha de Cadastro</title>
   <link rel="stylesheet" href="../static/css/geradorOrcamento.css">
-  <!-- Adicionado defer para garantir que o script execute após o carregamento do DOM -->
   <script src="../static/js/geradorOrcamento.js" defer></script>
 </head>
 <body>
@@ -14,74 +13,54 @@
     <form class="form-grid">
 
       <div class="section-title">Dados Gerais</div>
-        <div class="form-group"><label>Numero:</label><input type="number" name="nome"></div>
-        <div class="form-group"><label>Cliente:</label><input type="text" name="endereco"></div>
-        <div class="form-group"><label>Vendedor/resposanvel:</label><input type="text" name="bairro"></div>
-        <div class="form-group"><label>Data:</label><input type="date" name="data"></div>
-        <div class="form-group"><label>Prazo de entrega:</label><input type="date" name="prazo"></div>
-        <div class="form-group"><label>Canal de venda:</label><input type="email" placeholder="Via e-mail" name="canalVenda"></div>
-        <div class="form-group"><label>Centro de custo:</label><input type="text" name="CentroCusto"></div>
-      
-        <div class="section-title">Campos extras</div>
-        <div class="form-group"><label>Prazo para entrega:</label><input type="date" name="prazoParaEntrega"></div>
-        <div class="form-group"><label>Validade da proposta:</label><input type="date" name="validadeProposta"></div>
-        <div class="form-group"><label>Forma de Pagamento:</label><input type="text"  placeholder="Fazer um seletor entre pix,din..." name="Prazo??"></div>
-        <div class="form-group"><label>N° do orçamento:</label><input type="number" name="NdOrçamento"></div>
+      <div class="form-group"><label>ID da proposta:</label><input type="number" name="id"></div>
+      <div class="form-group"><label>Cliente:</label><input type="text" name="cliente"></div>
+      <div class="form-group"><label>CNPJ do Cliente:</label><input type="text" name="cnpj"></div>
+      <div class="form-group"><label>Responsável:</label><input type="text" name="responsavel"></div>
+      <div class="form-group"><label>Endereço:</label><input type="text" name="endereco"></div>
+      <div class="form-group"><label>Cidade:</label><input type="text" name="cidade"></div>
+      <div class="form-group"><label>Data:</label><input type="date" name="data"></div>
 
-        <div class="section-title">Produtos</div>
-        <div id="produtos-container">
-          <div class="produto form-group-set">
-            <div class="flex-row">
-              <div class="form-group"><label>Produto 1:</label><input type="text" name="Produto_1"></div>
-              <div class="form-group"><label>Detalhes:</label><input type="text" name="detalhesP_1"></div>
-            </div>
-            <div class="flex-row">
-              <div class="form-group"><label>Quantidade:</label><input type="number" name="qtdP_1"></div>
-              <div class="form-group"><label>Valor:</label><input type="number" name="ValorP_1"></div>
-            </div>
+      <div class="section-title">Produtos</div>
+      <div id="produtos-container">
+        <div class="produto form-group-set">
+          <div class="flex-row">
+            <div class="form-group"><label>Número do item:</label><input type="number" name="numero"></div>
+            <div class="form-group"><label>Produto:</label><input type="text" name="produto"></div>
+          </div>
+          <div class="flex-row">
+            <div class="form-group"><label>Quantidade:</label><input type="number" name="qtd"></div>
+            <div class="form-group"><label>Unidade:</label><input type="text" name="un"></div>
+          </div>
+          <div class="flex-row">
+            <div class="form-group"><label>Valor Unitário (R$):</label><input type="number" step="0.01" name="valor_unitario"></div>
+            <div class="form-group"><label>Valor Total (R$):</label><input type="number" step="0.01" name="total_local"></div>
           </div>
         </div>
-        <button type="button" id="add-produto">+ Adicionar Produto</button>
-        
-        <div class="section-title">Serviços</div>
-        <div id="servicos-container">
-          <div class="servico form-group-set">
-            <div class="flex-row">
-              <div class="form-group"><label>Serviço 1:</label><input type="text" name="servico_1"></div>
-              <div class="form-group"><label>Detalhes:</label><input type="text" name="detalhesS_1"></div>
-            </div>
-            <div class="flex-row">
-              <div class="form-group"><label>Quantidade:</label><input type="number" name="qtdS_1"></div>
-              <div class="form-group"><label>Valor:</label><input type="number" name="ValorS_1"></div>
-            </div>
-          </div>
-        </div>
-        <button type="button" id="add-servico">+ Adicionar Serviço</button>
+      </div>
+      <button type="button" id="add-produto">+ Adicionar Produto</button>
 
-      <div class="section-title">Transporte</div>
-        <div class="form-group"><label>Nome do frete:</label><input type="text" name="NomeFrete"></div>
-        <div class="form-group"><label>Transportadora:</label><input type="text" name="Transportadora"></div>
-        
+      <div class="section-title">Resumo</div>
+      <div class="form-group"><label>Total de Itens:</label><input type="number" name="T_itens"></div>
+      <div class="form-group"><label>Valor Total da Proposta:</label><input type="number" step="0.01" name="T_proposta"></div>
 
-      <div class="section-title">Endereço de entrega</div>
-        <div class="form-group"><label>Endereço:</label><input type="text" name="ref_endereco"></div>
+      <div class="section-title">Condições Comerciais</div>
+      <div class="form-group"><label>Dias para pagamento comercial:</label><input type="number" name="dias_pagamento_comercial"></div>
+      <div class="form-group"><label>Valor para pagamento comercial:</label><input type="number" step="0.01" name="valor_pagamento_comercial"></div>
+      <div class="form-group"><label>Observação de pagamento comercial:</label><input type="text" name="obs_pagamento_comercial"></div>
 
-      <div class="section-title">Total</div>
-        <div class="form-group"><label>Produtos:</label><input type="text" name="ProdutosT"></div>
-        <div class="form-group"><label>Serviços:</label><input type="text" name="ServiçosT"></div>
-        <div class="form-group"><label>Desconto(R$):</label><input type="text" name="DescontoTFlat"></div>
-        <div class="form-group"><label>Desconto(%):</label><input type="text" name="DescontoTPercent"></div>
+      <div class="section-title">Condições Gerais</div>
+      <div class="form-group"><label>Previsão de entrega (dias):</label><input type="number" name="dias_entrega"></div>
+      <div class="form-group"><label>Validade da proposta (dias):</label><input type="number" name="dias_validade"></div>
+      <div class="form-group"><label>Prazo de pagamento (dias):</label><input type="number" name="dias_pagamento"></div>
 
-      <div class="section-title">Pagamento</div>
-        <div class="form-group"><label>A vista:</label><input type="number" name="Avista"></div>
-        <div class="form-group"><label>Parcelado:</label><input type="number" name="Parcelado"></div>
-        <div class="form-group"><label>Forma de pagamento:</label><input type="text" name="FormaPagamento"></div>
-        <div class="section-title">Templates</div>
-        <div class="form-group">
-          <label><input type="checkbox" name="templates" value="BossBR"> BossBR</label>
-          <label><input type="checkbox" name="templates" value="Bling"> Bling</label>
-          <label><input type="checkbox" name="templates" value="PCasallas"> PCasallas</label>
-        </div>
+      <div class="section-title">Templates</div>
+      <div class="form-group">
+        <label><input type="checkbox" name="templates" value="BossBR"> BossBR</label>
+        <label><input type="checkbox" name="templates" value="Bling"> Bling</label>
+        <label><input type="checkbox" name="templates" value="PCasallas"> PCasallas</label>
+      </div>
+
       <div class="form-actions">
         <button type="submit">Enviar</button>
       </div>
