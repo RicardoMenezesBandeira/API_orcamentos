@@ -24,6 +24,11 @@ async function enviarOrcamento(data) {
       headers: { "Content-Type": "application/json" },
       body: data,
     });
+    if (response.ok) {
+      window.location.href = "/verification";
+    } else {
+      return alert("Erro: " + result.erro);
+    }
     const result = await response.json();
     console.log("Resposta da API:", result);
   } catch (error) {
