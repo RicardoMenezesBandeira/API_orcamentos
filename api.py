@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, redirect, render_template,send_file, send_from_directory, url_for
+from flask import Flask, request, jsonify, redirect, render_template,send_file, send_from_directory, url_for,make_response
 from werkzeug.utils import secure_filename  # sanitiza nomes de arquivos
 from flask_cors import CORS
 import os
