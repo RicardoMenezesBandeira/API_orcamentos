@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ficha de Cadastro</title>
-  <link rel="stylesheet" href="css/geradorOrcamento.css">
-  <!-- Adicionado defer para garantir que o script execute após o carregamento do DOM -->
-  <script src="js/geradorOrcamento.js" defer></script>
-</head>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha de Cadastro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/geradorOrcamento.css') }}">
+    <script src="{{ url_for('static', filename='js/geradorOrcamento.js') }}" defer></script>
+  </head>
+  
 <body>
   <div class="form-container">
     <h2>Adicionar orçamento</h2>

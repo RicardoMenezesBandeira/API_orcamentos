@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Revisão do Orçamento</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      text-align: center;
+      padding: 40px;
+    }
+
+    iframe {
+      width: 80%;
+      height: 900px;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 25px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Visualizando o template: <strong>{{ template_nome }}</strong></h2>
+
+  <iframe src="{{ iframe_src }}" frameborder="0"></iframe>
+
+  <br>
+
+  <a href="{{ url_for('verificar_template', template_idx=proximo_idx) }}">
+    <button>Aprovar e continuar</button>
+  </a>
+
+</body>
+</html>

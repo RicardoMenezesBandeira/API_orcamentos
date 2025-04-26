@@ -22,11 +22,11 @@ async function enviarOrcamento(data) {
     const response = await fetch("/postTemplate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: data,
+      body: data
     });
 
     if (response.ok) {
-      window.location.href = "/verification";  // REDIRECIONA após sucesso
+      window.location.href = "/verification";
     } else {
       const result = await response.json();
       alert("Erro: " + result.erro);
@@ -35,6 +35,7 @@ async function enviarOrcamento(data) {
     console.error("Erro ao enviar:", error.message);
   }
 }
+
 
 
 // Cria botão de remoção

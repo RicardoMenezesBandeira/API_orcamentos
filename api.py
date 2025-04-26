@@ -26,10 +26,14 @@ def login():
     password = auth.get("password")
     return logon(username, password, app.config['SECRET_KEY'])
 
-@app.route("/postTemplate", methods=['POST'])
+@app.route("/postTemplate", methods=['GET', 'POST'])
 def receber_orcamento():
+    if request.method == 'GET':
+        return render_template("geradorOrcamento.html")
+
     if request.method == 'OPTIONS':
         return '', 200
+
     try:
         dados = request.get_json(force=True)
         if not dados:
@@ -65,19 +69,30 @@ def verificar_template():
     with open(json_path, "r", encoding="utf-8") as f:
         dados = json.load(f)
 
-    nome_id = dados.get("nome", "usuario")
     templates = dados.get("templates", [])
+    if isinstance(templates, str):
+        templates = [templates]
     if not templates:
         return "Nenhum template selecionado", 400
 
-    primeiro_template = templates[0]
-    base_path = f"gerar_templates/{primeiro_template}"
-    template_html = os.path.join(base_path, "template_corrigido_windows1252.htm")
-    destino_html = os.path.join(base_path, f"preenchido_{nome_id}.htm")
+    template_idx = int(request.args.get("template_idx", 0))
 
-    preencher_template(template_html, destino_html, dados)
-    iframe_src = f"/template_preenchido/{primeiro_template}/preenchido_{nome_id}.htm"
-    return render_template("revisao.html", iframe_src=iframe_src, template_nome=primeiro_template)
+    if template_idx >= len(templates):
+        return "<h2>Todos os templates foram revisados!</h2><a href='/postTemplate'>Voltar para Início</a>", 200
+
+    empresa = templates[template_idx]
+    iframe_src = f"/template_preenchido/{empresa}/proposta_{empresa}_preenchida.htm"
+
+    proximo_idx = template_idx + 1  # Já calcula o próximo
+
+    return render_template(
+        "revisao.html",
+        iframe_src=iframe_src,
+        template_nome=empresa,
+        proximo_idx=proximo_idx
+    )
+
+
 
 @app.route('/template_preenchido/<template>/<arquivo>')
 def servir_template_preenchido(template, arquivo):
