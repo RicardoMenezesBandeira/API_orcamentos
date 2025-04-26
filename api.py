@@ -65,6 +65,42 @@ def receber_orcamento():
 
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
+@app.route("/verification", methods=["GET"])
+def verificar_template():
+    json_dir = "bd/json_preenchimento"
+    json_files = sorted(
+        [f for f in os.listdir(json_dir) if f.endswith(".json")],
+        key=lambda f: os.path.getmtime(os.path.join(json_dir, f))
+    )
+    if not json_files:
+        return "Nenhum JSON encontrado", 404
+
+    json_path = os.path.join(json_dir, json_files[-1])
+    with open(json_path, "r", encoding="utf-8") as f:
+        dados = json.load(f)
+    templates = dados.get("templates", [])
+    if isinstance(templates, str):
+        templates = [templates]
+    if not templates:
+        return "Nenhum template selecionado", 400
+
+    template_idx = int(request.args.get("template_idx", 0))
+
+    if template_idx >= len(templates):
+        return "<h2>Todos os templates foram revisados!</h2><a href='/postTemplate'>Voltar para Início</a>", 200
+
+    empresa = templates[template_idx]
+    iframe_src = f"/template_preenchido/{empresa}/proposta_{empresa}_preenchida.htm"
+
+
+    proximo_idx = template_idx + 1  # Já calcula o próximo
+
+    return render_template(
+        "revisao.html",
+        iframe_src=iframe_src,
+        template_nome=empresa,
+        proximo_idx=proximo_idx
+    )
 
 @app.route("/dashboard", methods=['GET'])
 @token_required
