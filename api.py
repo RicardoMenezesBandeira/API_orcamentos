@@ -127,6 +127,50 @@ def get_template():
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 
+@app.route("/cadastro")
+@token_required
+def cadastro_page(user_data):
+    return render_template('cadastro_usuario.html')
+
+@app.route("/add_usuario", methods=['POST'])
+@token_required
+def add_usuario(user_data):
+    data = request.get_json()
+    usuario = {
+    "nome": data["nome"],
+    "telefone":data["telefone"],
+    "user":data["user"]
+}
+    login = {
+    "user": data["user"],
+    "senha": data["senha"]
+    }
+    with open(f'./db/funcionarios{login["user"]}.json', 'w', encoding='utf-8') as f:
+        json.dump(usuario, f, indent=4, ensure_ascii=False)
+    with open(f'./db/funcionarios.json', 'r', encoding='utf-8') as f:
+        funcionarios = json.load(f)
+    funcionarios.append(usuario)
+    with open(f'./db/funcionarios.json', 'w', encoding='utf-8') as f:
+        json.dump(funcionarios, f, indent=4, ensure_ascii=False)
+    return jsonify({"message": "Usuário adicionado com sucesso!"}), 200
+
+@app.route("/usuario", methods=['GET'])
+@token_required
+def usuario_page(user_data):
+    # Caminho da pasta onde estão os JSONs
+    diretorio = './bd/funcionarios'
+
+    # Lista para guardar todos os dados
+    todos_os_dados = []
+
+    # Percorre todos os arquivos da pasta
+    for nome_arquivo in os.listdir(diretorio):
+        if nome_arquivo.endswith('.json'):
+            caminho_completo = os.path.join(diretorio, nome_arquivo)
+            with open(caminho_completo, 'r', encoding='utf-8') as f:
+                dados = json.load(f)
+                todos_os_dados.append(dados)
+    return todos_os_dados
 @app.after_request
 def after_request(response):
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,x-access-token')
