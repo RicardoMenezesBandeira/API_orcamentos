@@ -1,42 +1,50 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Revisão do Orçamento</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
-      text-align: center;
-      padding: 40px;
-    }
-
-    iframe {
-      width: 80%;
-      height: 900px;
-      border: 1px solid #ccc;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    button {
-      margin-top: 20px;
-      padding: 10px 25px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Revisão de Orçamento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            text-align: center;
+            padding: 20px;
+        }
+        iframe {
+            width: 90%;
+            height: 800px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+        }
+        .botoes {
+            margin-top: 20px;
+        }
+        .botoes a {
+            display: inline-block;
+            margin: 10px;
+            padding: 12px 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .botoes a:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
 
-  <h2>Visualizando o template: <strong>{{ template_nome }}</strong></h2>
+    <h2>Revisando Template: {{ template_nome }}</h2>
 
-  <iframe src="{{ iframe_src }}" frameborder="0"></iframe>
+    <iframe src="{{ iframe_src }}" frameborder="0"></iframe>
 
-  <br>
-
-  <a href="{{ url_for('verificar_template', template_idx=proximo_idx) }}">
-    <button>Aprovar e continuar</button>
-  </a>
+    <div class="botoes">
+        <a href="/verification?template_idx={{ proximo_idx }}">Aprovar e Continuar</a>
+        <a href="/postTemplate">Voltar ao Início</a>
+    </div>
 
 </body>
 </html>
