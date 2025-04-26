@@ -65,24 +65,51 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const addP = document.getElementById("add-produto");
-  addP?.addEventListener("click", () => {
-    produtoCount++;
-    const container = document.getElementById("produtos-container");
-    const novoProduto = document.createElement("div");
-    novoProduto.classList.add("produto", "form-group-set");
-    novoProduto.innerHTML = `
-      <div class="flex-row">
-        <div class="form-group"><label>Produto ${produtoCount}:</label><input type="text" name="Produto_${produtoCount}"></div>
-        <div class="form-group"><label>Detalhes:</label><input type="text" name="detalhesP_${produtoCount}"></div>
+
+addP?.addEventListener("click", () => {
+  produtoCount++;
+  const container = document.getElementById("produtos-container");
+
+  const novoProduto = document.createElement("div");
+  novoProduto.classList.add("produto", "form-group-set");
+  novoProduto.innerHTML = `
+    <div class="flex-row">
+      <div class="form-group">
+        <label>Número do item:</label>
+        <input type="number" name="numero_${produtoCount}" value="${produtoCount}" readonly>
       </div>
-      <div class="flex-row">
-        <div class="form-group"><label>Quantidade:</label><input type="number" name="qtdP_${produtoCount}"></div>
-        <div class="form-group"><label>Valor:</label><input type="number" name="ValorP_${produtoCount}"></div>
+      <div class="form-group">
+        <label>Produto:</label>
+        <input type="text" name="produto_${produtoCount}">
       </div>
-    `;
-    criarBotaoRemover(novoProduto);
-    container.appendChild(novoProduto);
-  });
+    </div>
+    <div class="flex-row">
+      <div class="form-group">
+        <label>Quantidade:</label>
+        <input type="number" name="qtd_${produtoCount}">
+      </div>
+      <div class="form-group">
+        <label>Unidade:</label>
+        <input type="text" name="un_${produtoCount}">
+      </div>
+    </div>
+    <div class="flex-row">
+      <div class="form-group">
+        <label>Valor Unitário (R$):</label>
+        <input type="number" step="0.01" name="valor_unitario_${produtoCount}">
+      </div>
+      <div class="form-group">
+        <label>Valor Total (R$):</label>
+        <input type="number" step="0.01" name="total_local_${produtoCount}">
+      </div>
+    </div>
+  `;
+
+  // Função que adiciona um botão de remover ao bloco (presumindo que você já a tenha definido)
+  criarBotaoRemover(novoProduto);
+
+  container.appendChild(novoProduto);
+});
 
   const addS = document.getElementById("add-servico");
   addS?.addEventListener("click", () => {
