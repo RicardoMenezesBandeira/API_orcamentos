@@ -1,8 +1,9 @@
-from flask import Flask, request, jsonify, send_file, render_template,make_response
-from weasyprint import HTML
-from login import token_required, clean_tolkens, logon
+from flask import Flask, request, jsonify, redirect, render_template, send_from_directory, url_for
+from werkzeug.utils import secure_filename  # sanitiza nomes de arquivos
 from flask_cors import CORS
 import os
+import json
+from login import token_required, create_token, logon
 #testeee
 
 app = Flask(__name__)
@@ -46,7 +47,18 @@ def receber_orcamento():
     if request.method == 'OPTIONS':
         return '', 200
     try:
-        dados = request.get_json(force=True)  # force=True para garantir que o JSON seja analisado mesmo se o cabeçalho não estiver definido
+        dados = request.get_json(force=True)
+        # Salvamento incremental de JSONs de orçamentos
+        pasta = "bd/json_preenchimento"
+        os.makedirs(pasta, exist_ok=True)
+        arquivos = [f for f in os.listdir(pasta) if f.endswith(".json")]
+        numeros = [int(f.split(".")[0]) for f in arquivos if f.split(".")[0].isdigit()]
+        proximo_numero = max(numeros) + 1 if numeros else 1
+        nome_arquivo = f"{proximo_numero}.json"
+        caminho_arquivo = os.path.join(pasta, nome_arquivo)
+
+        with open(caminho_arquivo, "w", encoding="utf-8") as f:
+            json.dump(dados, f, indent=2, ensure_ascii=False)  # force=True para garantir que o JSON seja analisado mesmo se o cabeçalho não estiver definido
         return jsonify({"mensagem":  dados}), 200
 
     except Exception as e:
@@ -73,7 +85,6 @@ def get_template():
     if request.method == 'OPTIONS':
         return '', 200
     try:
-        dados = request.get_json(force=True) 
         return send_file('orcamento.pdf', as_attachment=True)
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
