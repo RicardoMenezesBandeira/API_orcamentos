@@ -4,6 +4,7 @@ from flask_cors import CORS
 import os
 import json
 from login import token_required,clean_tolkens, create_token, logon
+from cadastra import cadastrar
 
 #testeee
 
@@ -193,23 +194,10 @@ def cadastro_page(user_data):
 @token_required
 def add_usuario(user_data):
     data = request.get_json()
-    usuario = {
-    "nome": data["nome"],
-    "telefone":data["telefone"],
-    "user":data["user"]
-}
-    login = {
-    "user": data["user"],
-    "senha": data["senha"]
-    }
-    with open(f'./db/funcionarios{login["user"]}.json', 'w', encoding='utf-8') as f:
-        json.dump(usuario, f, indent=4, ensure_ascii=False)
-    with open(f'./db/funcionarios.json', 'r', encoding='utf-8') as f:
-        funcionarios = json.load(f)
-    funcionarios.append(usuario)
-    with open(f'./db/funcionarios.json', 'w', encoding='utf-8') as f:
-        json.dump(funcionarios, f, indent=4, ensure_ascii=False)
-    return jsonify({"message": "Usuário adicionado com sucesso!"}), 200
+    if (cadastrar(data)):
+        return jsonify({"message": "Usuário adicionado com sucesso!"}), 200
+    else:
+        return jsonify({"message": "Erro ao adicionar usuário!"}), 500
 
 @app.route("/usuario", methods=['GET'])
 @token_required

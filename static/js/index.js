@@ -6,3 +6,7 @@ document.querySelector(".btn").addEventListener("click", () => {
     // Redireciona para a página principal
     window.location.href = "/preencher";
   }
+  function novoFuncionario(){
+    // Redireciona para a página principal
+    window.location.href = "/cadastro";
+  }
