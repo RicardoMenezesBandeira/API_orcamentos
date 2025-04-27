@@ -28,15 +28,15 @@ def token_required(f):
             if username not in USERS:
                 return jsonify({'message': 'Usuário não encontrado'}), 401
                 
-            user_id = USERS[username]["id"]
-            user_file_path = f'bd/funcionarios/{user_id}.json'
+            user = USERS[username]
+            user_file_path = f'bd/funcionarios/{user}.json'
 
             # Carrega os dados adicionais do usuário
             if os.path.exists(user_file_path):
                 with open(user_file_path, 'r') as file:
                     user_data = json.load(file)
             else:
-                user_data = {"erro": "Arquivo de usuário não encontrado", "id": user_id, "nome": username}
+                user_data = {"erro": "Arquivo de usuário não encontrado", "nome": username}
             
             # Passa os dados do usuário para a função decorada
             return f(user_data=user_data, *args, **kwargs)

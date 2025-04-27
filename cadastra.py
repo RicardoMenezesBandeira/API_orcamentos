@@ -21,15 +21,25 @@ def cadastrar(data):
 
         with open(f'./bd/funcionarios/{login["user"]}.json', 'w', encoding='utf-8') as f:
             json.dump(usuario, f, indent=4, ensure_ascii=False)
+        # Tenta carregar a lista de funcionários, se o arquivo não existir ou estiver vazio, cria uma lista vazia
         try:
             with open(f'./bd/funcionarios.json', 'r', encoding='utf-8') as f:
                 funcionarios = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError):  # Se não encontrar o arquivo ou estiver vazio
             funcionarios = []
-
+        
         # Adiciona o novo usuário à lista de funcionários
-        funcionarios.append(usuario)
-
+        user = login["user"]
+        print(funcionarios)
+        if user in funcionarios:
+            print("Usuario já existe")
+        else:
+            print ("Usuario não existe")
+            senha = login["senha"]        
+            funcionarios[user] = {"senha":senha}
+           
+       
+        
         # Salva a lista atualizada de funcionários
         with open(f'./bd/funcionarios.json', 'w', encoding='utf-8') as f:
             json.dump(funcionarios, f, indent=4, ensure_ascii=False)
@@ -37,4 +47,3 @@ def cadastrar(data):
         print(f"Erro ao cadastrar usuário: {str(e)}")
         return {"erro": str(e)}, 500
     return True
-        
