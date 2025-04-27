@@ -1,14 +1,13 @@
-// Contador de produtos
+// gera contador inicial (se você precisar reutilizar ele em correção, ok)
 let produtoCount = 1;
 
-// Função para adicionar novo produto
+// Adiciona novo produto
 document.getElementById('add-produto').addEventListener('click', () => {
   produtoCount++;
   const container = document.getElementById('produtos-container');
-  
-  const novoProduto = document.createElement('div');
-  novoProduto.className = 'produto form-group-set';
-  novoProduto.innerHTML = `
+  const novo = document.createElement('div');
+  novo.className = 'produto form-group-set';
+  novo.innerHTML = `
     <div class="flex-row">
       <div class="form-group">
         <label>Número do item:</label>
@@ -41,78 +40,77 @@ document.getElementById('add-produto').addEventListener('click', () => {
     </div>
     <button type="button" class="remove-btn" onclick="this.parentNode.remove()">×</button>
   `;
-  
-  container.appendChild(novoProduto);
+  container.appendChild(novo);
 });
 
-// Função para converter FormData em JSON com produtos como array
+// Transforma FormData em objeto e depois em JSON
 function formDataToJson(formData) {
   const data = {};
+
+  // 1) coleta *todos* os templates marcados
+  //    observe que mudamos o name para "templates[]"
+  data.templates = formData.getAll('templates[]');
+
+  // 2) coleta produtos
   const produtos = [];
-  
-  // Coletar todos os arrays de campos
-  const numeros = formData.getAll('numero[]');
-  const produtosNomes = formData.getAll('produto[]');
-  const quantidades = formData.getAll('qtd[]');
-  const unidades = formData.getAll('un[]');
-  const valoresUnitarios = formData.getAll('valor_unitario[]');
-  const totaisLocais = formData.getAll('total_local[]');
-  
-  // Construir array de produtos
-  for (let i = 0; i < numeros.length; i++) {
+  const nums = formData.getAll('numero[]');
+  const nomes = formData.getAll('produto[]');
+  const qtds = formData.getAll('qtd[]');
+  const uns = formData.getAll('un[]');
+  const vus = formData.getAll('valor_unitario[]');
+  const tls = formData.getAll('total_local[]');
+  for (let i = 0; i < nums.length; i++) {
     produtos.push({
-      numero: numeros[i],
-      produto: produtosNomes[i],
-      quantidade: quantidades[i],
-      unidade: unidades[i],
-      valor_unitario: valoresUnitarios[i],
-      total_local: totaisLocais[i]
+      numero: nums[i],
+      produto: nomes[i],
+      quantidade: qtds[i],
+      unidade: uns[i],
+      valor_unitario: vus[i],
+      total_local: tls[i]
     });
   }
-  
-  // Adicionar outros campos ao objeto principal
-  formData.forEach((value, key) => {
-    if (!key.endsWith('[]')) {
-      data[key] = value;
-    }
-  });
-  
-  // Adicionar array de produtos
   data.produtos = produtos;
-  
+
+  // 3) copia demais campos (pulando arrays acima)
+  formData.forEach((value, key) => {
+    if (key === 'templates[]') return;
+    if (key.endsWith('[]'))   return;
+    data[key] = value;
+  });
+
   return JSON.stringify(data, null, 2);
 }
 
-// Envia dados para a API
-async function enviarOrcamento(data) {
+// Envia para /postTemplate
+async function enviarOrcamento(jsonData) {
   try {
-    const response = await fetch("http://127.0.0.1:8000/postTemplate", {
+    const resp = await fetch("http://127.0.0.1:8000/postTemplate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: data,
+      body: jsonData
     });
-    
-    if (response.ok) {
+    if (resp.ok) {
       window.location.href = "/verification";
     } else {
-      const result = await response.json();
-      alert("Erro: " + (result.erro || "Erro desconhecido"));
+      const err = await resp.json();
+      alert("Erro: " + (err.erro || "desconhecido"));
     }
-  } catch (error) {
-    console.error("Erro ao enviar:", error);
-    alert("Erro ao enviar os dados");
+  } catch (e) {
+    console.error(e);
+    alert("Falha ao enviar dados");
   }
 }
 
-// Event listener para o formulário
-document.querySelector('.form-grid').addEventListener('submit', function(e) {
+// Listener do form principal
+document.querySelector('.form-grid').addEventListener('submit', e => {
   e.preventDefault();
-  const formData = new FormData(this);
-  const jsonData = formDataToJson(formData);
-  console.log("Dados enviados:", jsonData);
+  const fm = new FormData(e.target);
+  const jsonData = formDataToJson(fm);
+  console.log("JSON enviado:", jsonData);
   enviarOrcamento(jsonData);
 });
 
+// função de voltar
 function back() {
   window.location.href = "/dashboard";
 }
