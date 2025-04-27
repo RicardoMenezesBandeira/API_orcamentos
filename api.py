@@ -54,8 +54,13 @@ def receber_orcamento():
         return render_template("geradorOrcamento.html")
     try:
         dados = request.get_json(force=True)
-
+        itens = dados.get("produtos", [])
+        lista =""
+        for item in itens:
+            lista +=f'<tr><td>{item["numero"]}</td><td>{item["produto"]}</td><td>{item["quantidade"]}</td><td>{item["unidade"]}</td><td>R$ {item["valor_unitario"]}</td><td>R$ {item["total_local"]}</td></tr>'
+        dados["produtos"] = lista
         # 1. Salvamento incremental do JSON
+
         pasta_json = "bd/json_preenchimento"
         os.makedirs(pasta_json, exist_ok=True)
         arquivos = [f for f in os.listdir(pasta_json) if f.endswith(".json")]

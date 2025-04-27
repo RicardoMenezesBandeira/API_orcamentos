@@ -1,19 +1,86 @@
-// Contadores iniciais
+// Contador de produtos
 let produtoCount = 1;
-let servicoCount = 1;
 
-// Converte FormData em JSON
+// Função para adicionar novo produto
+document.getElementById('add-produto').addEventListener('click', () => {
+  produtoCount++;
+  const container = document.getElementById('produtos-container');
+  
+  const novoProduto = document.createElement('div');
+  novoProduto.className = 'produto form-group-set';
+  novoProduto.innerHTML = `
+    <div class="flex-row">
+      <div class="form-group">
+        <label>Número do item:</label>
+        <input type="number" name="numero[]" value="${produtoCount}" readonly>
+      </div>
+      <div class="form-group">
+        <label>Produto:</label>
+        <input type="text" name="produto[]">
+      </div>
+    </div>
+    <div class="flex-row">
+      <div class="form-group">
+        <label>Quantidade:</label>
+        <input type="number" name="qtd[]">
+      </div>
+      <div class="form-group">
+        <label>Unidade:</label>
+        <input type="text" name="un[]">
+      </div>
+    </div>
+    <div class="flex-row">
+      <div class="form-group">
+        <label>Valor Unitário (R$):</label>
+        <input type="number" step="0.01" name="valor_unitario[]">
+      </div>
+      <div class="form-group">
+        <label>Valor Total (R$):</label>
+        <input type="number" step="0.01" name="total_local[]">
+      </div>
+    </div>
+    <button type="button" class="remove-btn" onclick="this.parentNode.remove()">×</button>
+  `;
+  
+  container.appendChild(novoProduto);
+});
+
+// Função para converter FormData em JSON com produtos como array
 function formDataToJson(formData) {
-  const jsonObject = {};
+  const data = {};
+  const produtos = [];
+  
+  // Coletar todos os arrays de campos
+  const numeros = formData.getAll('numero[]');
+  const produtosNomes = formData.getAll('produto[]');
+  const quantidades = formData.getAll('qtd[]');
+  const unidades = formData.getAll('un[]');
+  const valoresUnitarios = formData.getAll('valor_unitario[]');
+  const totaisLocais = formData.getAll('total_local[]');
+  
+  // Construir array de produtos
+  for (let i = 0; i < numeros.length; i++) {
+    produtos.push({
+      numero: numeros[i],
+      produto: produtosNomes[i],
+      quantidade: quantidades[i],
+      unidade: unidades[i],
+      valor_unitario: valoresUnitarios[i],
+      total_local: totaisLocais[i]
+    });
+  }
+  
+  // Adicionar outros campos ao objeto principal
   formData.forEach((value, key) => {
-    if (jsonObject.hasOwnProperty(key)) {
-      if (!Array.isArray(jsonObject[key])) jsonObject[key] = [jsonObject[key]];
-      jsonObject[key].push(value);
-    } else {
-      jsonObject[key] = value;
+    if (!key.endsWith('[]')) {
+      data[key] = value;
     }
   });
-  return JSON.stringify(jsonObject, null, 2);
+  
+  // Adicionar array de produtos
+  data.produtos = produtos;
+  
+  return JSON.stringify(data, null, 2);
 }
 
 // Envia dados para a API
@@ -24,116 +91,28 @@ async function enviarOrcamento(data) {
       headers: { "Content-Type": "application/json" },
       body: data,
     });
+    
     if (response.ok) {
       window.location.href = "/verification";
     } else {
-      return alert("Erro: " + result.erro);
+      const result = await response.json();
+      alert("Erro: " + (result.erro || "Erro desconhecido"));
     }
-    const result = await response.json();
-    console.log("Resposta da API:", result);
   } catch (error) {
-    console.error("Erro ao enviar:", error.message);
+    console.error("Erro ao enviar:", error);
+    alert("Erro ao enviar os dados");
   }
 }
 
-// Cria botão de remoção
-function criarBotaoRemover(parentElement) {
-  const btn = document.createElement("button");
-  btn.innerHTML = "×";
-  btn.className = "remove-btn";
-  btn.type = "button";
-  btn.onclick = () => {
-    if (parentElement.classList.contains("produto")) produtoCount--;
-    else if (parentElement.classList.contains("servico")) servicoCount--;
-    parentElement.remove();
-  };
-  parentElement.appendChild(btn);
-}
-
-// Registra event listeners após o DOM carregar
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.querySelector('.form-grid');
-  form?.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = {};
-    formData.forEach((value, key) => (data[key] = value));
-    console.log("Dados do formulário:", data);
-    const dataTratada = formDataToJson(formData);
-    console.log("JSON:", dataTratada);
-    enviarOrcamento(dataTratada);
-  });
-
-  const addP = document.getElementById("add-produto");
-
-addP?.addEventListener("click", () => {
-  produtoCount++;
-  const container = document.getElementById("produtos-container");
-
-  const novoProduto = document.createElement("div");
-  novoProduto.classList.add("produto", "form-group-set");
-  novoProduto.innerHTML = `
-    <div class="flex-row">
-      <div class="form-group">
-        <label>Número do item:</label>
-        <input type="number" name="numero_${produtoCount}" value="${produtoCount}" readonly>
-      </div>
-      <div class="form-group">
-        <label>Produto:</label>
-        <input type="text" name="produto_${produtoCount}">
-      </div>
-    </div>
-    <div class="flex-row">
-      <div class="form-group">
-        <label>Quantidade:</label>
-        <input type="number" name="qtd_${produtoCount}">
-      </div>
-      <div class="form-group">
-        <label>Unidade:</label>
-        <input type="text" name="un_${produtoCount}">
-      </div>
-    </div>
-    <div class="flex-row">
-      <div class="form-group">
-        <label>Valor Unitário (R$):</label>
-        <input type="number" step="0.01" name="valor_unitario_${produtoCount}">
-      </div>
-      <div class="form-group">
-        <label>Valor Total (R$):</label>
-        <input type="number" step="0.01" name="total_local_${produtoCount}">
-      </div>
-    </div>
-  `;
-
-  // Função que adiciona um botão de remover ao bloco (presumindo que você já a tenha definido)
-  criarBotaoRemover(novoProduto);
-
-  container.appendChild(novoProduto);
+// Event listener para o formulário
+document.querySelector('.form-grid').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+  const jsonData = formDataToJson(formData);
+  console.log("Dados enviados:", jsonData);
+  enviarOrcamento(jsonData);
 });
 
-  const addS = document.getElementById("add-servico");
-  addS?.addEventListener("click", () => {
-    servicoCount++;
-    const container = document.getElementById("servicos-container");
-    const novoServico = document.createElement("div");
-    novoServico.classList.add("servico", "form-group-set");
-    novoServico.innerHTML = `
-      <div class="flex-row">
-        <div class="form-group"><label>Serviço ${servicoCount}:</label><input type="text" name="servico_${servicoCount}"></div>
-        <div class="form-group"><label>Detalhes:</label><input type="text" name="detalhesS_${servicoCount}"></div>
-      </div>
-      <div class="flex-row">
-        <div class="form-group"><label>Quantidade:</label><input type="number" name="qtdS_${servicoCount}"></div>
-        <div class="form-group"><label>Valor:</label><input type="number" name="ValorS_${servicoCount}"></div>
-      </div>
-    `;
-    criarBotaoRemover(novoServico);
-    container.appendChild(novoServico);
-  });
-
-  console.log('form-grid:', document.querySelector('.form-grid'));
-  console.log('add-produto:', document.getElementById('add-produto'));
-});
 function back() {
   window.location.href = "/dashboard";
 }
