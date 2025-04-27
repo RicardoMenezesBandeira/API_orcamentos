@@ -1,16 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="modelo2.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modelos de Orçamento</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./css/modelo2.css">
+  <!-- Adicione estas bibliotecas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
-<body>
-    
+<body class="bg-light">
+
   <!-- Template 2 -->
-  <div class="container bg-white p-4 my-4 shadow rounded template-style-2">
+  <div class="container bg-white p-4 my-4 shadow rounded template-style-2" id="content-to-print">
     <header class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
       <div class="d-flex align-items-center">
         <div class="logo-placeholder me-3">LOGO EMPRESA</div>
@@ -68,17 +71,71 @@
          Equipe Comercial</p>
     </section>
   </div>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modelos de Orçamento</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="./css/modelo2.css">
-</head>
-<body class="bg-light">
+
+  <!-- Botão para baixar o PDF -->
+  <div class="container text-center my-4">
+    <button id="download-pdf" class="btn btn-primary">Baixar PDF</button>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const { jsPDF } = window.jspdf;
+      
+      document.getElementById('download-pdf').addEventListener('click', function() {
+        const element = document.getElementById('content-to-print');
+        const button = this;
+        
+        // Mostrar feedback visual
+        button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Gerando PDF...';
+        button.disabled = true;
+        
+        // Configurações do html2canvas
+        const options = {
+          scale: 2,
+          logging: true,
+          useCORS: true,
+          allowTaint: true,
+          scrollX: 0,
+          scrollY: -window.scrollY
+        };
+        
+        html2canvas(element, options).then(canvas => {
+          // Criar PDF
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const imgData = canvas.toDataURL('image/png');
+          
+          // Calcular dimensões para caber no A4
+          const imgWidth = 210; // Largura A4 em mm
+          const pageHeight = 295; // Altura A4 em mm
+          const imgHeight = canvas.height * imgWidth / canvas.width;
+          let heightLeft = imgHeight;
+          let position = 0;
+          
+          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+          
+          // Adicionar páginas extras se necessário
+          while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+          }
+          
+          // Salvar o PDF
+          pdf.save('orcamento.pdf');
+          
+          // Restaurar botão
+          button.innerHTML = 'Baixar PDF';
+          button.disabled = false;
+        }).catch(error => {
+          console.error('Erro ao gerar PDF:', error);
+          alert('Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.');
+          button.innerHTML = 'Baixar PDF';
+          button.disabled = false;
+        });
+      });
+    });
+  </script>
 </body>
 </html>
