@@ -106,11 +106,11 @@ body {
     background-color: #5a6b7e;
   }
   .table tbody tr:nth-child(odd) {
-    background-color: #5a6b7e; /* cor 1 */
+    background-color: #ffffff00; /* cor 1 */
   }
   
   .table tbody tr:nth-child(even) {
-    background-color: #4a5b6c; /* cor 2 */
+    background-color: #003f7e57; /* cor 2 */
   }
   .table td:nth-child(1) { width: 27%; }
 .table td:nth-child(2) { width: 10%; }
