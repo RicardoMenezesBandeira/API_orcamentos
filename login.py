@@ -54,16 +54,19 @@ def create_token(username, secret_key):
     }, secret_key, algorithm='HS256')
     return token
 
-def logon(username, password, secret_key):
+def logon(username, password, secret_key):  
     user_data = USERS.get(username)
+    print(user_data)
+    print(password)
     if user_data and user_data["senha"] == password:  # Verifica usuário e senha
         token = create_token(username, secret_key)
         # Se quiser armazenar tokens (opcional, mas geralmente tokens JWT são stateless)
         USERS_TOKENS.append({"username": username, "token": token})
+        print(USERS_TOKENS)
         return {
             "token": token, 
             "user": username
         }
-    return jsonify({"message": "Credenciais inválidas"}), 401
+    return {"message": "Credenciais inválidas"}
 def clean_tolkens():
     USERS_TOKENS.clear()  # Limpa a lista de tokens armazenados

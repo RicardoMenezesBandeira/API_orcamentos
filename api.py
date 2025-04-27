@@ -22,6 +22,8 @@ def login():
     password = auth.get("password")
 
     token =logon(username, password, app.config['SECRET_KEY'])["token"]
+    if type(token) != str:
+        return jsonify({'messagem':'erro ao logar'}), 401
 
      # Cria uma resposta combinando JSON e cookie
     response = make_response(jsonify({
@@ -176,6 +178,31 @@ def get_dashboard(user_data):  # Recebe user_data do decorador
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 
+@app.route("/orçaemnto",methods=['GET'])
+@token_required
+def orcamento(user_data):
+    try:
+        path = "./bd/json_preenchimento"
+        arquivos = [f for f in os.listdir(path) if f.endswith(".json")]
+        todos =[]
+        if not arquivos:
+            return None,200
+        for arquivo in arquivos:
+            if arquivo.endswith(".json"):
+                caminho_arquivo = os.path.join(path, arquivo)
+                with open(caminho_arquivo, "r", encoding="utf-8") as f:
+                    dados = json.load(f)
+                    print(dados)
+                    todos.append(dados)
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+    return jsonify(todos), 200
+
+                
+                
+        
+        
+        
 @app.route("/getTemplate", methods=['POST']) 
 def get_template():
     if request.method == 'OPTIONS':
