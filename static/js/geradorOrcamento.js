@@ -134,3 +134,6 @@ addP?.addEventListener("click", () => {
   console.log('form-grid:', document.querySelector('.form-grid'));
   console.log('add-produto:', document.getElementById('add-produto'));
 });
+function back() {
+  window.location.href = "/dashboard";
+}
