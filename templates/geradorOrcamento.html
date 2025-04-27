@@ -8,13 +8,14 @@
   <script src="../static/js/geradorOrcamento.js" defer></script>
 </head>
 <body>
-  <head>
+  <header>
     <button class="back-button" onclick="back()">Voltar</button>
-  </head>
+  </header>
   <div class="form-container">
-    <h2>Adicionar orçamento</h2>
+    <h2>Adicionar Orçamento</h2>
     <form class="form-grid">
 
+      <!-- Dados Gerais -->
       <div class="section-title">Dados Gerais</div>
       <div class="form-group"><label>ID da proposta:</label><input type="number" name="id"></div>
       <div class="form-group"><label>Cliente:</label><input type="text" name="cliente"></div>
@@ -24,6 +25,7 @@
       <div class="form-group"><label>Cidade:</label><input type="text" name="cidade"></div>
       <div class="form-group"><label>Data:</label><input type="date" name="data"></div>
 
+      <!-- Produtos -->
       <div class="section-title">Produtos</div>
       <div id="produtos-container">
         <div class="produto form-group-set">
@@ -44,29 +46,38 @@
       </div>
       <button type="button" id="add-produto">+ Adicionar Produto</button>
 
+      <!-- Resumo -->
       <div class="section-title">Resumo</div>
       <div class="form-group"><label>Total de Itens:</label><input type="number" name="T_itens"></div>
       <div class="form-group"><label>Valor Total da Proposta:</label><input type="number" step="0.01" name="T_proposta"></div>
 
+      <!-- Condições Comerciais -->
       <div class="section-title">Condições Comerciais</div>
       <div class="form-group"><label>Dias para pagamento comercial:</label><input type="number" name="dias_pagamento_comercial"></div>
       <div class="form-group"><label>Valor para pagamento comercial:</label><input type="number" step="0.01" name="valor_pagamento_comercial"></div>
       <div class="form-group"><label>Observação de pagamento comercial:</label><input type="text" name="obs_pagamento_comercial"></div>
 
+      <!-- Condições Gerais -->
       <div class="section-title">Condições Gerais</div>
       <div class="form-group"><label>Previsão de entrega (dias):</label><input type="number" name="dias_entrega"></div>
       <div class="form-group"><label>Validade da proposta (dias):</label><input type="number" name="dias_validade"></div>
       <div class="form-group"><label>Prazo de pagamento (dias):</label><input type="number" name="dias_pagamento"></div>
 
+      <!-- Templates -->
       <div class="section-title">Templates</div>
       <div class="form-group">
-        <label><input type="checkbox" name="templates" value="BossBR"> BossBR</label>
-        <label><input type="checkbox" name="templates" value="Bling"> Bling</label>
-        <label><input type="checkbox" name="templates" value="PCasallas"> PCasallas</label>
+        <label><input type="checkbox" name="templates[]" value="BossBR"> BossBR</label>
+        <label><input type="checkbox" name="templates[]" value="Bling"> Bling</label>
+        <label><input type="checkbox" name="templates[]" value="PCasallas"> PCasallas</label>
       </div>
 
+      <!-- Ações -->
       <div class="form-actions">
         <button type="submit">Enviar</button>
       </div>
     </form>
   </div>
+
+</body>
+</html>
+
