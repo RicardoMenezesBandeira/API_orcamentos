@@ -133,11 +133,11 @@ table td {
 .l2{
   position: relative;
   top: -150px;
-  width: 90vw;
+  width: 100%;
 }
 .infos
 {
-  width: 90vw;
+  width:100%;
   height: 310px;
   
 }

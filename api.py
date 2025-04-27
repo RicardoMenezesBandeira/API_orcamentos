@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, redirect, render_template,send_file, send_from_directory, url_for,make_response
+from jinja2 import ChoiceLoader, FileSystemLoader
 from werkzeug.utils import secure_filename  # sanitiza nomes de arquivos
 from flask_cors import CORS
 import os
@@ -9,6 +10,11 @@ from cadastra import cadastrar
 #testeee
 
 app = Flask(__name__)
+# Adicionar um novo loader de templates
+app.jinja_loader = ChoiceLoader([
+    FileSystemLoader('./template-PDF'),  # Sua nova pasta
+    app.jinja_loader,                    # A pasta templates padrão
+])
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 app.config['SECRET_KEY'] = 'meusegredosecreto'
 
@@ -105,8 +111,15 @@ def receber_orcamento():
 
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
-
-
+@app.route("/impressao", methods=["GET"])
+def imprimir_template():
+    arquivo = request.args.get("arquivo")
+    dir = './template-PDF'
+    print(arquivo)
+    print(os.path.join(dir, arquivo))
+    with open(os.path.join(dir, arquivo), "r", encoding="utf-8") as f:
+        conteudo_html = f.read()
+    return render_template(conteudo_html),200
 
 @app.route("/verification", methods=["GET"])
 def verificar_template():
