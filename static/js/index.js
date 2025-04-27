@@ -6,31 +6,57 @@
   function novoFuncionario(){
     // Redireciona para a página principal
     window.location.href = "/cadastro";
-  }
-  function atualizaOrcamento(){
+  }function atualizaOrcamento(){
     fetch('/orçaemnto', {
       method: 'GET',
       credentials: 'include',
       headers: {
         'Accept': 'application/json',
-        // Inclua o token de autenticação se necessário
-        // 'Authorization': 'Bearer SEU_TOKEN_AQUI'
       }
     })
     .then(response => {
       if (!response.ok) {
         throw new Error('Erro na requisição: ' + response.status);
       }
-      return response.json();
+      return response.json(); // Aqui você converte pra JSON
     })
-    .then(data => {
-      console.log('Dados recebidos:', data);
-      // Aqui você pode manipular os dados recebidos, como atualizar o DOM
+    .then(dados => { // Agora sim os dados estão prontos
+      console.log('Dados recebidos:', dados);
+      let orca = document.getElementById("orcamento");
+      let lista = "<table class='table'><tbody>";
+      let id = 0;
+      dados.forEach(function(dado) {
+        console.log(dado); // Verifica o que está vindo
+        let templates = dado.templates || []; // Garante que seja uma lista
+
+        let circulos = '';
+        const tipos = ['BossBR', 'Bling', 'PCasallas','construcom']; // os nomes que você quer verificar
+
+        tipos.forEach(tipo => {
+          if (templates.includes(tipo)) {
+            circulos += "<td>🔵</td>"; // Círculo preenchido se existir
+          } else {
+            circulos += "<td>⚪</td> "; // Círculo vazio se não existir
+          }
+        });
+        lista += "<tr class='row'>" +
+                  "<td>" + dado.id + "</td>" +
+                  circulos  + 
+                  "<td><button onclick='edita(" + id + ")'>Editar</button></td>" +
+                  "<td><button onclick='download(" + id + ")'>Download</button></td>" +
+                "</tr>";
+        id++;
+      });
+      lista += "</tbody></table>";
+
+      orca.innerHTML = lista;
+
     })
     .catch(error => {
       console.error('Erro ao buscar os dados:', error);
     });
-    }
+  }
+  
   
   window.onload = function() {
     atualizaOrcamento();
