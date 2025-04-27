@@ -28,17 +28,18 @@
       <div id="produtos-container">
         <div class="produto form-group-set">
           <div class="flex-row">
-            <div class="form-group"><label>Número do item:</label><input type="number" name="numero"></div>
-            <div class="form-group"><label>Produto:</label><input type="text" name="produto"></div>
+            <div class="form-group"><label>Número do item:</label><input type="number" name="numero[]" value="1" readonly></div>
+            <div class="form-group"><label>Produto:</label><input type="text" name="produto[]"></div>
           </div>
           <div class="flex-row">
-            <div class="form-group"><label>Quantidade:</label><input type="number" name="qtd"></div>
-            <div class="form-group"><label>Unidade:</label><input type="text" name="un"></div>
+            <div class="form-group"><label>Quantidade:</label><input type="number" name="qtd[]"></div>
+            <div class="form-group"><label>Unidade:</label><input type="text" name="un[]"></div>
           </div>
           <div class="flex-row">
-            <div class="form-group"><label>Valor Unitário (R$):</label><input type="number" step="0.01" name="valor_unitario"></div>
-            <div class="form-group"><label>Valor Total (R$):</label><input type="number" step="0.01" name="total_local"></div>
+            <div class="form-group"><label>Valor Unitário (R$):</label><input type="number" step="0.01" name="valor_unitario[]"></div>
+            <div class="form-group"><label>Valor Total (R$):</label><input type="number" step="0.01" name="total_local[]"></div>
           </div>
+          <button type="button" class="remove-btn" onclick="this.parentNode.remove()">×</button>
         </div>
       </div>
       <button type="button" id="add-produto">+ Adicionar Produto</button>
@@ -69,5 +70,3 @@
       </div>
     </form>
   </div>
-</body>
-</html>
