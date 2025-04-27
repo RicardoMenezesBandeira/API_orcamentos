@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" href="./static/css/pc_asallas.css">
 </head>
-<body>
+<body style="border: 1px solid black;">
     <div class="header">
         <div class="logo">
             <img src="./static/img/PC_asallas.png" alt="Logo da Empresa">
@@ -23,7 +23,7 @@
     
     <h4 class="titulo-proposta">Proposta Comercial Nº {id}</h4>
 
-    <div class="dados_cliente">
+    <div class="dados_cliente row">
         <div>
             Para<br>
             {cliente}<br>
@@ -31,9 +31,17 @@
             Aos cuidados de {responsavel}<br>
         </div>
         <div class="endereco">
-            <b>Endereço do Cliente</b><br>
+            <div>
+                <b>Endereço do Cliente</b><br>
             {endereco},<br>
             {cidade}<br>
+            </div>
+            <div>
+                <b>Dados do Cliente</b><br>
+                Telefone: {telefone}<br>
+                E-mail: {email}<br>
+            </div>
+            
         </div>
         <div class="extras_empresa">
             EMPRESA SIMPLES NACIONAL<br>
@@ -119,9 +127,9 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>{dias_entrega}</td>
-                    <td>{dias_validade}</td>
-                    <td>{dias_pagamento}</td>
+                    <td>{previsao_entrega}</td>
+                    <td>{validade_proposta}</td>
+                    <td>{prazo_pagamento}</td>
                 </tr>
             </tbody>
         </table>

@@ -21,6 +21,12 @@ app.config['SECRET_KEY'] = 'meusegredosecreto'
 @app.route("/")
 def login_page():
     return render_template('login.html')
+
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    response = send_from_directory('static', filename)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 @app.route("/login", methods=["POST"])
 def login():
     auth = request.get_json()

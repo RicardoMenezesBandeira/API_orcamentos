@@ -13,6 +13,16 @@ body {
   -webkit-print-color-adjust: exact;
 }
 
+  @page {
+    size: A4;
+  }
+  body {
+    width: 210mm;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+
 /* Container principal */
 .orçamento-com-barra {
   position: relative;
@@ -111,7 +121,7 @@ table td {
 
 .text-end{
   position: relative;
-  top: -180px;
+  top: 0px;
 }
 .proposta-box {
   border: 1px solid #ddd;

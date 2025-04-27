@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Revisão de Orçamento</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Carregar jsPDF usando CDN corretamente -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -15,8 +14,8 @@
             padding: 20px;
         }
         iframe {
-            width: 90%;
-            height: 800px;
+            width: 210mm;
+            height: 350mm;
             border: 1px solid #ccc;
             margin-bottom: 20px;
             box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
@@ -53,83 +52,112 @@
         <button id="download-pdf" class="btn btn-primary">Baixar PDF</button>
     </div>
 
-    <script>
-    window.addEventListener('load', function() {
-    const { jsPDF } = window.jspdf;
+    <script>window.addEventListener('load', function() {
+        const { jsPDF } = window.jspdf;
     
-    document.getElementById('download-pdf').addEventListener('click', async function() {
-        const button = this;
-        button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Gerando PDF...';
-        button.disabled = true;
-
-        try {
-            // 1. Extrair conteúdo do iframe
-            const iframe = document.getElementById('content-to-print');
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            
-            // 2. Criar container temporário com estilos
-            const tempDiv = document.createElement('div');
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.left = '-9999px';
-            tempDiv.style.width = '210mm';
-            tempDiv.style.background = 'transparent';
-            
-            // Clonar o conteúdo preservando estilos
-            const clone = iframeDoc.documentElement.cloneNode(true);
-            clone.style.background = 'transparent';
-            tempDiv.appendChild(clone);
-            document.body.appendChild(tempDiv);
-            
-            // 3. Configurações otimizadas do html2canvas
-            const options = {
-                scale: 2,
-                useCORS: true,
-                allowTaint: true,
-                scrollX: 0,
-                scrollY: 0,
-                backgroundColor: null, // Fundo transparente
-                logging: true,
-                onclone: (clonedDoc) => {
-                    // Forçar carregamento de recursos
-                    clonedDoc.querySelectorAll('img, link[rel="stylesheet"]').forEach(el => {
-                        el.crossOrigin = 'Anonymous';
-                        if (el.tagName === 'IMG') {
-                            el.style.opacity = '1';
-                            el.style.visibility = 'visible';
-                        }
-                    });
-                    clonedDoc.body.style.background = 'transparent';
+        document.getElementById('download-pdf').addEventListener('click', async function() {
+            const button = this;
+            button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Gerando PDF...';
+            button.disabled = true;
+    
+            try {
+                // Acessar o iframe
+                const iframe = document.getElementById('content-to-print');
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+    
+                // Garantir que todas as imagens estão carregadas em Base64
+                await convertImagesToBase64(iframeDoc);
+    
+                // Esperar um pouquinho para segurança
+                await new Promise(resolve => setTimeout(resolve, 300));
+    
+                // Opções do html2canvas
+                const options = {
+                    scale: 4,
+                    useCORS: true,
+                    backgroundColor: null,
+                    logging: true,
+                    onclone: (clonedDoc) => { 
+                        clonedDoc.body.style.margin = '0';
+                        clonedDoc.body.style.padding = '0';
+                        clonedDoc.documentElement.style.margin = '10px';
+                        clonedDoc.documentElement.style.padding = '5px';
+                        clonedDoc.documentElement.scrollTop = 0;
+                        clonedDoc.body.scrollTop = 0;
+                    }
+                };
+    
+                // Capturar o canvas
+                const canvas = await html2canvas(iframeDoc.body, options);
+    
+                const imgData = canvas.toDataURL('image/png');
+    
+                const pdf = new jsPDF('p', 'mm', 'a4');
+    
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+    
+                const imgWidth = pageWidth;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    
+                let heightLeft = imgHeight;
+                let position = 0;
+    
+                // Adiciona a imagem na primeira página
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+    
+                // Enquanto sobra conteúdo, adiciona novas páginas
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
                 }
-            };
-            
-            // 4. Adicionar delay para carregar imagens
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // 5. Gerar PDF
-            const canvas = await html2canvas(tempDiv, options);
-            
-            // Converter para PNG com fundo transparente
-            const imgData = canvas.toDataURL('image/png');
-            
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const imgWidth = 210;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            
-            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-            pdf.save('orcamento.pdf');
-            
-        } catch (error) {
-            console.error('Erro ao gerar PDF:', error);
-            alert('Erro: ' + error.message);
-        } finally {
-            const tempDiv = document.querySelector('div.temp-pdf-container');
-            if (tempDiv) document.body.removeChild(tempDiv);
-            
-            button.innerHTML = 'Baixar PDF';
-            button.disabled = false;
+    
+                pdf.save('orcamento.pdf');
+    
+            } catch (error) {
+                console.error('Erro ao gerar PDF:', error);
+                alert('Erro ao gerar PDF: ' + error.message);
+            } finally {
+                button.innerHTML = 'Baixar PDF';
+                button.disabled = false;
+            }
+        });
+    
+        // Função para converter todas as imagens para Base64
+        async function convertImagesToBase64(document) {
+            const images = document.querySelectorAll('img');
+            const promises = [];
+    
+            images.forEach(img => {
+                if (!img.src.startsWith('data:')) {
+                    promises.push(fetchAndReplaceImage(img));
+                }
+            });
+    
+            await Promise.all(promises);
+        }
+    
+        async function fetchAndReplaceImage(img) {
+            try {
+                const response = await fetch(img.src, { mode: 'cors', credentials: 'include' });
+                const blob = await response.blob();
+                const reader = new FileReader();
+                return new Promise((resolve) => {
+                    reader.onloadend = () => {
+                        img.src = reader.result;
+                        resolve();
+                    };
+                    reader.readAsDataURL(blob);
+                });
+            } catch (error) {
+                console.warn('Falha ao converter imagem para Base64:', img.src, error);
+            }
         }
     });
-});
+    
     </script>
 </body>
 </html>
