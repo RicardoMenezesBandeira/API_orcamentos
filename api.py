@@ -1,55 +1,44 @@
-from flask import Flask, request, jsonify, redirect, render_template,send_file, send_from_directory, url_for,make_response
+from flask import Flask, request, jsonify, redirect, render_template, send_file, send_from_directory, url_for, make_response, session
 from jinja2 import ChoiceLoader, FileSystemLoader
 from werkzeug.utils import secure_filename  # sanitiza nomes de arquivos
 from flask_cors import CORS
 import os
 import json
-from login import token_required,clean_tolkens, create_token, logon
+import re
+from login import token_required, clean_tolkens, create_token, logon
 from cadastra import cadastrar
 
-#testeee
-
 app = Flask(__name__)
-# Adicionar um novo loader de templates
+# Permite carregar templates também de template-PDF
 app.jinja_loader = ChoiceLoader([
-    FileSystemLoader('./template-PDF'),  # Sua nova pasta
-    app.jinja_loader,                    # A pasta templates padrão
+    FileSystemLoader('./template-PDF'),
+    app.jinja_loader,
 ])
+
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 app.config['SECRET_KEY'] = 'meusegredosecreto'
 
-@app.route("/")
-def login_page():
-    return render_template('login.html')
-
+# Serve arquivos estáticos com CORS
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     response = send_from_directory('static', filename)
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
+
+@app.route("/")
+def login_page():
+    return render_template('login.html')
+
 @app.route("/login", methods=["POST"])
 def login():
     auth = request.get_json()
-    username = auth.get("username")
-    password = auth.get("password")
-
-    token =logon(username, password, app.config['SECRET_KEY'])["token"]
-    if type(token) != str:
+    token = logon(auth.get("username"), auth.get("password"), app.config['SECRET_KEY'])["token"]
+    if not isinstance(token, str):
         return jsonify({'messagem':'erro ao logar'}), 401
-
-     # Cria uma resposta combinando JSON e cookie
-    response = make_response(jsonify({
-        'message': 'Login bem-sucedido',
-        'user': username
-    }))
-    # Configura o cookie seguro
+    response = make_response(jsonify({'message':'Login bem-sucedido','user':auth.get("username")}))
     response.set_cookie(
-        'auth_token', 
-        token,
-        httponly=True,      # Acessível apenas pelo servidor
-        secure=True,        # Envia apenas em HTTPS
-        samesite='Strict',  # Proteção contra CSRF
-        max_age=3600        # Expira em 1 hora
+        'auth_token', token,
+        httponly=True, secure=True, samesite='Strict', max_age=3600
     )
     return response
 
@@ -58,221 +47,247 @@ def login():
 def preencher(user_data):
     return render_template("geradorOrcamento.html")
 
-@app.route("/postTemplate", methods=['GET', 'POST'])
+@app.route("/postTemplate", methods=['GET','POST'])
 def receber_orcamento():
-    if request.method == 'OPTIONS':
-        return '', 200
     if request.method == 'GET':
         return render_template("geradorOrcamento.html")
-    try:
-        dados = request.get_json(force=True)
-        itens = dados.get("produtos", [])
-        lista =""
-        for item in itens:
-            lista +=f'<tr><td>{item["numero"]}</td><td>{item["produto"]}</td><td>{item["quantidade"]}</td><td>{item["unidade"]}</td><td>R$ {item["valor_unitario"]}</td><td>R$ {item["total_local"]}</td></tr>'
-        dados["produtos"] = lista
-        # 1. Salvamento incremental do JSON
-
-        pasta_json = "bd/json_preenchimento"
-        os.makedirs(pasta_json, exist_ok=True)
-        arquivos = [f for f in os.listdir(pasta_json) if f.endswith(".json")]
-        numeros = [int(f.split(".")[0]) for f in arquivos if f.split(".")[0].isdigit()]
-        proximo_numero = max(numeros) + 1 if numeros else 1
-        nome_arquivo_json = f"{proximo_numero}.json"
-        caminho_arquivo_json = os.path.join(pasta_json, nome_arquivo_json)
-
-        with open(caminho_arquivo_json, "w", encoding="utf-8") as f:
-            json.dump(dados, f, indent=2, ensure_ascii=False)
-
-        # 2. Injeção dos dados em múltiplos templates
-        templates = dados.get("templates", [])
-        if isinstance(templates, str):
-            templates = [templates]
-
-        pasta_templates = "template-PDF"  # Está na raiz do projeto
-        os.makedirs(pasta_templates, exist_ok=True)
-
-        for empresa in templates:
-            nome_template = f"{empresa.lower()}_placeholders.html"
-            caminho_template = os.path.join(pasta_templates, nome_template)
-
-            if not os.path.exists(caminho_template):
-                continue  # Se não encontrar, ignora
-
-            with open(caminho_template, "r", encoding="utf-8") as f:
-                conteudo_html = f.read()
-
-            # Substituir placeholders
-            for chave, valor in dados.items():
-                conteudo_html = conteudo_html.replace(f"{{{chave}}}", str(valor))
-
-            # Nome final do orçamento preenchido
-            nome_arquivo_saida = f"orcamento_{str(proximo_numero).zfill(3)}_{empresa.lower()}.html"
-            caminho_arquivo_saida = os.path.join(pasta_templates, nome_arquivo_saida)
-
-            with open(caminho_arquivo_saida, "w", encoding="utf-8") as f:
-                f.write(conteudo_html)
-
-        return jsonify({"mensagem": f"Orçamentos salvos para {', '.join(templates)}."}), 200
-
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
-@app.route("/impressao", methods=["GET"])
-def imprimir_template():
-    arquivo = request.args.get("arquivo")
-    dir = './template-PDF'
-    print(arquivo)
-    print(os.path.join(dir, arquivo))
-    with open(os.path.join(dir, arquivo), "r", encoding="utf-8") as f:
-        conteudo_html = f.read()
-    return render_template(conteudo_html),200
+    dados = request.get_json(force=True)
+    # converte produtos em HTML
+    itens = dados.get("produtos", [])
+    html_rows = ''.join(
+        f"<tr><td>{i['numero']}</td><td>{i['produto']}</td>"
+        f"<td>{i['quantidade']}</td><td>{i['unidade']}</td>"
+        f"<td>R$ {i['valor_unitario']}</td><td>R$ {i['total_local']}</td></tr>"
+        for i in itens
+    )
+    dados["produtos"] = html_rows
+    # salva JSON incremental
+    pasta = "bd/json_preenchimento"
+    os.makedirs(pasta, exist_ok=True)
+    files = [f for f in os.listdir(pasta) if f.endswith('.json')]
+    ids = [int(f.split('.')[0]) for f in files if f.split('.')[0].isdigit()]
+    nid = max(ids)+1 if ids else 1
+    path = os.path.join(pasta, f"{nid}.json")
+    with open(path,'w',encoding='utf-8') as f:
+        json.dump(dados,f,indent=2,ensure_ascii=False)
+    # gera HTMLs iniciais para cada template
+    tpl_dir = 'template-PDF'
+    os.makedirs(tpl_dir,exist_ok=True)
+    templates = dados.get('templates',[])
+    if isinstance(templates,str): templates=[templates]
+    for emp in templates:
+        tpl_file = os.path.join(tpl_dir, f"{emp.lower()}_placeholders.html")
+        if not os.path.exists(tpl_file): continue
+        tpl_html = open(tpl_file,encoding='utf-8').read()
+        for k,v in dados.items(): tpl_html = tpl_html.replace(f"{{{k}}}", str(v))
+        out_name = f"orcamento_{str(nid).zfill(3)}_{emp.lower()}.html"
+        with open(os.path.join(tpl_dir,out_name),'w',encoding='utf-8') as f:
+            f.write(tpl_html)
+    return jsonify({"mensagem":f"Orçamentos salvos para {', '.join(templates)}."}),200
 
 @app.route("/verification", methods=["GET"])
 def verificar_template():
+    json_dir = "bd/json_preenchimento"
+    arquivos = sorted(
+        [f for f in os.listdir(json_dir) if f.endswith('.json')],
+        key=lambda f: os.path.getmtime(os.path.join(json_dir,f))
+    )
+    if not arquivos:
+        return "Nenhum JSON encontrado",404
+    json_file = request.args.get('json_file', arquivos[-1])
+    if json_file not in arquivos: json_file = arquivos[-1]
+    dados = json.load(open(os.path.join(json_dir,json_file),'r',encoding='utf-8'))
+    # converte produtos
+    raw = dados.get('produtos','')
+    if isinstance(raw,str):
+        lst=[]
+        for trecho in raw.split('</tr>'):
+            if '<tr>' not in trecho: continue
+            cells = re.findall(r'<td>(.*?)</td>', trecho, flags=re.DOTALL)
+            lst.append({
+                'numero':cells[0] if len(cells)>0 else '',
+                'produto':cells[1] if len(cells)>1 else '',
+                'quantidade':cells[2] if len(cells)>2 else '',
+                'unidade':cells[3] if len(cells)>3 else '',
+                'valor_unitario':cells[4] if len(cells)>4 else '',
+                'total_local':cells[5] if len(cells)>5 else ''
+            })
+        dados['produtos']=lst
+    templates = dados.get('templates',[])
+    if isinstance(templates,str): templates=[templates]
+    idx = int(request.args.get('template_idx',0) or 0)
+    if idx>=len(templates):
+        return ("<h2>Todos os templates foram revisados!</h2><a href='/postTemplate'>Voltar para Início</a>",200)
+    emp = templates[idx]
+    # usa id do json_file
+    base_id = int(json_file.split('.')[0])
+    iframe_src = f"/template-PDF/orcamento_{str(base_id).zfill(3)}_{emp.lower()}.html"
+    return render_template('revisao.html', iframe_src=iframe_src,
+                           template_nome=emp, proximo_idx=idx+1,
+                           dados=dados, json_filename=json_file)
+
+@app.route("/verification/preview", methods=["POST"])
+def preview_template():
+    correcoes = request.get_json(force=True)
+    tpl = correcoes.get('template')
+    # load original
+    dirj = 'bd/json_preenchimento'
+    files = sorted([f for f in os.listdir(dirj) if f.endswith('.json')],
+                   key=lambda f: os.path.getmtime(os.path.join(dirj,f)))
+    jf = correcoes.get('json_file', files[-1])
+    orig = json.load(open(os.path.join(dirj,jf),'r',encoding='utf-8'))
+    novo = orig.copy(); novo['templates']=[tpl]
+    for k,v in correcoes.items():
+        if k not in ('template','json_file'): novo[k]=v
+    # convert produtos list to rows
+    if isinstance(novo.get('produtos'), list):
+        rows = []
+        for item in novo['produtos']:
+            rows.append(
+                '<tr>' +
+                ''.join(f'<td>{item.get(fld,"")}</td>' for fld in ['numero','produto','quantidade','unidade','valor_unitario','total_local']) +
+                '</tr>'
+            )
+        novo['produtos'] = ''.join(rows)
+    # inject
+    tpl_path = os.path.join('template-PDF', f"{tpl.lower()}_placeholders.html")
+    html = open(tpl_path,encoding='utf-8').read()
+    for k,v in novo.items(): html = html.replace(f"{{{k}}}", str(v))
+    html = html.replace('href="/css/','href="'+url_for('static', filename='css/') )
+    html = html.replace('src="/img/','src="'+url_for('static', filename='img/') )
+    return jsonify({'preview_html':html}),200
+
+@app.route("/verification/update", methods=["POST"])
+def update_template():
     try:
-        # 1. Buscar o último JSON para obter o ID correto
-        json_dir = "bd/json_preenchimento"
-        json_files = sorted(
-            [f for f in os.listdir(json_dir) if f.endswith(".json")],
-            key=lambda f: os.path.getmtime(os.path.join(json_dir, f))
-        )
-        if not json_files:
-            return "Nenhum JSON encontrado", 404
-
-        json_path = os.path.join(json_dir, json_files[-1])
-        with open(json_path, "r", encoding="utf-8") as f:
-            dados = json.load(f)
-
-        # 2. Pegar templates selecionados
-        templates = dados.get("templates", [])
-        if isinstance(templates, str):
-            templates = [templates]
-
-        if not templates:
-            return "Nenhum template selecionado", 400
-
-        # 3. Saber qual template estamos revisando
-        template_idx = int(request.args.get("template_idx", 0))
-
-        if template_idx >= len(templates):
-            return "<h2>Todos os templates foram revisados!</h2><a href='/postTemplate'>Voltar para Início</a>", 200
-
-        empresa = templates[template_idx]
-
-        # 4. Calcular o ID do orçamento
-        id_orcamento = max([int(f.split(".")[0]) for f in os.listdir(json_dir) if f.endswith(".json")])
-
-        # 5. Montar o path relativo do orçamento preenchido
-        nome_arquivo_html = f"orcamento_{str(id_orcamento).zfill(3)}_{empresa.lower()}.html"
-        iframe_src = f"/template-PDF/{nome_arquivo_html}"
-        print(nome_arquivo_html)
-        proximo_idx = template_idx + 1
-
-        return render_template(
-            "revisao.html",
-            iframe_src=iframe_src,
-            template_nome=empresa,
-            proximo_idx=proximo_idx
-        )
+        correcoes = request.get_json(force=True)
+        tpl = correcoes.get('template')
+        jf  = correcoes.get('json_file')
+        dirj= 'bd/json_preenchimento'
+        orig= json.load(open(os.path.join(dirj,jf),'r',encoding='utf-8'))
+        base_id = int(jf.split('.')[0])
+        novo = orig.copy(); novo['templates']=[tpl]
+        for k,v in correcoes.items():
+            if k not in ('template','json_file'): novo[k]=v
+        # detect change
+        changed = any(str(orig.get(k))!=str(v) for k,v in correcoes.items() if k not in ('template','json_file'))
+        if changed:
+            ids = [int(f.split('.')[0]) for f in os.listdir(dirj) if f.endswith('.json')]
+            nid = max(ids)+1
+            with open(os.path.join(dirj,f"{nid}.json"),'w',encoding='utf-8') as f:
+                json.dump(novo,f,indent=2,ensure_ascii=False)
+        use_id = base_id
+        # generate html
+        tpl_file = f"{tpl.lower()}_placeholders.html"
+        html = open(os.path.join('template-PDF',tpl_file),encoding='utf-8').read()
+        for k,v in novo.items(): html = html.replace(f"{{{k}}}",str(v))
+        html = html.replace('href="/css/','href="/static/css/')
+        html = html.replace('src="/img/','src="/static/img/')
+        out = f"orcamento_{str(use_id).zfill(3)}_{tpl.lower()}.html"
+        with open(os.path.join('template-PDF',out),'w',encoding='utf-8') as f: f.write(html)
+        return jsonify({'new_iframe_src':f"/template-PDF/{out}"}),200
     except Exception as e:
-        return jsonify({"erro": str(e)}), 500
-    
+        return jsonify({'erro':str(e)}),500
 
-
+@app.route('/impressao', methods=['GET'])
+def imprimir_template():
+    arquivo = request.args.get('arquivo')
+    html = open(os.path.join('template-PDF',arquivo),'r',encoding='utf-8').read()
+    return render_template(html),200
 
 @app.route("/template-PDF/<path:filename>")
 def servir_template_pdf(filename):
     return send_from_directory("template-PDF", filename)
 
-
+# ... demais rotas de dashboard, orcamento, cadastro etc. ...
 
 @app.route("/dashboard", methods=['GET'])
 @token_required
-def get_dashboard(user_data):  # Recebe user_data do decorador
-    try:
-        # Agora você pode acessar todos os dados do usuário
-        telefone = user_data.get("telefone")
-        nome = user_data.get("nome")
-        cargo = user_data.get("cargo")
-        user_data=f"telefone: {telefone},nome: {nome},cargo: {cargo}"
-        # Faça o processamento necessário aqui
-        # Exemplo: buscar templates específicos para este usuário
-        template = render_template('index.html', info=user_data)
-        return template, 200
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
+def get_dashboard(user_data):
+    """
+    Exibe a dashboard para o usuário logado, 
+    passando os dados de telefone, nome e cargo.
+    """
+    telefone = user_data.get("telefone")
+    nome     = user_data.get("nome")
+    cargo    = user_data.get("cargo")
+    info     = f"telefone: {telefone}, nome: {nome}, cargo: {cargo}"
+    return render_template('index.html', info=info), 200
 
-@app.route("/orçaemnto",methods=['GET'])
+
+@app.route("/orçaemnto", methods=['GET'])
 @token_required
 def orcamento(user_data):
-    try:
-        path = "./bd/json_preenchimento"
-        arquivos = [f for f in os.listdir(path) if f.endswith(".json")]
-        todos =[]
-        if not arquivos:
-            return None,200
-        for arquivo in arquivos:
-            if arquivo.endswith(".json"):
-                caminho_arquivo = os.path.join(path, arquivo)
-                with open(caminho_arquivo, "r", encoding="utf-8") as f:
-                    dados = json.load(f)
-                    print(dados)
-                    todos.append(dados)
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
+    """
+    Retorna todos os JSONs de orçamentos já preenchidos.
+    """
+    path     = "./bd/json_preenchimento"
+    arquivos = [f for f in os.listdir(path) if f.endswith(".json")]
+    todos    = []
+    for arquivo in arquivos:
+        with open(os.path.join(path, arquivo), 'r', encoding='utf-8') as f:
+            dados = json.load(f)
+            todos.append(dados)
     return jsonify(todos), 200
 
-                
-                
-        
-        
-        
-@app.route("/getTemplate", methods=['POST']) 
+
+@app.route("/getTemplate", methods=['POST'])
 def get_template():
-    if request.method == 'OPTIONS':
-        return '', 200
-    try:
-        return send_file('orcamento.pdf', as_attachment=True)
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
+    """
+    Envia um PDF pré-gerado como anexo.
+    """
+    # OPTIONS já liberado globalmente pelo CORS
+    return send_file('orcamento.pdf', as_attachment=True)
+
 
 @app.route("/cadastro")
 @token_required
 def cadastro_page(user_data):
+    """
+    Exibe o formulário de cadastro de novos usuários.
+    """
     return render_template('cadastro_usuario.html')
+
 
 @app.route("/add_usuario", methods=['POST'])
 @token_required
 def add_usuario(user_data):
-    data = request.get_json()
-    if (cadastrar(data)):
+    """
+    Recebe JSON com dados de usuário e chama a função cadastrar().
+    """
+    data = request.get_json(force=True)
+    success = cadastrar(data)
+    if success:
         return jsonify({"message": "Usuário adicionado com sucesso!"}), 200
     else:
         return jsonify({"message": "Erro ao adicionar usuário!"}), 500
 
+
 @app.route("/usuario", methods=['GET'])
 @token_required
 def usuario_page(user_data):
-    # Caminho da pasta onde estão os JSONs
-    diretorio = './bd/funcionarios'
-
-    # Lista para guardar todos os dados
+    """
+    Lê todos os arquivos JSON em bd/funcionarios e retorna como lista.
+    """
+    diretorio   = './bd/funcionarios'
     todos_os_dados = []
-
-    # Percorre todos os arquivos da pasta
     for nome_arquivo in os.listdir(diretorio):
         if nome_arquivo.endswith('.json'):
-            caminho_completo = os.path.join(diretorio, nome_arquivo)
-            with open(caminho_completo, 'r', encoding='utf-8') as f:
+            with open(os.path.join(diretorio, nome_arquivo), 'r', encoding='utf-8') as f:
                 dados = json.load(f)
                 todos_os_dados.append(dados)
-    return todos_os_dados
+    return jsonify(todos_os_dados), 200
+
+
 @app.after_request
 def after_request(response):
+    """
+    Ajusta cabeçalhos CORS adicionais após cada resposta.
+    """
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,x-access-token')
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
     return response
 
+
 if __name__ == "__main__":
-    app.config.from_mapping(SECRET_KEY='meusegredosecreto')
     app.run(host="0.0.0.0", port=8000, debug=True)
