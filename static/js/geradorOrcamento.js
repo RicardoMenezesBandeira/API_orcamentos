@@ -112,3 +112,61 @@ document.querySelector('.form-grid').addEventListener('submit', function(e) {
 function back() {
   window.location.href = "/dashboard";
 }
+
+
+// referência aos elementos
+const produtosContainer = document.getElementById('produtos-container');
+const totalItensInput    = document.getElementById('total-itens');
+const valorTotalInput    = document.getElementById('valor-total');
+
+// função que recalcula totais
+function recalcularResumo() {
+  const linhas = produtosContainer.querySelectorAll('.produto');
+  let somaQtd = 0;
+  let somaValor = 0;
+
+  linhas.forEach(linha => {
+    const qtdInput   = linha.querySelector('input[name="qtd[]"]');
+    const unitInput  = linha.querySelector('input[name="valor_unitario[]"]');
+    const totalInput = linha.querySelector('input[name="total_local[]"]');
+
+    const qtd  = parseFloat(qtdInput.value)   || 0;
+    const unit = parseFloat(unitInput.value)  || 0;
+    const total = qtd * unit;
+
+    // atualiza total da linha
+    totalInput.value = total.toFixed(2);
+
+    somaQtd   += qtd;
+    somaValor += total;
+  });
+
+  // atualiza resumo
+  totalItensInput.value = somaQtd;
+  valorTotalInput.value = somaValor.toFixed(2);
+}
+
+// dispara recálculo toda vez que mudar qtd ou valor unitário
+produtosContainer.addEventListener('input', (e) => {
+  if (e.target.matches('input[name="qtd[]"], input[name="valor_unitario[]"]')) {
+    recalcularResumo();
+  }
+});
+
+// também recalcule quando adicionar ou remover produtos
+document.getElementById('add-produto').addEventListener('click', () => {
+  // seu código existente que cria a nova linha...
+  // depois de adicionar:
+  recalcularResumo();
+});
+
+// quando remove um produto
+produtosContainer.addEventListener('click', e => {
+  if (e.target.matches('.remove-btn')) {
+    // espera a remoção do DOM, depois:
+    setTimeout(recalcularResumo, 0);
+  }
+});
+
+// recálculo inicial (caso tenha itens pré-existentes)
+document.addEventListener('DOMContentLoaded', recalcularResumo);
