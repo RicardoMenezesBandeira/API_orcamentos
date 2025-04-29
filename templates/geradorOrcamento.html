@@ -47,9 +47,19 @@
       <button type="button" id="add-produto">+ Adicionar Produto</button>
 
       <!-- Resumo -->
-      <div class="section-title">Resumo</div>
-      <div class="form-group"><label>Total de Itens:</label><input type="number" name="T_itens"></div>
-      <div class="form-group"><label>Valor Total da Proposta:</label><input type="number" step="0.01" name="T_proposta"></div>
+      <!-- Resumo -->
+<div id="resumo" class="section-title">
+  <div class="flex-row">
+    <div class="form-group">
+      <label>Total de itens:</label>
+      <input type="number" id="total-itens" readonly value="0">
+    </div>
+    <div class="form-group">
+      <label>Valor total (R$):</label>
+      <input type="number" step="0.01" id="valor-total" readonly value="0.00">
+    </div>
+  </div>
+</div>
 
       <!-- Condições Comerciais -->
       <div class="section-title">Condições Comerciais</div>
