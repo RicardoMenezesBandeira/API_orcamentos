@@ -40,11 +40,13 @@
           }
         });
         lista += "<tr class='row'>" +
-                  "<td>" + dado.id + "</td>" +
-                  circulos  + 
-                  "<td><button onclick='edita(" + id + ")'>Editar</button></td>" +
-                  "<td><button onclick='download(" + id + ")'>Download</button></td>" +
-                "</tr>";
+             "<td>" + dado.id + "</td>" +
+             circulos +
+             // botão amarelo (warning)
+             "<td><button class='btn btn-warning btn-sm' onclick='edita(" + id + ")'>Editar</button></td>" +
+             // botão vermelho (danger)
+             "<td><button class='btn btn-danger btn-sm' onclick='download(" + id + ")'>Download</button></td>" +
+           "</tr>";
         id++;
       });
       lista += "</tbody></table>";
