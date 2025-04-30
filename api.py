@@ -7,6 +7,7 @@ import json
 import re
 from login import token_required, clean_tolkens, create_token, logon
 from cadastra import cadastrar
+from functools import wraps
 
 app = Flask(__name__)
 # Permite carregar templates também de template-PDF
@@ -38,7 +39,7 @@ def login():
     response = make_response(jsonify({'message':'Login bem-sucedido','user':auth.get("username")}))
     response.set_cookie(
         'auth_token', token,
-        httponly=True, secure=True, samesite='Strict', max_age=3600
+        httponly=True, secure=True, samesite='Strict', max_age=36000
     )
     return response
 
@@ -287,6 +288,51 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,x-access-token')
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
     return response
+
+
+@app.route("/delete_usuario/<username>", methods=['DELETE'])
+@token_required
+def delete_usuario(user_data, username):
+    BASE_DIR = os.path.dirname(__file__)
+    BD_DIR = os.path.join(BASE_DIR, 'bd')
+    USERS_DIR = os.path.join(BD_DIR, 'funcionarios')       # pasta com os arquivos {username}.json
+    LIST_FILE = os.path.join(BD_DIR, 'funcionarios.json')
+    """
+    Exclui o arquivo bd/funcionarios/{username}.json
+    Remove a chave username do JSON em bd/funcionarios.json
+    """
+    user_file = os.path.join(USERS_DIR, f"{username}.json")
+
+    # 1) tenta remover o arquivo individual
+    try:
+        os.remove(user_file)
+    except FileNotFoundError:
+        return jsonify({"error": f"Arquivo do usuário '{username}' não encontrado."}), 404
+    except Exception as e:
+        return jsonify({"error": "Erro ao apagar arquivo de usuário."}), 500
+
+    # 2) carrega, deleta a entrada e salva o JSON mestre
+    try:
+        with open(LIST_FILE, 'r', encoding='utf-8') as f:
+            all_users = json.load(f)
+
+        if username not in all_users:
+            return jsonify({"error": f"Usuário '{username}' não encontrado na lista."}), 404
+
+        del all_users[username]
+
+        with open(LIST_FILE, 'w', encoding='utf-8') as f:
+            json.dump(all_users, f, ensure_ascii=False, indent=2)
+
+        return jsonify({"message": f"Usuário '{username}' excluído com sucesso."}), 200
+
+    except FileNotFoundError:
+        return jsonify({"error": "Arquivo de lista de usuários não encontrado."}), 500
+    except json.JSONDecodeError:
+        return jsonify({"error": "JSON de lista de usuários inválido."}), 500
+    except Exception as e:
+        return jsonify({"error": "Erro ao atualizar lista de usuários."}), 500
+
 
 
 if __name__ == "__main__":

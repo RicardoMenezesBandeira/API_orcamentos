@@ -49,12 +49,34 @@ formCadastro.addEventListener('submit', function(event) {
 
 });
 
-function excluirUsuario(index) {
+async function excluirUsuario(index) {
   if (confirm('Tem certeza que deseja excluir este usuário?')) {
+    print(usuarios)
+    username = usuarios[index].user;
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/delete_usuario/${encodeURIComponent(username)}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Erro desconhecido');
+      }
+
+      // remove do array local e re-renderiza
+      alert(`Usuário "${username}" excluído com sucesso!`);
+    } catch (error) {
+      alert(`Falha ao excluir usuário: ${error.message}`);
+      console.error(error);
+    }
+  }
     usuarios.splice(index, 1);
     renderizarUsuarios();
   }
-}
+
 
 function editarUsuario(index) {
   const usuario = usuarios[index];
