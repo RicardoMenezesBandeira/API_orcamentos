@@ -42,8 +42,6 @@
         lista += "<tr class='row'>" +
              "<td>" + dado.id + "</td>" +
              circulos +
-             // botão amarelo (warning)
-             "<td><button class='btn btn-warning btn-sm' onclick='edita(" + id + ")'>Editar</button></td>" +
              // botão vermelho (danger)
              "<td><button class='btn btn-danger btn-sm' onclick='download(" + id + ")'>Download</button></td>" +
            "</tr>";
