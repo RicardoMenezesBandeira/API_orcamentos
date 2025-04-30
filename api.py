@@ -39,7 +39,7 @@ def login():
     response = make_response(jsonify({'message':'Login bem-sucedido','user':auth.get("username")}))
     response.set_cookie(
         'auth_token', token,
-        httponly=True, secure=True, samesite='Strict', max_age=36000
+        httponly=True, secure=True, samesite='Strict', max_age=360000#em segundos 10 horas
     )
     return response
 
