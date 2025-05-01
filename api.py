@@ -258,6 +258,9 @@ def add_usuario(user_data):
     """
     Recebe JSON com dados de usuário e chama a função cadastrar().
     """
+    user_data = user_data.get("admin")
+    if not user_data:
+        return jsonify({"message": "Acesso não autorizado!"}), 401 # Não mudar esta mensagem, pois o front-end depende dela.
     data = request.get_json(force=True)
     success = cadastrar(data)
     if success:
