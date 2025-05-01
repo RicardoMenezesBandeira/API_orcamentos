@@ -1,14 +1,8 @@
 /* Reset e base */
 * {
-  box-sizing: border-box;
+  
   margin: 0;
   padding: 0;
-}
-body {
-  width: 210mm;
-  margin: 0 auto;
-  box-sizing: border-box;
-  padding: 0mm 5mm; /* Margem superior e inferior para centralização vertical opcional */
 }
 
 
@@ -17,18 +11,17 @@ body {
   }
   body {
     position: relative;
-    left: auto;
-    width: 200mm;
-    margin: 0;
-    box-sizing: border-box;
+    width: 210mm;
+    margin: 0 auto;
   }
+
 
 
   .orçamento-com-barra {
     position: relative;
     padding-left: 20px;
     margin: 0 auto;
-    width: 200mm;
+    width: 210mm;
   }
   
 .empresa-info{
@@ -39,15 +32,6 @@ body {
   font-size: 0.8em;
 }
 
-.barra-lateral {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 6px;
-  height: 100%;
-  background-color: #007bff;
-  border-radius: 3px 0 0 3px;
-}
 
 /* Cabeçalho */
 header {
@@ -163,4 +147,9 @@ table td {
 .container{
   margin-top: 0px;
   margin: 0px;
+}
+section{
+  margin: 0px;
+  padding: 0px;
+  height: 200mm;
 }

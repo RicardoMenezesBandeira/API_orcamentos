@@ -42,7 +42,10 @@ def login():
         httponly=True, secure=True, samesite='Strict', max_age=360000#em segundos 10 horas
     )
     return response
-
+@app.route("/logout",methods=["POST"])
+@token_required
+def logout(user_data):
+    return jsonify({"message":"Logout bem-sucedido!"}), 200
 @app.route("/preencher")
 @token_required
 def preencher(user_data):

@@ -1,6 +1,12 @@
 *{
 color: black;
 }
+body {
+  width: 210mm;
+  margin: 0;
+  box-sizing: border-box;
+  padding: 0mm/* Margem superior e inferior para centralização vertical opcional */
+}
 table th, table td {
   vertical-align: middle;
 }

@@ -70,3 +70,18 @@ def logon(username, password, secret_key):
     return {"message": "Credenciais inválidas"}
 def clean_tolkens():
     USERS_TOKENS.clear()  # Limpa a lista de tokens armazenados
+
+
+def logout():
+    token = request.headers.get('Authorization') or request.cookies.get('auth_token')
+
+    if not token:
+        return jsonify({'message': 'Token não fornecido'}), 400
+
+    # Procura o token na lista USERS_TOKENS e remove
+    for entry in USERS_TOKENS:
+        if entry["token"] == token:
+            USERS_TOKENS.remove(entry)
+            return jsonify({'message': 'Logout realizado com sucesso'}), 200
+
+    return jsonify({'message': 'Token não encontrado ou já expirado'}), 400

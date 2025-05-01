@@ -5,7 +5,14 @@ body {
     font-size: 12px;
     max-width: 29cm;
     align-items: center;
+    
 }
+body {
+    width: 205mm;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 0mm 5mm; /* Margem superior e inferior para centralização vertical opcional */
+  }
 
 .header {
     display: flex;
