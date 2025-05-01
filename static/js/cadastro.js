@@ -31,13 +31,18 @@ formCadastro.addEventListener('submit', function(event) {
   fetch('http://127.0.0.1:8000/add_usuario', {
     method: 'POST', // método POST para enviar dados
     headers: {
-      'Content-Type': 'application/json' // indica que está mandando JSON
+      'Content-Type': 'application/json',
+      credentials: 'include' // indica que está mandando JSON
     },
     body: JSON.stringify(dados), // transforma o objeto em JSON string
      credentials: 'include'
   })
   .then(response => response.json())
   .then(data => {
+    console.log(data);
+  
+    if(data.message == "Acesso não autorizado!")
+      return alert('Cadastro não autorizado!');
     console.log('Sucesso:', data);
     usuarios.push(dados); // Opcional: adiciona na lista local também
     renderizarUsuarios();
