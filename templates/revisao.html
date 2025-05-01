@@ -112,7 +112,9 @@
       function ajustarAlturaIframe() {
     const iframe = document.getElementById("orcamento-frame");
     if (iframe && iframe.contentWindow && iframe.contentDocument.body) {
-      iframe.style.height = iframe.contentDocument.body.scrollHeight + "px";
+      pixels = iframe.contentDocument.body.scrollHeight +57;
+      iframe.style.height = pixels+ "px";
+      console.log("Altura do iframe ajustada para: " + pixels + "px");
     }
   }
 

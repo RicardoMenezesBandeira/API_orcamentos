@@ -49,7 +49,8 @@ def preencher(user_data):
     return render_template("geradorOrcamento.html")
 
 @app.route("/postTemplate", methods=['GET','POST'])
-def receber_orcamento():
+@token_required
+def receber_orcamento(user_data):
     if request.method == 'GET':
         return render_template("geradorOrcamento.html")
     dados = request.get_json(force=True)
@@ -62,6 +63,7 @@ def receber_orcamento():
         for i in itens
     )
     dados["produtos"] = html_rows
+
     # salva JSON incremental
     pasta = "bd/json_preenchimento"
     os.makedirs(pasta, exist_ok=True)
@@ -69,6 +71,8 @@ def receber_orcamento():
     ids = [int(f.split('.')[0]) for f in files if f.split('.')[0].isdigit()]
     nid = max(ids)+1 if ids else 1
     path = os.path.join(pasta, f"{nid}.json")
+    nome     = user_data.get("nome")
+    dados["vendedor"] = nome
     with open(path,'w',encoding='utf-8') as f:
         json.dump(dados,f,indent=2,ensure_ascii=False)
     # gera HTMLs iniciais para cada template
@@ -209,10 +213,8 @@ def get_dashboard(user_data):
     Exibe a dashboard para o usuário logado, 
     passando os dados de telefone, nome e cargo.
     """
-    telefone = user_data.get("telefone")
     nome     = user_data.get("nome")
-    cargo    = user_data.get("cargo")
-    info     = f"telefone: {telefone}, nome: {nome}, cargo: {cargo}"
+    info     = f"nome: {nome}"
     return render_template('index.html', info=info), 200
 
 

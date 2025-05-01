@@ -30,7 +30,7 @@
         let templates = dado.templates || []; // Garante que seja uma lista
 
         let circulos = '';
-        const tipos = ['BossBR', 'Bling', 'PCasallas','construcom']; // os nomes que você quer verificar
+        const tipos = ['BossBR', 'PCasallas','Construcom']; // os nomes que você quer verificar
 
         tipos.forEach(tipo => {
           if (templates.includes(tipo)) {
