@@ -4,33 +4,33 @@
   margin: 0;
   padding: 0;
 }
-
 body {
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background-color: #fff;
-  -webkit-print-color-adjust: exact;
+  width: 210mm;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 0mm 5mm; /* Margem superior e inferior para centralização vertical opcional */
 }
+
 
   @page {
     size: A4;
-    margin: 10px;
   }
   body {
-    width: 210mm;
+    position: relative;
+    left: auto;
+    width: 200mm;
     margin: 0;
     box-sizing: border-box;
   }
 
 
-/* Container principal */
-.orçamento-com-barra {
-  position: relative;
-  padding-left: 20px;
-  margin: 20px auto;
-  max-width: 210mm; /* Tamanho A4 */
-}
+  .orçamento-com-barra {
+    position: relative;
+    padding-left: 20px;
+    margin: 0 auto;
+    width: 200mm;
+  }
+  
 .empresa-info{
   position: relative;
   left: 150px;
@@ -130,7 +130,7 @@ table td {
   padding: 15px;
   margin-bottom: 15px;
   background-color: #f9f9f9;
-  max-width: 45%;
+  max-width: 50%;
   height: 150px;
 }
 .b2{
@@ -159,4 +159,8 @@ table td {
 }
 .assin{
   text-align: center;
+}
+.container{
+  margin-top: 0px;
+  margin: 0px;
 }
