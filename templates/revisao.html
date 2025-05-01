@@ -29,6 +29,8 @@
     }
     .botoes a:hover,
     .botoes button:hover { background-color: #0056b3; }
+    #orcamento-frame { width: 100%; height: 100%; border: none; }
+
   </style>
 </head>
 <body>
@@ -107,6 +109,15 @@
   </div>
 
   <script>
+      function ajustarAlturaIframe() {
+    const iframe = document.getElementById("orcamento-frame");
+    if (iframe && iframe.contentWindow && iframe.contentDocument.body) {
+      iframe.style.height = iframe.contentDocument.body.scrollHeight + "px";
+    }
+  }
+
+  // Ajusta ao carregar
+  document.getElementById("orcamento-frame").onload = ajustarAlturaIframe;
     (function() {
       const form = document.getElementById('correction-form');
       const iframe = document.getElementById('orcamento-frame');
