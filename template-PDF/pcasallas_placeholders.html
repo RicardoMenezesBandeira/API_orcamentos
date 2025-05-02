@@ -1,130 +1,139 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Proposta Comercial</title>
-
-    <link rel="stylesheet" href="./static/css/pc_asallas.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proposta Comercial</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="http://127.0.0.1:5500/template-pdf/static/css/style.css">
 </head>
 <body>
-    <div class="header">
-        <div class="logo">
-            <img src="./static/img/PC_asallas.png" alt="Logo da Empresa">
-        </div>
-        <div class="dados_empresa">
-            <b>PCASALLAS CÓMERCIO E SERVIÇOS LTDA</b><br>
-            CNPJ: 11.712.921/0001-01<br>
-            Rua Natal, 108<br>
-            Novo Horizonte, Macaé - RJ<br>
-            27.935-170<br>
-            79012971<br>
-        </div>
-    </div>
-    
-    <h4 class="titulo-proposta">Proposta Comercial Nº {id}</h4>
-
-    <div class="dados_cliente row">
-        <div>
-            Para<br>
-            {cliente}<br>
-            {cnpj}<br>
-            Aos cuidados de {responsavel}<br>
-        </div>
-        <div class="endereco">
-            <div>
-                <b>Endereço do Cliente</b><br>
-            {endereco},<br>
-            {cidade}<br>
-            </div>
-            <div>
-                <b>Dados do Cliente</b><br>
-                Telefone: {telefone}<br>
-                E-mail: {email}<br>
-            </div>
-            
-        </div>
-        <div class="extras_empresa">
-            EMPRESA SIMPLES NACIONAL<br>
-            IMPOSTOS INCLUSOS<br>
-            FRETE CIF<br>
-        </div>
-    </div>
-    
-    <div id="produtos">
-        <b class="titulo">Itens de produto</b>
-        <table class="tabela-produtos">
-            <thead>
-                <tr>
-                    <th>Nº</th><th>Item</th><th>QTD</th><th>Un</th><th>Valor Unitário</th><th>Valor Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>                  
-                  {produtos}
-                </tr>             
-            </tbody>
-        </table>        
+  <div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 header">
+      <div class="logo">
+        <img src="./static/img/PC_asallas.png" alt="Logo da Empresa" style="max-height: 100px;">
+      </div>
+      <div class="text-end">
+        <strong>PCASALLAS CÓMERCIO E SERVIÇOS LTDA</strong><br>
+        CNPJ: 11.712.921/0001-01<br>
+        Rua Natal, 108<br>
+        Novo Horizonte, Macaé - RJ<br>
+        27.935-170<br>
+        79012971<br>
+      </div>
     </div>
 
-    <div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Total de itens</th>
-                    <th>Total de produtos</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{data}</td>
-                    <td>{total_itens}</td>
-                    <td>{valor_total}</td>
-                </tr>
-            </tbody>
-        </table>
+    <h4 class="text-center mb-4 ">Proposta Comercial Nº {id}</h4>
+
+    <div class="row mb-4 cliente">
+      <div class="col-md-6">
+        <p>
+          <strong>Para</strong><br>
+          {cliente}<br>
+          {cnpj}<br>
+          Aos cuidados de {responsavel}<br>
+        </p>
+        <p>
+          <strong>Dados do Cliente</strong><br>
+          Telefone: {telefone}<br>
+          E-mail: {email}<br>
+        </p>
+      </div>
+      <div class="col-md-6">
+        <p>
+          <strong>Endereço do Cliente</strong><br>
+          {endereco},<br>
+          {cidade}<br>
+        </p>
+        
+      </div>
     </div>
 
-    <div>
-        <b class="titulo">Condições Especiais</b>
-        <table>
-            <thead>
-                <tr>
-                    <th>Obs</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{obs}</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="mb-3 imposto">
+      <p><strong>EMPRESA SIMPLES NACIONAL</strong><br>
+      IMPOSTOS INCLUSOS <br>
+      FRETE CIF</p>
     </div>
 
-    <div>
-        <b class="titulo">Condições Gerais</b>
-        <table id="condicoes_gerais">
-            <thead>
-                <tr>
-                    <th>Previsão de entrega</th>
-                    <th>Validade da proposta</th>
-                    <th>Prazo de pagamento</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{dias_entrega}</td>
-                    <td>{dias_validade}</td>
-                    <td>{dias_pagamento}</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="mb-4 produtos">
+      <h5>Itens de produto</h5>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Nº</th>
+            <th>Item</th>
+            <th>QTD</th>
+            <th>Un</th>
+            <th>Valor Unitário</th>
+            <th>Valor Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {produtos}
+        </tbody>
+      </table>
     </div>
 
-    <div class="assinatura">
-        <p>______________________________</p>
-        <p>Responsável</p>
+    <div class="mb-4">
+      <h5>Resumo</h5>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Total de itens</th>
+            <th>Total de produtos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{data}</td>
+            <td>{total_itens}</td>
+            <td>{valor_total}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
+    <div class="mb-4">
+      <h5>Condições Especiais</h5>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Obs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{obs}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mb-4">
+      <h5>Condições Gerais</h5>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Previsão de entrega</th>
+            <th>Validade da proposta</th>
+            <th>Prazo de pagamento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{dias_entrega}</td>
+            <td>{dias_validade}</td>
+            <td>{dias_pagamento}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="text-center mt-5">
+      <p>__________________________________________________</p>
+      <p>Responsável</p>
+    </div>
+  </div>
 </body>
 </html>
