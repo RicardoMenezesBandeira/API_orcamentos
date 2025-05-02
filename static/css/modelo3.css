@@ -1,91 +1,75 @@
-*{
-color: black;
+* {
+  color: black;
 }
-table th, table td {
-  vertical-align: middle;
-}
-.total {
-  font-weight: bold;
-  text-align: right;
-}
-.empresa-info {
-  font-size: 0.875rem;
-}
-.template-style-2 header {
-  background: #f8f9fa;
-}
-.barra-lateral {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 6px;
-  height: 100%;
-  background-color: #007bff;
-}
-.orçamento-com-barra {
-  position: relative;
-}
-.proposta-box {
-  border: 1px solid #dee2e6;
-  border-radius: 0.375rem;
-  padding: 1rem;
-  margin-bottom: 1rem;
+@page {
+  size: A4;
+  margin: 0.5cm;
 }
 body {
-  background-color: #fdf6e3;
   font-family: 'Georgia', serif;
 }
-.logo-placeholder {
-  width: 150px; height: 60px; background: #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #6c757d;
+html, body {
+  height: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
 }
+img {
+  width: 200px;
+}
+
 table th, table td {
   vertical-align: middle;
 }
+
 .total {
   font-weight: bold;
   text-align: right;
 }
+
 .empresa-info {
-  font-size: 0.875rem;
+  font-size: 1rem;
+ 
 }
-.template-style-2 header {
-  background: #f2e5c4;
+.empresa-info div{
+  padding: 0.5rem;
 }
 
-.barra-lateral {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 6px;
-  height: 100%;
-  background-color: #007bff;
-}
-.orçamento-com-barra {
-  position: relative;
-  border: 1px solid #d3c6a2;
-  background: #fffef9;
-}
-.proposta-box {
-  border: 1px dashed #a3907c;
-  background-color: #fffaf0;
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
 .template-style-vintage {
   background-color: #fefcf9;
   border: 1px solid #d1bfa3;
   font-family: 'Times New Roman', Times, serif;
 }
+
 .template-style-vintage header {
   background: #ede1c7;
   border-bottom: 2px dashed #c2aa89;
 }
+
 .template-style-vintage .table {
   border: 1px solid #c2aa89;
 }
-.template-style-vintage .table th, .template-style-vintage .table td {
+
+.template-style-vintage .table th,
+.template-style-vintage .table td {
   background-color: #fdfaf3;
 }
-img{
-  width: 200px;
+
+
+.container {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  min-height: 200mm;
+}
+.pagina {
+  page-break-after: auto;
+}
+
+.nao-quebrar {
+  page-break-inside: avoid;
+}
+.text-end{
+  padding: 5px;
 }
