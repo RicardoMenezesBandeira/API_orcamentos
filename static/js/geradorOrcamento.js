@@ -75,7 +75,7 @@ function formDataToJson(formData) {
     if (key === 'templates[]' || key.endsWith('[]')) return;
     data[key] = value;
   });
-
+  console.log("Dados do formulário:", data);
   return JSON.stringify(data, null, 2);
 }
 
