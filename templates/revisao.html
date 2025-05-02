@@ -54,12 +54,15 @@
           <input type="{{ 'date' if campo=='data' else 'text' }}" name="{{ campo }}" value="{{ dados[campo] }}">
         </div>
         {% endfor %}
-
+        
         <!-- Produtos -->
         <div class="section-title">Produtos</div>
         <div id="produtos-container">
           {% for item in dados['produtos'] %}
+
           <div class="produto form-group-set">
+            <div>
+            </div>
             <div class="flex-row">
               <div class="form-group"><label>Número do item:</label><input type="number" name="numero[]" value="{{ item.numero }}" readonly></div>
               <div class="form-group"><label>Produto:</label><input type="text" name="produto[]" value="{{ item.produto }}"></div>
@@ -69,8 +72,8 @@
               <div class="form-group"><label>Unidade:</label><input type="text" name="un[]" value="{{ item.unidade }}"></div>
             </div>
             <div class="flex-row">
-              <div class="form-group"><label>Valor Unitário (R$):</label><input type="number" step="0.01" name="valor_unitario[]" value="{{ item.valor_unitario }}"></div>
-              <div class="form-group"><label>Valor Total (R$):</label><input type="number" step="0.01" name="total_local[]" value="{{ item.total_local }}"></div>
+              <div class="form-group"><label>Valor Unitário (R$):</label><input type="text" step="0.01" name="valor_unitario[]" value="{{ item.valor_unitario }}"></div>
+              <div class="form-group"><label>Valor Total (R$):</label><input type="text" step="0.01" name="total_local[]" value="{{ item.total_local }}"></div>
             </div>
             <button type="button" class="remove-btn" onclick="this.parentNode.remove()">×</button>
           </div>
@@ -109,7 +112,22 @@
   </div>
 
   <script>
-      function ajustarAlturaIframe() {
+    window.onload = async function() {
+      // Ajusta a altura do iframe ao carregar
+      ajustarAlturaIframe();
+      const body = formDataToJson(new FormData(form));
+        const resp = await fetch('/verification/preview', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(body)
+        });
+        const js = await resp.json();
+        if (resp.ok) {
+          iframe.srcdoc = js.preview_html;
+        } else alert('Erro: ' + js.erro);
+
+    };
+    function ajustarAlturaIframe() {
     const iframe = document.getElementById("orcamento-frame");
     if (iframe && iframe.contentWindow && iframe.contentDocument.body) {
       pixels = iframe.contentDocument.body.scrollHeight +57;
@@ -120,6 +138,7 @@
 
   // Ajusta ao carregar
   document.getElementById("orcamento-frame").onload = ajustarAlturaIframe;
+  
     (function() {
       const form = document.getElementById('correction-form');
       const iframe = document.getElementById('orcamento-frame');

@@ -2,16 +2,18 @@
 body {
     font-family: Arial, sans-serif;
     margin: 30px 50px;
+    padding: 5px;
     font-size: 12px;
     max-width: 29cm;
     align-items: center;
+
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 10px;
+    padding: 5px;
     height: 100px;
 }
 

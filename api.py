@@ -62,7 +62,7 @@ def receber_orcamento(user_data):
     html_rows = ''.join(
         f"<tr><td>{i['numero']}</td><td>{i['produto']}</td>"
         f"<td>{i['quantidade']}</td><td>{i['unidade']}</td>"
-        f"<td>R$ {i['valor_unitario']}</td><td>R$ {i['total_local']}</td></tr>"
+        f"<td>{i['valor_unitario']}</td><td>{i['total_local']}</td></tr>"
         for i in itens
     )
     dados["produtos"] = html_rows
@@ -76,6 +76,8 @@ def receber_orcamento(user_data):
     path = os.path.join(pasta, f"{nid}.json")
     nome     = user_data.get("nome")
     dados["vendedor"] = nome
+    dados["id"]=nid
+
     with open(path,'w',encoding='utf-8') as f:
         json.dump(dados,f,indent=2,ensure_ascii=False)
     # gera HTMLs iniciais para cada template
@@ -177,15 +179,17 @@ def update_template():
         novo = orig.copy(); novo['templates']=[tpl]
         for k,v in correcoes.items():
             if k not in ('template','json_file'): novo[k]=v
-        # detect change
-        changed = any(str(orig.get(k))!=str(v) for k,v in correcoes.items() if k not in ('template','json_file'))
-        if changed:
-            ids = [int(f.split('.')[0]) for f in os.listdir(dirj) if f.endswith('.json')]
-            nid = max(ids)+1
-            with open(os.path.join(dirj,f"{nid}.json"),'w',encoding='utf-8') as f:
-                json.dump(novo,f,indent=2,ensure_ascii=False)
+        # detect change        
         use_id = base_id
         # generate html
+        itens = novo.get("produtos", [])
+        html_rows = ''.join(
+        f"<tr><td>{i['numero']}</td><td>{i['produto']}</td>"
+        f"<td>{i['quantidade']}</td><td>{i['unidade']}</td>"
+        f"<td>R$ {i['valor_unitario']}</td><td>R$ {i['total_local']}</td></tr>"
+        for i in itens
+         )
+        novo["produtos"] = html_rows
         tpl_file = f"{tpl.lower()}_placeholders.html"
         html = open(os.path.join('template-PDF',tpl_file),encoding='utf-8').read()
         for k,v in novo.items(): html = html.replace(f"{{{k}}}",str(v))
@@ -197,6 +201,20 @@ def update_template():
     except Exception as e:
         return jsonify({'erro':str(e)}),500
 
+@app.route("/download/<id>/<template>", methods=["GET"])
+def download(id, template):
+    """
+    Renderiza a página de download com o iframe contendo o orçamento
+    """
+    # Gera o nome do arquivo do template
+    template_nome = f"http://127.0.0.1:8000/template-PDF/orcamento_{str(id).zfill(3)}_{template.lower()}.html"
+    
+    # Você precisaria definir o 'nome' de alguma forma - aqui estou usando o ID como exemplo
+    nome = f"Orçamento #{id}" 
+    
+    return render_template('download.html', 
+                         nome=nome,
+                         template_nome=template_nome)
 @app.route('/impressao', methods=['GET'])
 def imprimir_template():
     arquivo = request.args.get('arquivo')
