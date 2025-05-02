@@ -3,4 +3,4 @@ weasyprint
 pyjwt
 flask-cors
 tinydb
-
+weasyprint

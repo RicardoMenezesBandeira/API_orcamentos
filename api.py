@@ -8,6 +8,7 @@ import re
 from login import token_required, clean_tolkens, create_token, logon
 from cadastra import cadastrar
 from functools import wraps
+from weasyprint import HTML
 
 app = Flask(__name__)
 # Permite carregar templates também de template-PDF
@@ -134,7 +135,7 @@ def verificar_template():
     iframe_src = f"/template-PDF/orcamento_{str(base_id).zfill(3)}_{emp.lower()}.html"
     return render_template('revisao.html', iframe_src=iframe_src,
                            template_nome=emp, proximo_idx=idx+1,
-                           dados=dados, json_filename=json_file)
+                           dados=dados, json_filename=json_file,id=base_id), 200
 
 @app.route("/verification/preview", methods=["POST"])
 def preview_template():
@@ -206,15 +207,18 @@ def download(id, template):
     """
     Renderiza a página de download com o iframe contendo o orçamento
     """
+    print(f"Download solicitado: id={id}, template={template}")
     # Gera o nome do arquivo do template
-    template_nome = f"http://127.0.0.1:8000/template-PDF/orcamento_{str(id).zfill(3)}_{template.lower()}.html"
+    template_nome = f"/orcamento_{str(id).zfill(3)}_{template.lower()}.html"
     
-    # Você precisaria definir o 'nome' de alguma forma - aqui estou usando o ID como exemplo
-    nome = f"Orçamento #{id}" 
-    
-    return render_template('download.html', 
-                         nome=nome,
-                         template_nome=template_nome)
+    rendered_html = render_template(template_nome)
+    pdf = HTML(string=rendered_html).write_pdf()
+
+    response = make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'attachment; filename=orcamento.pdf'
+    return response
+
 @app.route('/impressao', methods=['GET'])
 def imprimir_template():
     arquivo = request.args.get('arquivo')

@@ -35,7 +35,7 @@
 
         tipos.forEach(tipo => {
           if (templates.includes(tipo)) {
-            circulos += `<td onclick="download(${id}, '${tipo}')">🔵</td>`; // Círculo preenchido se existir
+            circulos += `<td><button class='btn btn-danger btn-sm' onclick='download( ${id},"${tipo}")'>Download</button></td>`; // Círculo preenchido se existir
           } else {
             circulos += "<td>⚪</td> "; // Círculo vazio se não existir
           }
@@ -44,7 +44,7 @@
              "<td>" + dado.id + "</td>" +
              circulos +
              // botão vermelho (danger)
-             "<td><button class='btn btn-danger btn-sm' onclick='download(" + id + ")'>Download</button></td>" +
+             
            "</tr>";
         id++;
       });
@@ -58,11 +58,36 @@
     });
   }
   async function download(id,template) {
+    console.log("Baixando PDF para o orçamento com ID:", id);
+    
   
-    href = "/download/" + id+"/" + template;
-    window.location.href = href;
-  } 
-  
+    fetch(`/download/${id}/${template}`, {
+      method: "GET",
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Erro ao gerar PDF.");
+        }
+        return response.blob();
+      })
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "orcamento.pdf";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      })
+      .catch(error => {
+        console.error("Erro:", error);
+        alert("Não foi possível gerar o PDF.");
+      })
+      .finally(() => {
+        btn.innerHTML = "Baixar PDF";
+        btn.disabled = false;
+      });
+  }
   window.onload = function() {
     atualizaOrcamento();
   }

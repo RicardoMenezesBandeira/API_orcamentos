@@ -4,23 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="./static/css/modelo1.css">
+  <link rel="stylesheet" href="http://127.0.0.1:8000/static/css/modelo1.css">
+  <style>
+    @page {
+      size: A4;
+      margin: 0.5cm;
+    }
+
+    .pagina {
+      page-break-after: auto;
+      
+    }
+
+    .nao-quebrar {
+      page-break-inside: avoid;
+    }
+     </style>
     <title>BOSSBR</title>
 </head>
 <body >
   <div class="container orçamento-com-barra">
     <header >
-      <div class="align-items-center">
-        <div class="me-3"><img class="logo-placeholder" src="./static/img/boss-br.png" alt=""></div>
+      <div class="align-items-center nao-quebrar heade">
+        <div class="me-3"><img class="logo-placeholder" src="http://127.0.0.1:8000/static/img/boss-br.png" alt=""></div>
         <div class="empresa-info">
           <h2 class="mb-0">BOSSBR</h2>
-          <div >
-            <div>CNPJ: 25.100.007/0001-06</div>
-            <div>Endereço: Rua Secretario Salo Brand, 411 - Visconde de Araújo,</br> Macaé/RJ - CEP: 27940-380 </div>
-            <div>Telefone: (22) 2020-4284 - (22) 97404-8186</div>
-            <div>Email: comercial@bossbr.com</div>
-            <div>Site: WWW.BOSSBR.COM</div>
-          </div>
+          
+            <p>CNPJ: 25.100.007/0001-06<br>
+            Endereço: Rua Secretario Salo Brand, 411 - Visconde de Araújo,</br> Macaé/RJ - CEP: 27940-380 <br>
+            Telefone: (22) 2020-4284 - (22) 97404-8186<br>
+            Email: comercial@bossbr.com<br>
+            Site: WWW.BOSSBR.COM</p>
+          
         </div>
       </div>
       <div class="text-end">
@@ -37,40 +52,41 @@
           DDP INCOTERMS 2020 (CIF)
         </div>
         <div class="infos">
-          <div class="proposta-box" >
-            <strong>Razão social:</strong> {cliente}<br>
-            <strong>Endereço:</strong> {endereco}<br>
-            <strong>CPF/CNPJ:</strong> {cnpj}<br>
-            <strong>Telefone:</strong> {telefone}<br>
+          <div class="linha">
+            <div class="proposta-box nao-quebrar">
+              <strong>Razão social:</strong> {cliente}<br>
+              <strong>Endereço:</strong> {endereco}<br>
+              <strong>CPF/CNPJ:</strong> {cnpj}<br>
+              <strong>Telefone:</strong> {telefone}<br>
+            </div>
+            <div class="proposta-box nao-quebrar">
+              <strong>Email:</strong> {email}<br>
+              <strong>Nome fantasia:</strong> {nome}<br>
+              <strong>Cidade/UF:</strong> {cidade}<br>
+              <strong>CEP:</strong> {cep}<br>
+            </div>
           </div>
-          <div class="proposta-box b2" >
-            
-          <strong>Email:</strong> {email}<br>
-          <strong>Nome fantasia:</strong> {nome}<br>
-          <strong>Cidade/UF:</strong> {cidade}<br>
-          <strong>CEP:</strong> {cep}<br>
         
+          <div class="linha">
+            <div class="proposta-box nao-quebrar">
+              <p><strong>Vendedor:</strong> {vendedor}</p>
+              <p><strong>Aos cuidados de:</strong> {responsavel}</p>
+            </div>
+            <div class="proposta-box nao-quebrar">
+              <p>
+                <strong>Prazo para pagamento:</strong> {dias_pagamento}<br>
+                <strong>Previsão de entrega:</strong> {dias_entrega}<br>
+                <strong>Validade da proposta:</strong> {dias_validade}
+              </p>
+            </div>
           </div>
+        </div>
         
-        </div>
-        <div class="l2">
-          <div class="proposta-box">
-            <p><strong>Vendedor:</strong> {vendedor}<br></p>
-            <p><strong>Aos cuidados de:</strong> {responsavel}</p>
-          </div>
-          <div class="proposta-box b2">
-              
-            <p>
-              <strong>Prazo para pagamento:</strong> {dias_pagamento}<br>
-              <strong>Previsão de entrega:</strong> {dias_entrega}<br>
-            <strong>Validade da proposta:</strong> {dias_validade}
-          </p>
-          </div>
-        </div>
+       
       </div>
      
 
-      <div class="intens">
+      <div class="intens  nao-quebrar">
         <h5 class="mt-4">Itens</h5>
         <table class="table table-bordered mt-3">
           <thead class="table-light">
@@ -87,9 +103,11 @@
            
           </tbody>
         </table>
-        <p class="total mt-3">Total do orçamento: <strong>R$ {valor_total}</strong></p>
-        Atensiosamente, <br>Departamento de vendas
-        <p class="assin">Assinatura do cliente<br><br>_____________________________________________________</p>
+        <p class="total mt-3 nao-quebrar">Total do orçamento: <strong>R$ {valor_total}</strong></p>
+        <div class="nao-quebrar">
+          Atensiosamente, <br>Departamento de vendas
+          <p class="assin nao-quebrar">Assinatura do cliente<br><br>_____________________________________________________</p>
+        </div>
     </div>
   
     </section>
