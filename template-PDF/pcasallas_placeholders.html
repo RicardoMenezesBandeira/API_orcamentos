@@ -63,17 +63,7 @@
                   {produtos}
                 </tr>             
             </tbody>
-        </table>
-
-        <table class="tabela-resumo">
-            <tbody>
-                <tr>
-                    <th>Numero de itens: {numero_itens}</th>
-                    <th>Soma das quantidades: {soma_quantidades}</th>
-                    <th>Valor Total: {valor-total}</th>
-                </tr>
-            </tbody>
-        </table>
+        </table>        
     </div>
 
     <div>
@@ -88,28 +78,24 @@
             <tbody>
                 <tr>
                     <td>{data}</td>
-                    <td>{T_itens}</td>
-                    <td>{T_proposta}</td>
+                    <td>{total_itens}</td>
+                    <td>{valor_total}</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
     <div>
-        <b class="titulo">Condições comerciais</b>
+        <b class="titulo">Condições Especiais</b>
         <table>
             <thead>
                 <tr>
-                    <th>Dias</th>
-                    <th>Valor</th>
                     <th>Obs</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>{dias_pagamento_comercial}</td>
-                    <td>R$ {valor_pagamento_comercial}</td>
-                    <td>{obs_pagamento_comercial}</td>
+                    <td>{obs}</td>
                 </tr>
             </tbody>
         </table>
