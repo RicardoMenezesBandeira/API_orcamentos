@@ -82,6 +82,6 @@ def logout():
     for entry in USERS_TOKENS:
         if entry["token"] == token:
             USERS_TOKENS.remove(entry)
-            return jsonify({'message': 'Logout realizado com sucesso'}), 200
+            return True
 
-    return jsonify({'message': 'Token não encontrado ou já expirado'}), 400
+    return True

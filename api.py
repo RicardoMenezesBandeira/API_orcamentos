@@ -5,7 +5,7 @@ from flask_cors import CORS
 import os
 import json
 import re
-from login import token_required, clean_tolkens, create_token, logon
+from login import token_required, clean_tolkens, create_token, logon,logout
 from cadastra import cadastrar
 from functools import wraps
 from weasyprint import HTML
@@ -43,10 +43,16 @@ def login():
         httponly=True, secure=True, samesite='Strict', max_age=360000#em segundos 10 horas
     )
     return response
-@app.route("/logout",methods=["POST"])
+@app.route("/logout",methods=["GET"])
 @token_required
-def logout(user_data):
-    return jsonify({"message":"Logout bem-sucedido!"}), 200
+def logout_route(user_data):
+    print("Logout solicitado")
+    if logout() == True:    
+        print("Logout bem-sucedido")
+        return jsonify({"message":"Logout bem-sucedido!"}), 200
+    else:
+        print("Erro ao fazer logout")
+        return jsonify({"message":"Erro ao fazer logout!"}), 500
 @app.route("/preencher")
 @token_required
 def preencher(user_data):
@@ -76,7 +82,8 @@ def receber_orcamento(user_data):
     nid = max(ids)+1 if ids else 1
     path = os.path.join(pasta, f"{nid}.json")
     nome     = user_data.get("nome")
-    dados["vendedor"] = nome
+    dados_funcionario = get_data(nome)
+    dados["vendedor"] = dados_funcionario.get("nome")
     dados["id"]=nid
 
     with open(path,'w',encoding='utf-8') as f:
@@ -234,13 +241,16 @@ def servir_template_pdf(filename):
 @app.route("/dashboard", methods=['GET'])
 @token_required
 def get_dashboard(user_data):
-    """
-    Exibe a dashboard para o usuário logado, 
-    passando os dados de telefone, nome e cargo.
-    """
+    
     nome     = user_data.get("nome")
-    info     = f"nome: {nome}"
-    return render_template('index.html', info=info), 200
+    dados =get_data(nome)
+    nome = dados.get("nome")
+    info     = f"Nome: {nome}"
+    if dados.get("admin"):
+        btn = "<button class='btn' onclick='novoOrcamento()'>gerar novo orçamento</button> <button class='btn' onclick='novoFuncionario()'>cadastra empregado</button>"
+    else:
+        btn = "<button class='btn' onclick='novoOrcamento()'>gerar novo orçamento</button>"
+    return render_template('index.html', info=info,btns=btn), 200
 
 
 @app.route("/orçaemnto", methods=['GET'])
@@ -283,7 +293,8 @@ def add_usuario(user_data):
     """
     Recebe JSON com dados de usuário e chama a função cadastrar().
     """
-    user_data = user_data.get("admin")
+    dados = get_data(user_data.get("nome"))
+    user_data = dados.get("admin")
     if not user_data:
         return jsonify({"message": "Acesso não autorizado!"}), 401 # Não mudar esta mensagem, pois o front-end depende dela.
     data = request.get_json(force=True)
@@ -364,6 +375,11 @@ def delete_usuario(user_data, username):
         return jsonify({"error": "Erro ao atualizar lista de usuários."}), 500
 
 
-
+def get_data(nome):
+    path = os.path.join('bd/funcionarios', f"{nome}.json")
+    with open(path, 'r', encoding='utf-8') as f:
+        dados = json.load(f)
+   
+    return dados
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)

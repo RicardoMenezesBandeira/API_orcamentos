@@ -5,7 +5,8 @@ def cadastrar(data):
     usuario = {
     "nome": data["nome"],
     "telefone":data["telefone"],
-    "user":data["user"]
+    "user":data["user"],
+    "admin":data["admin"]
 }
     login = {
     "user": data["user"],

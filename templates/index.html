@@ -11,23 +11,19 @@
 <body>
   <div class="top-bar">
     <div class="info-box">{{info}}</div>
-    <button class="btn" onclick="novoOrcamento()">gerar novo orçamento</button>
-    <button class="btn" onclick="novoFuncionario()">cadastra empregado</button>
-    <button class="btn" style="background-color: red;" onclick="Logout()">Logout</button>
-
+    <div class="menu">
+      {{btns|safe}}
+      <button class="btn logout"  onclick="Logout()">Logout</button>
+  </div>
   </div>
 
   <div class="main-content">
     <div class="item-bar">
       <span class="id-label">id</span>
-      <div class="inputs">
-        <b>BOSS-BR</b>
-        <b>PC-ASALLAS</b>
-        <b>CONSTRUCOM</b>
-        
-      </div>
-
-      <div class="arrow" onclick="atualizaOrcamento()"></div>
+      
+      <div>Cliente</div>
+      <div>Vendendor</div>
+      <div>DOWNLOADS</div>
       
     </div>
     <div id ="orcamento" class="orcamentos">

@@ -1,12 +1,11 @@
 {
     "maicon": {
-        "senha": "1234",
-        "id": 0
-
+        "senha": "1234"
     },
-    "andre":{
-        "senha": "1234",
-        "id": 1
-
+    "andre": {
+        "senha": "1234"  
+    },
+    "ricardo": {
+        "senha": "1234"
     }
 }

@@ -15,7 +15,65 @@ body {
     justify-content: space-between;
     margin-bottom: 20px;
   }
+  .row{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    border-radius: 5px;
+  }
+  .row:nth-of-type(odd) {
+    background-color: #f0f0f0; /* cinza claro */
+  }
+  .row:nth-of-type(even) {
+    background-color: #cce5ff; /* azul claro */
+  }
+  .row > div{
+    text-align: center;
+    align-content: center;
+    padding: 10px;
+  }
+  .row > div:nth-child(1) {
+    /* coluna 1 (ID) */
+    width: 40px;
+    background-color: #007bff;
+    height: 40px;
+    border-radius: 20px;
+    text-align: center;
+    align-content: center;
+
+  }
+  .row > div:nth-child(4) {
+    /* coluna 1 (ID) */
+    width: 500px;
+    
+    border-radius: 20px;
+    text-align: center;
+    align-content: center;
+
+  }
+  .item-bar > div:nth-child(4) {
+    /* coluna 1 (ID) */
+    width: 500px;
+    
+    border-radius: 20px;
+    text-align: center;
+    align-content: center;
+
+  }
   
+
+  .downloads {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .downloads div{
+    width: 121px;
+    justify-content: center;
+  }
   .info-box {
     background-color: white;
     border-radius: 8px;
