@@ -24,8 +24,9 @@ formCadastro.addEventListener('submit', function(event) {
   const user = document.getElementById('user').value;
   const telefone = document.getElementById('telefone').value;
   const senha = document.getElementById('senha').value;
+  const admin = document.getElementById('admin').checked; // Verifica se o checkbox está marcado
 
-  const dados = { nome, user, telefone, senha }; // Monta o JSON
+  const dados = { nome, user, telefone, senha ,admin}; // Monta o JSON
 
   // Envia o JSON para o servidor
   fetch('http://127.0.0.1:8000/add_usuario', {

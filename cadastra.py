@@ -12,6 +12,8 @@ def cadastrar(data):
     "user": data["user"],
     "senha": data["senha"]
     }
+    print(usuario) 
+    print(login)
     try:
         # Diretório onde o arquivo será salvo
         diretorio = f'./bd/funcionarios/'
@@ -38,9 +40,6 @@ def cadastrar(data):
             print ("Usuario não existe")
             senha = login["senha"]        
             funcionarios[user] = {"senha":senha}
-           
-       
-        
         # Salva a lista atualizada de funcionários
         with open(f'./bd/funcionarios.json', 'w', encoding='utf-8') as f:
             json.dump(funcionarios, f, indent=4, ensure_ascii=False)
@@ -48,3 +47,6 @@ def cadastrar(data):
         print(f"Erro ao cadastrar usuário: {str(e)}")
         return {"erro": str(e)}, 500
     return True
+if __name__ == "__main__":
+    dados= {'nome': 'gabryellla Nata', 'user': 'bibi', 'telefone': '22999058942', 'senha': '1234'}
+    cadastrar(dados)

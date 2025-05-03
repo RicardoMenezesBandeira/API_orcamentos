@@ -45,9 +45,13 @@ document.getElementById('add-produto').addEventListener('click', () => {
 
 // Converte FormData em JSON, incluindo múltiplos templates
 function formDataToJson(formData) {
-  const data = {};
-
-  // Coleta todos os templates marcados
+  const data = {};// Coleta todos os templates marcados
+    const checkboxes = document.querySelectorAll('input[name="templates[]"]');
+    const algumMarcado = Array.from(checkboxes).some(cb => cb.checked);
+    if (!algumMarcado) {
+      alert("Selecione ao menos um template.");
+      return false; // Impede o envio
+    }
   data.templates = formData.getAll('templates[]');
 
   // Monta array de produtos

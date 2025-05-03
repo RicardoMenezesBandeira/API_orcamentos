@@ -135,7 +135,7 @@ def verificar_template():
     if isinstance(templates,str): templates=[templates]
     idx = int(request.args.get('template_idx',0) or 0)
     if idx>=len(templates):
-        return ("<h2>Todos os templates foram revisados!</h2><a href='/postTemplate'>Voltar para Início</a>",200)
+        return ("<h2>Todos os templates foram revisados!</h2><a href='/dashboard'>Voltar para Início</a>",200)
     emp = templates[idx]
     # usa id do json_file
     base_id = int(json_file.split('.')[0])
@@ -294,11 +294,16 @@ def add_usuario(user_data):
     Recebe JSON com dados de usuário e chama a função cadastrar().
     """
     dados = get_data(user_data.get("nome"))
-    user_data = dados.get("admin")
-    if not user_data:
+    print(f"Dados do usuário: {dados}")
+    permision = dados.get("admin")
+    print(f"permisão: {permision}")
+    if not permision:
+        print("Acesso não autorizado!")
         return jsonify({"message": "Acesso não autorizado!"}), 401 # Não mudar esta mensagem, pois o front-end depende dela.
     data = request.get_json(force=True)
+    print(f"Dados recebidos: {data}")
     success = cadastrar(data)
+    print(f"Cadastro bem-sucedido: {success}")
     if success:
         return jsonify({"message": "Usuário adicionado com sucesso!"}), 200
     else:
