@@ -1,11 +1,6 @@
 {
-    "maicon": {
-        "senha": "1234"
-    },
-    "andre": {
-        "senha": "1234"  
-    },
-    "ricardo": {
-        "senha": "1234"
+    "admin":{
+        "senha": "admin"
     }
-}
+
+ }

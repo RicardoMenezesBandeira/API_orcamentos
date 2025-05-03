@@ -10,7 +10,6 @@ function renderizarUsuarios() {
     li.innerHTML = `
       ${usuario.nome} (${usuario.user})
       <div>
-        <button class="btn btn-sm btn-warning me-2" onclick="editarUsuario(${index})">Editar</button>
         <button class="btn btn-sm btn-danger" onclick="excluirUsuario(${index})">Excluir</button>
       </div>
     `;
@@ -57,7 +56,6 @@ formCadastro.addEventListener('submit', function(event) {
 
 async function excluirUsuario(index) {
   if (confirm('Tem certeza que deseja excluir este usuário?')) {
-    print(usuarios)
     username = usuarios[index].user;
     try {
       const response = await fetch(`http://127.0.0.1:8000/delete_usuario/${encodeURIComponent(username)}`, {
