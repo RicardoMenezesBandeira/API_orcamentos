@@ -344,7 +344,7 @@ def delete_usuario(user_data, username):
     """
     user_file = os.path.join(USERS_DIR, f"{username}.json")
 
-    # 1) tenta remover o arquivo individual
+    
     try:
         os.remove(user_file)
     except FileNotFoundError:
@@ -352,7 +352,6 @@ def delete_usuario(user_data, username):
     except Exception as e:
         return jsonify({"error": "Erro ao apagar arquivo de usuário."}), 500
 
-    # 2) carrega, deleta a entrada e salva o JSON mestre
     try:
         with open(LIST_FILE, 'r', encoding='utf-8') as f:
             all_users = json.load(f)

@@ -28,7 +28,7 @@ table th, table td {
 }
 
 .empresa-info {
-  font-size: 1rem;
+  font-size: 0.9rem;
  
 }
 .empresa-info div{
@@ -36,31 +36,33 @@ table th, table td {
 }
 
 .template-style-vintage {
-  background-color: #fefcf9;
-  border: 1px solid #d1bfa3;
+  
+  background-color: #ffffff56;
   font-family: 'Times New Roman', Times, serif;
 }
 
 .template-style-vintage header {
-  background: #ede1c7;
-  border-bottom: 2px dashed #c2aa89;
+  background: #4d6b4b36;
+  padding: 10px;
+  border-radius: 5px;
+
 }
 
 .template-style-vintage .table {
-  border: 1px solid #c2aa89;
+  border: 1px solid #4d6b4b9c;
 }
 
 .template-style-vintage .table th,
 .template-style-vintage .table td {
-  background-color: #fdfaf3;
+  background: #4d6b4b1a;
 }
 
 
 .container {
   width: 100%;
   max-width: none;
-  padding: 0;
-  margin: 0;
+  padding: 5px;
+  margin: 5px;
   min-height: 200mm;
 }
 .pagina {

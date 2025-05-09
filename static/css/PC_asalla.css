@@ -6,7 +6,6 @@
 .container {
     margin: 0px auto;
     padding: 2px;
-   border: 1px solid #000;
   }
   .text-end{
     font-size: 0.7rem;
@@ -39,4 +38,9 @@
     margin: 0 10px;
     padding: 5px;
     align-content: center;
+}
+.text-center{
+    text-align: center;
+    margin-top:5 px;
+    margin-bottom: 3px;
 }
