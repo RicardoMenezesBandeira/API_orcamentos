@@ -267,13 +267,13 @@ def orcamento(user_data):
     arquivos = [f for f in os.listdir(path) if f.endswith(".json")]
     todos    = []
     nome    = user_data.get("nome")
-    nome = get_data(nome)["nome"]
+    nome = get_data(nome)
     for arquivo in arquivos:
         with open(os.path.join(path, arquivo), 'r', encoding='utf-8') as f:
 
             dados = json.load(f)
             print(dados["vendedor"])
-            if dados["vendedor"] == nome or user_data.get("admin"):
+            if dados["vendedor"] == nome["nome"] or nome["admin"]:
                 todos.append(dados)
         
     return jsonify(todos), 200
