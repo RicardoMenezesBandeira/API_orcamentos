@@ -268,7 +268,7 @@ def orcamento(user_data):
 
             dados = json.load(f)
             print(dados["vendedor"])
-            if dados["vendedor"] == nome:
+            if dados["vendedor"] == nome or user_data.get("admin"):
                 todos.append(dados)
         
     return jsonify(todos), 200
