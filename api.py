@@ -9,6 +9,11 @@ from login import token_required, clean_tolkens, create_token, logon,logout
 from cadastra import cadastrar
 from functools import wraps
 from weasyprint import HTML
+from babel.numbers import format_currency
+
+def formatar_dinheiro_brl(valor: float, casas: int = 4) -> str:
+    fmt = '¤#,##0.' + '0' * casas
+    return format_currency(valor, 'BRL', locale='pt_BR', format=fmt)
 
 app = Flask(__name__)
 # Permite carregar templates também de template-PDF
