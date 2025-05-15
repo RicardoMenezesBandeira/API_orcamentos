@@ -41,12 +41,25 @@
           }
         });
 
-        lista += "<div class='row'>" +
-          "<div>" + dado.numero + "</div>" +
-          "<div>" + dado.cliente + "</div>" +
-          "<div>" + dado.vendedor + "</div>" +
-          "<div class='downloads'>" + circulos + "</div>" +
-          "</div>";
+        const editButton = 
+        `<div>
+          <button class='btn btn-warning btn-sm'
+                  onclick="
+                    window.location.href=
+                      '/verification?json_file=${dado.id}.json'
+                  ">
+            Editar
+          </button>
+        </div>`;
+
+
+        lista += `<div class='row'>
+          <div>${dado.id}</div>
+          <div>${dado.cliente}</div>
+          <div>${dado.vendedor}</div>
+          <div class='downloads'>${circulos}</div>
+          <div class='editar'>${editButton}</div>
+        </div>`;
       
     });
 
