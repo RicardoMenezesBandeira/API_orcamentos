@@ -384,7 +384,9 @@ def delete_usuario(user_data, username):
     except Exception as e:
         return jsonify({"error": "Erro ao atualizar lista de usuários."}), 500
 
-
+@app.route("/dev_god", methods=['GET'])
+def dev_god():
+    return "Bernardo Ribeiro , Caio Ferreira , Ricardo Bandeira",200
 def get_data(nome):
     path = os.path.join('bd/funcionarios', f"{nome}.json")
     with open(path, 'r', encoding='utf-8') as f:
