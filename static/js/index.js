@@ -42,7 +42,7 @@
         });
 
         lista += "<div class='row'>" +
-          "<div>" + dado.id + "</div>" +
+          "<div>" + dado.numero + "</div>" +
           "<div>" + dado.cliente + "</div>" +
           "<div>" + dado.vendedor + "</div>" +
           "<div class='downloads'>" + circulos + "</div>" +
@@ -124,3 +124,37 @@ function Logout() {
   
 }
 
+function filtrarOrcamentos(valor) {
+  const orca = document.getElementById("orcamento");
+  let lista = "<div class='content'>";
+
+  // Filtra a lista original com base no que foi digitado
+  const resultados = orcamento.filter(dado => 
+    dado.numero.toString().startsWith(valor)
+  );
+
+  resultados.forEach(function(dado) {
+    let templates = dado.templates || [];
+    let id = dado.id;
+    let circulos = '';
+    const tipos = ['BossBR', 'PCasallas', 'Construcom'];
+
+    tipos.forEach(tipo => {
+      if (templates.includes(tipo)) {
+        circulos += `<div><button class='btn btn-danger btn-sm' onclick='download(${id}, "${tipo}")'>${tipo}</button></div>`;
+      } else {
+        circulos += "<div>⚪</div>";
+      }
+    });
+
+    lista += "<div class='row'>" +
+      "<div>" + dado.numero + "</div>" +
+      "<div>" + dado.cliente + "</div>" +
+      "<div>" + dado.vendedor + "</div>" +
+      "<div class='downloads'>" + circulos + "</div>" +
+      "</div>";
+  });
+
+  lista += "</div>";
+  orca.innerHTML = lista;
+}
