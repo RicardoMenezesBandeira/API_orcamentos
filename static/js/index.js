@@ -6,57 +6,58 @@
   function novoFuncionario(){
     // Redireciona para a página principal
     window.location.href = "/cadastro";
-  }function atualizaOrcamento(){
-    fetch('/orçaemnto', {
+  }async function atualizaOrcamento() {
+  try {
+    const response = await fetch('/orçaemnto', {
       method: 'GET',
       credentials: 'include',
       headers: {
         'Accept': 'application/json',
       }
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Erro na requisição: ' + response.status);
-      }
-      return response.json(); // Aqui você converte pra JSON
-    })
-    .then(dados => { // Agora sim os dados estão prontos
-      console.log('Dados recebidos:', dados);
-      orcamento =  dados;
-      let orca = document.getElementById("orcamento");
-      let lista = "<div class='content'>";
-      let id = 1;
-      dados.forEach(function(dado) {
-        console.log(dado); // Verifica o que está vindo
-        let templates = dado.templates || []; // Garante que seja uma lista
+    });
 
+    if (!response.ok) {
+      throw new Error('Erro na requisição: ' + response.status);
+    }
+
+    const dados = await response.json();
+    console.log('Dados recebidos:', dados);
+    orcamento = dados;
+
+    const orca = document.getElementById("orcamento");
+    let lista = "<div class='content'>";
+
+    dados.forEach(function(dado) {
+        let templates = dado.templates || [];
+        let id = dado.id;
         let circulos = '';
-        const tipos = ['BossBR', 'PCasallas','Construcom']; // os nomes que você quer verificar
+        const tipos = ['BossBR', 'PCasallas', 'Construcom'];
 
         tipos.forEach(tipo => {
           if (templates.includes(tipo)) {
-            circulos += `<div><button class='btn btn-danger btn-sm' onclick='download( ${id},"${tipo}")'>${tipo}</button></div>`; // Círculo preenchido se existir
+            circulos += `<div><button class='btn btn-danger btn-sm' onclick='download(${id}, "${tipo}")'>${tipo}</button></div>`;
           } else {
-            circulos += "<div>⚪</div> "; // Círculo vazio se não existir
+            circulos += "<div>⚪</div>";
           }
         });
+
         lista += "<div class='row'>" +
-             "<div>" + dado.id + "</div>" +
-             "<div>" + dado.cliente + "</div>" +
-             "<div>" + dado.vendedor + "</div>" +
-             "<div class='downloads'>" +circulos + "</div>" +
-             "</div>";
-        id++;
-      });
-      lista += "</div>";
-
-      orca.innerHTML = lista;
-
-    })
-    .catch(error => {
-      console.error('Erro ao buscar os dados:', error);
+          "<div>" + dado.id + "</div>" +
+          "<div>" + dado.cliente + "</div>" +
+          "<div>" + dado.vendedor + "</div>" +
+          "<div class='downloads'>" + circulos + "</div>" +
+          "</div>";
+      
     });
+
+    lista += "</div>";
+    orca.innerHTML = lista;
+
+  } catch (error) {
+    console.error('Erro ao buscar os dados:', error);
   }
+}
+
   async function download(id,template) {
     console.log("Baixando PDF para o orçamento com ID:", id);
     
@@ -122,3 +123,4 @@ function Logout() {
   });
   
 }
+

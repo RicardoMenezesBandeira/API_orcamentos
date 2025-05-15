@@ -236,7 +236,6 @@ def imprimir_template():
 def servir_template_pdf(filename):
     return send_from_directory("template-PDF", filename)
 
-# ... demais rotas de dashboard, orcamento, cadastro etc. ...
 
 @app.route("/dashboard", methods=['GET'])
 @token_required
@@ -262,12 +261,24 @@ def orcamento(user_data):
     path     = "./bd/json_preenchimento"
     arquivos = [f for f in os.listdir(path) if f.endswith(".json")]
     todos    = []
+    nome    = user_data.get("nome")
+    nome = get_data(nome)["nome"]
     for arquivo in arquivos:
         with open(os.path.join(path, arquivo), 'r', encoding='utf-8') as f:
-            dados = json.load(f)
-            todos.append(dados)
-    return jsonify(todos), 200
 
+            dados = json.load(f)
+            print(dados["vendedor"])
+            if dados["vendedor"] == nome:
+                todos.append(dados)
+        
+    return jsonify(todos), 200
+@app.route("/user", methods=['GET'])
+@token_required
+def user(user_data):
+    nome     = user_data.get("nome")
+    dados =get_data(nome)
+    nome = dados.get("nome")   
+    return jsonify(nome), 200
 
 @app.route("/getTemplate", methods=['POST'])
 def get_template():
