@@ -1,5 +1,14 @@
 // Contador de produtos inicial
 let produtoCount = 1;
+// Função para formatar valores em dinheiro no padrão brasileiro
+function formatarDinheiro(valorEmNumero) {
+  return valorEmNumero.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4
+  });
+}
 
 // Função para adicionar novo produto
 document.getElementById('add-produto').addEventListener('click', () => {
@@ -31,11 +40,11 @@ document.getElementById('add-produto').addEventListener('click', () => {
     <div class="flex-row">
       <div class="form-group">
         <label>Valor Unitário (R$):</label>
-        <input type="number" step="0.01" name="valor_unitario[]">
+        <input type="text" step="0.0001" name="valor_unitario[]">
       </div>
       <div class="form-group">
         <label>Valor Total (R$):</label>
-        <input type="number" step="0.01" name="total_local[]">
+        <input type="text" step="0.0001" name="total_local[]">
       </div>
     </div>
     <button type="button" class="remove-btn" onclick="this.parentNode.remove()">×</button>
@@ -139,7 +148,7 @@ function recalcularResumo() {
     const total = qtd * unit;
 
     // atualiza total da linha
-    totalInput.value = total.toFixed(2);
+    totalInput.value = formatarDinheiro(total);
 
     somaQtd   += qtd;
     somaValor += total;
@@ -147,7 +156,7 @@ function recalcularResumo() {
 
   // atualiza resumo
   totalItensInput.value = somaQtd;
-  valorTotalInput.value = somaValor.toFixed(2);
+  valorTotalInput.value = formatarDinheiro(somaValor)
 }
 
 // dispara recálculo toda vez que mudar qtd ou valor unitário
