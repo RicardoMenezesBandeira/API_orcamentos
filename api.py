@@ -250,12 +250,11 @@ def get_dashboard(user_data):
     dados =get_data(nome)
     nome = dados.get("nome")
     info     = f"Nome: {nome}"
+    btn = "<input type='text' class='search' placeholder='Buscar...' oninput='filtrarOrcamentos(this.value)'><button class='btn' onclick='novoOrcamento()'>gerar novo orçamento</button>"
     if dados.get("admin"):
-        btn = "<input type='text' class='search' placeholder='Buscar...'  oninput='filtrarOrcamentos(this.value)'><button class='btn' onclick='novoOrcamento()'>gerar novo orçamento</button> <button class='btn' onclick='novoFuncionario()'>cadastra empregado</button>"
-    else:
-        btn = "<input type='text' class='search' placeholder='Buscar...' oninput='filtrarOrcamentos(this.value)'><button class='btn' onclick='novoOrcamento()'>gerar novo orçamento</button>"
-    return render_template('index.html', info=info,btns=btn), 200
+        btn += " <button class='btn' onclick='novoFuncionario()'>cadastra empregado</button>"
 
+    return render_template('index.html', info=info, btns=btn), 200
 
 @app.route("/orçaemnto", methods=['GET'])
 @token_required
@@ -389,6 +388,40 @@ def delete_usuario(user_data, username):
     except Exception as e:
         return jsonify({"error": "Erro ao atualizar lista de usuários."}), 500
 
+@app.route("/cadastra_cliente", methods=['POST'])
+@token_required
+def cadastra_cliente(user_data):
+    """
+    Recebe JSON com dados de cliente e chama a função cadastrar_cliente().
+    """
+    cliente  =request.get_json(force=True)
+    cnpj = cliente.get("cnpj")
+    if not cnpj:
+        return jsonify({"message": "CNPJ não fornecido!"}), 400
+    
+    path= "bd/clientes"
+
+    os.makedirs(path, exist_ok=True)
+    path = os.path.join(path, f"{cnpj}.json")
+    if os.path.exists(path):
+        return jsonify({"message": "Cliente já cadastrado!"}), 400
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(cliente, f, indent=2, ensure_ascii=False)
+    return jsonify({"message": "Cliente cadastrado com sucesso!"}), 200
+@app.route("/get_cliente", methods=['GET'])
+@token_required
+def get_cliente(user_data):
+    """
+    Lê todos os arquivos JSON em bd/clientes e retorna como lista.
+    """
+    diretorio   = './bd/clientes'
+    todos_os_dados = []
+    for nome_arquivo in os.listdir(diretorio):
+        if nome_arquivo.endswith('.json'):
+            with open(os.path.join(diretorio, nome_arquivo), 'r', encoding='utf-8') as f:
+                dados = json.load(f)
+                todos_os_dados.append(dados)
+    return jsonify(todos_os_dados), 200
 @app.route("/dev_god", methods=['GET'])
 def dev_god():
     return "Bernardo Ribeiro , Caio Ferreira , Ricardo Bandeira",200

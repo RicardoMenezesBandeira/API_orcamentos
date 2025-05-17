@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="../static/css/geradorOrcamento.css">
+      <link rel="stylesheet" href="../static/css/index.css" />
+    <title>Cadastro de clientes</title>
+    <style>
+        .menu{
+        display: flex;
+        gap: 200px;
+        align-items: center;
+            justify-content: space-between;
+}
+    </style>
+</head>
+<body>
+<div class="menu">
+<button class='btn' onclick='Voltar()'>Voltar</button>  <h2>Cadastro de novos clientes</h2>  <button class='btn' onclick='Cadastra_cliente()'>cadastrar</button>
+</div>
+    <div class="form-container">
+     <form class="form-grid">
+
+      <!-- Dados Gerais -->
+      <div class="section-title">Dados Gerais</div>
+      <div class="form-group"><label>Cliente:</label><input type="text" name="cliente"></div>
+      <div class="form-group"><label>CNPJ do Cliente:</label><input type="text" name="cnpj"></div>
+      <div class="form-group"><label>Responsável:</label><input type="text" name="responsavel"></div>
+      <div class="form-group"><label>Endereço:</label><input type="text" name="endereco"></div>
+      <div class="form-group"><label>Cidade:</label><input type="text" name="cidade"></div>
+      <div class="form-group"><label>Telefone:</label><input type="text" name="telefone"></div>
+      <div class="form-group"><label>E-mail:</label><input type="email" name="email"></div>
+      <div class="form-group"><label>Nome Fantasia:</label><input type="text" name="nome"></div>
+      <div class="form-group"><label>CEP:</label><input type="text" name="cep"></div>
+      </form>
+      </div>
+</body>
+</html>

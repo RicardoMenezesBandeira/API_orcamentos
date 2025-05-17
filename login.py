@@ -42,7 +42,8 @@ def token_required(f):
             return f(user_data=user_data, *args, **kwargs)
             
         except jwt.ExpiredSignatureError:
-            return jsonify({'message': 'Token expirado'}), 401
+            return jsonify({'message': 'Token expirado', 'redirect': '/'}), 401
+
         except Exception as e:
             return jsonify({'message': f'Erro na autenticação: {str(e)}'}), 401
     return decorated
