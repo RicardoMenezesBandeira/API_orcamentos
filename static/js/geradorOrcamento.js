@@ -10,6 +10,30 @@ function formatarDinheiro(valorEmNumero) {
   });
 }
 
+// Retorna a data de hoje no formato DD/MM/AAAA
+function getDataHoje() {
+  const hoje = new Date();
+  const dia  = String(hoje.getDate()    ).padStart(2, '0');
+  const mes  = String(hoje.getMonth() + 1).padStart(2, '0');
+  const ano  = hoje.getFullYear();
+  return `${dia}/${mes}/${ano}`;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const inputData = document.getElementById('data');
+  // Se estiver vazio, pré-preenche
+  if (inputData && !inputData.value) {
+    inputData.value = getDataHoje();
+  }
+  // Adiciona listener para forçar máscara enquanto digita (opcional)
+  inputData.addEventListener('input', (e) => {
+    let v = e.target.value.replace(/\D/g, '');
+    if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2);
+    if (v.length > 5) v = v.slice(0,5) + '/' + v.slice(5,9);
+    e.target.value = v;
+  });
+});
+
 // Função para adicionar novo produto
 document.getElementById('add-produto').addEventListener('click', () => {
   produtoCount++;
