@@ -22,7 +22,16 @@
       <div class="form-group"><label>Responsável:</label><input type="text" name="responsavel"></div>
       <div class="form-group"><label>Endereço:</label><input type="text" name="endereco"></div>
       <div class="form-group"><label>Cidade:</label><input type="text" name="cidade"></div>
-      <div class="form-group"><label>Data:</label><input type="date" name="data"></div>
+      <div class="form-group">
+        <label for="data">Data:</label>
+        <input
+          type="text"
+          id="data"
+          name="data"
+          placeholder="DD/MM/AAAA"
+          pattern="\d{2}/\d{2}/\d{4}"
+        >
+      </div>
       <div class="form-group"><label>Telefone:</label><input type="text" name="telefone"></div>
       <div class="form-group"><label>E-mail:</label><input type="email" name="email"></div>
       <div class="form-group"><label>Nome Fantasia:</label><input type="text" name="nome"></div>
