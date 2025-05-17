@@ -1,6 +1,14 @@
 // Contador de produtos inicial
 let produtoCount = 1;
 // Função para formatar valores em dinheiro no padrão brasileiro
+const inputNumero = document.getElementById('numero');
+
+  // Ao sair do campo, já preenche os zeros
+  inputNumero.addEventListener('blur', () => {
+    let val = inputNumero.value;
+    // Converte para string e adiciona zeros à esquerda até comprimento 4
+    inputNumero.value = val.toString().padStart(4, '0');
+  });
 function formatarDinheiro(valorEmNumero) {
   return valorEmNumero.toLocaleString('pt-BR', {
     style: 'currency',
