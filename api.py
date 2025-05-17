@@ -165,13 +165,28 @@ def preview_template():
     # convert produtos list to rows
     if isinstance(novo.get('produtos'), list):
         rows = []
+        valor_total = 0.0
         for item in novo['produtos']:
+            q = float(item.get('quantidade',0))
+            v = float(item.get('valor_unitario',0))
+            total_local = q * v
+            valor_total += total_local
+            # formata cada célula em padrão brasileiro
             rows.append(
-                '<tr>' +
-                ''.join(f'<td>{item.get(fld,"")}</td>' for fld in ['numero','produto','quantidade','unidade','valor_unitario','total_local']) +
+                '<tr>'
+                f'<td>{item["numero"]}</td>'
+                f'<td>{item["produto"]}</td>'
+                f'<td>{q}</td>'
+                f'<td>{item["unidade"]}</td>'
+                f'<td>{format_currency(v,"BRL", locale="pt_BR", format="¤#,##0.0000")}</td>'
+                f'<td>{format_currency(total_local,"BRL", locale="pt_BR", format="¤#,##0.0000")}</td>'
                 '</tr>'
             )
         novo['produtos'] = ''.join(rows)
+        # injeta também o valor total do orçamento
+        novo['valor_total'] = format_currency(valor_total, "BRL", 
+                                            locale="pt_BR", 
+                                            format="¤#,##0.0000")
     # inject
     tpl_path = os.path.join('template-PDF', f"{tpl.lower()}_placeholders.html")
     html = open(tpl_path,encoding='utf-8').read()

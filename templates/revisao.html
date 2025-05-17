@@ -73,7 +73,7 @@
             </div>
             <div class="flex-row">
               <div class="form-group"><label>Valor Unitário (R$):</label><input type="text" step="0.01" name="valor_unitario[]" value="{{ item.valor_unitario }}"></div>
-              <div class="form-group"><label>Valor Total (R$):</label><input type="text" step="0.01" name="total_local[]" value="{{ item.total_local }}"></div>
+              <div class="form-group"><input type="hidden" name="total_local[]" value="{{ item.total_local }}"></div>
             </div>
             <button type="button" class="remove-btn" onclick="this.parentNode.remove()">×</button>
           </div>
@@ -81,11 +81,7 @@
         </div>
         <button type="button" id="add-produto">+ Adicionar Produto</button>
 
-        <!-- Resumo -->
-        <div class="section-title">Resumo</div>
-        <div class="form-group"><label>Total de Itens:</label><input type="text" name="total_itens" value="{{ dados.total_itens }}"></div>
-        <div class="form-group"><label>Valor Total da Proposta:</label><input type="text" step="0.01" name="valor_total" value="{{ dados.valor_total }}"></div>
-
+        
         <!-- Condições Comerciais -->
         <div class="section-title">Condições Comerciais</div>
         {% for campo in ['dias_pagamento_comercial','valor_pagamento_comercial','obs_pagamento_comercial'] %}
@@ -112,32 +108,89 @@
   </div>
 
   <script>
+    // Ao carregar a página, faz preview inicial
     window.onload = async function() {
-      // Ajusta a altura do iframe ao carregar
       ajustarAlturaIframe();
-      const body = formDataToJson(new FormData(form));
-        const resp = await fetch('/verification/preview', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify(body)
-        });
-        const js = await resp.json();
-        if (resp.ok) {
-          iframe.srcdoc = js.preview_html;
-        } else alert('Erro: ' + js.erro);
-
+      const body = formDataToJson(new FormData(document.getElementById('correction-form')));
+      const resp = await fetch('/verification/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const js = await resp.json();
+      if (resp.ok) {
+        document.getElementById('orcamento-frame').srcdoc = js.preview_html;
+      } else {
+        alert('Erro: ' + js.erro);
+      }
     };
+  
+    // Ajusta a altura do iframe para caber o conteúdo
     function ajustarAlturaIframe() {
-    const iframe = document.getElementById("orcamento-frame");
-    if (iframe && iframe.contentWindow && iframe.contentDocument.body) {
-      pixels = iframe.contentDocument.body.scrollHeight +57;
-      iframe.style.height = pixels+ "px";
-      console.log("Altura do iframe ajustada para: " + pixels + "px");
+      const iframe = document.getElementById("orcamento-frame");
+      if (iframe && iframe.contentDocument && iframe.contentDocument.body) {
+        const pixels = iframe.contentDocument.body.scrollHeight + 57;
+        iframe.style.height = pixels + "px";
+        console.log("Altura do iframe ajustada para: " + pixels + "px");
+      }
     }
-  }
-
-  // Ajusta ao carregar
-  document.getElementById("orcamento-frame").onload = ajustarAlturaIframe;
+    document.getElementById("orcamento-frame").onload = ajustarAlturaIframe;
+  
+    // ========== Novas funções de cálculo e formatação ==========
+  
+    // formata número em R$ com separador de milhar e 4 casas decimais
+    function formatBRL(valor) {
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 4,
+        maximumFractionDigits: 4
+      }).format(valor);
+    }
+  
+    // percorre cada produto, calcula total local, atualiza total de itens e valor total
+    function recalcResumo() {
+      const container = document.getElementById('produtos-container');
+      const rows = container.querySelectorAll('.produto');
+      let totalItens = 0, totalValor = 0;
+  
+      rows.forEach(row => {
+        const qtdInput = row.querySelector('input[name="qtd[]"]');
+        const valInput = row.querySelector('input[name="valor_unitario[]"]');
+        const totInput = row.querySelector('input[name="total_local[]"]');
+  
+        const quantidade = parseFloat(qtdInput.value.toString().replace(',', '.')) || 0;
+        const valorUnit = parseFloat(valInput.value.toString().replace(',', '.')) || 0;
+        const totalLocal = quantidade * valorUnit;
+  
+        totalItens++;
+        totalValor += totalLocal;
+  
+        // atualiza o campo de total local formatado
+        totInput.value = formatBRL(totalLocal);
+      });
+  
+      // atualiza resumo no formulário
+      const totalItensEl = document.querySelector('input[name="total_itens"]');
+      if (totalItensEl) totalItensEl.value = totalItens;
+      
+      const valorTotalEl = document.querySelector('input[name="valor_total"]');
+      if (valorTotalEl) valorTotalEl.value = formatBRL(totalValor);
+    }
+  
+    // vincula listeners de input e remoção a uma linha de produto
+    function attachListeners(row) {
+      const qtdInput = row.querySelector('input[name="qtd[]"]');
+      const valInput = row.querySelector('input[name="valor_unitario[]"]');
+      const removeBtn = row.querySelector('.remove-btn');
+  
+      qtdInput.addEventListener('input', recalcResumo);
+      valInput.addEventListener('input', recalcResumo);
+      removeBtn.addEventListener('click', () => {
+        row.remove();
+        recalcResumo();
+      });
+    }
   
     (function() {
       const form = document.getElementById('correction-form');
@@ -146,137 +199,153 @@
       const saveNextBtn = document.getElementById('save-next');
       const container = document.getElementById('produtos-container');
       let produtoCount = container.children.length;
-
+  
+      // inicializa listeners nas linhas existentes e faz recálculo inicial
+      document.querySelectorAll('#produtos-container .produto').forEach(attachListeners);
+      recalcResumo();
+  
       // Adicionar novo produto
       document.getElementById('add-produto').addEventListener('click', () => {
         produtoCount++;
         const novo = document.createElement('div');
         novo.className = 'produto form-group-set';
         novo.innerHTML = [
-          '<div class="flex-row">',
-            '<div class="form-group">',
-              '<label>Número do item:</label>',
-              '<input type="number" name="numero[]" value="' + produtoCount + '" readonly>',
-            '</div>',
-            '<div class="form-group">',
-              '<label>Produto:</label>',
-              '<input type="text" name="produto[]">',
-            '</div>',
+        '<div class="flex-row">',
+          '<div class="form-group">',
+            '<label>Número do item:</label>',
+            '<input type="number" name="numero[]" value="' + produtoCount + '" readonly>',
           '</div>',
-          '<div class="flex-row">',
-            '<div class="form-group">',
-              '<label>Quantidade:</label>',
-              '<input type="number" name="qtd[]">',
-            '</div>',
-            '<div class="form-group">',
-              '<label>Unidade:</label>',
-              '<input type="text" name="un[]">',
-            '</div>',
+          '<div class="form-group">',
+            '<label>Produto:</label>',
+            '<input type="text" name="produto[]">',
           '</div>',
-          '<div class="flex-row">',
-            '<div class="form-group">',
-              '<label>Valor Unitário (R$):</label>',
-              '<input type="number" step="0.01" name="valor_unitario[]">',
-            '</div>',
-            '<div class="form-group">',
-              '<label>Valor Total (R$):</label>',
-              '<input type="number" step="0.01" name="total_local[]">',
-            '</div>',
+        '</div>',
+        '<div class="flex-row">',
+          '<div class="form-group">',
+            '<label>Quantidade:</label>',
+            '<input type="number" name="qtd[]">',
           '</div>',
-          '<button type="button" class="remove-btn" onclick="this.parentNode.remove()">×</button>'
-        ].join('');
-        container.appendChild(novo);
-      });
+          '<div class="form-group">',
+            '<label>Unidade:</label>',
+            '<input type="text" name="un[]">',
+          '</div>',
+        '</div>',
+        '<div class="flex-row">',
+          '<div class="form-group">',
+            '<label>Valor Unitário (R$):</label>',
+            '<input type="number" step="0.01" name="valor_unitario[]">',
+          '</div>',
+        '</div>',
+        // campo oculto para total_local[], usado pelo recalcResumo()
+        '<input type="hidden" name="total_local[]" value="0">',
+        '<button type="button" class="remove-btn">×</button>'
+      ].join('');
 
+        container.appendChild(novo);
+  
+        // anexar listeners e recalc após adicionar
+        attachListeners(novo);
+        recalcResumo();
+      });
+  
       // Monta objeto de dados a partir do formulário
       function formDataToJson(fd) {
         const data = {};
-        // campos auxiliares
         data.template = fd.get('template');
         data.json_file = fd.get('json_file');
-        // produtos
+  
         const produtos = [];
-        const nums = fd.getAll('numero[]'),
-              nomes = fd.getAll('produto[]'),
-              qtds = fd.getAll('qtd[]'),
-              uns  = fd.getAll('un[]'),
-              vus  = fd.getAll('valor_unitario[]'),
-              tls  = fd.getAll('total_local[]');
+        const nums   = fd.getAll('numero[]'),
+              nomes  = fd.getAll('produto[]'),
+              qtds   = fd.getAll('qtd[]'),
+              uns    = fd.getAll('un[]'),
+              vus    = fd.getAll('valor_unitario[]'),
+              tls    = fd.getAll('total_local[]');
+  
         for (let i = 0; i < nums.length; i++) {
           produtos.push({
-            numero: nums[i], produto: nomes[i], quantidade: qtds[i],
-            unidade: uns[i], valor_unitario: vus[i], total_local: tls[i]
+            numero: nums[i],
+            produto: nomes[i],
+            quantidade: qtds[i],
+            unidade: uns[i],
+            valor_unitario: vus[i],
+            total_local: tls[i]
           });
         }
         data.produtos = produtos;
-        // demais campos
-        fd.forEach((v,k) => { if (!k.endsWith('[]') && !['template','json_file'].includes(k)) data[k] = v; });
+  
+        fd.forEach((v, k) => {
+          if (!k.endsWith('[]') && !['template','json_file'].includes(k)) {
+            data[k] = v;
+          }
+        });
         return data;
       }
-
+  
       // Preview sem salvar
       previewBtn.addEventListener('click', async () => {
         const body = formDataToJson(new FormData(form));
         const resp = await fetch('/verification/preview', {
           method: 'POST',
-          headers: {'Content-Type':'application/json'},
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
         });
         const js = await resp.json();
         if (resp.ok) {
           iframe.srcdoc = js.preview_html;
-        } else alert('Erro: ' + js.erro);
+        } else {
+          alert('Erro: ' + js.erro);
+        }
       });
-
+  
       // Salvar e avançar
       saveNextBtn.addEventListener('click', async () => {
         const body = formDataToJson(new FormData(form));
         const resp = await fetch('/verification/update', {
           method: 'POST',
-          headers: {'Content-Type':'application/json'},
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
         });
         const js = await resp.json();
         if (resp.ok) {
           window.location.href = `/verification?template_idx={{ proximo_idx }}&json_file={{ json_filename }}`;
-        } else alert('Erro: ' + js.erro);
+        } else {
+          alert('Erro: ' + js.erro);
+        }
       });
     })();
-    
-  async function download() {
-    id = '{{id}}';
-    template = '{{ template_nome }}';
-    console.log("Baixando PDF para o orçamento com ID:", id);
-    
   
-    fetch(`/download/${id}/${template}`, {
-      method: "GET",
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Erro ao gerar PDF.");
-        }
-        return response.blob();
-      })
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "orcamento.pdf";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      })
-      .catch(error => {
-        console.error("Erro:", error);
-        alert("Não foi possível gerar o PDF.");
-      })
-      .finally(() => {
-        btn.innerHTML = "Baixar PDF";
-        btn.disabled = false;
-      });
-  }
-
+    // Função de download inalterada
+    async function download() {
+      const id = '{{id}}';
+      const template = '{{ template_nome }}';
+      console.log("Baixando PDF para o orçamento com ID:", id);
+  
+      fetch(`/download/${id}/${template}`, { method: "GET" })
+        .then(response => {
+          if (!response.ok) throw new Error("Erro ao gerar PDF.");
+          return response.blob();
+        })
+        .then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "orcamento.pdf";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        })
+        .catch(error => {
+          console.error("Erro:", error);
+          alert("Não foi possível gerar o PDF.");
+        })
+        .finally(() => {
+          // Se houver um botão referenciado, redefina-o
+          const btn = document.querySelector('.btn-danger') || {};
+          btn.innerHTML = "Baixar PDF";
+          btn.disabled = false;
+        });
+    }
   </script>
 </body>
 </html>
