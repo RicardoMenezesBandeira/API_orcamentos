@@ -5,11 +5,7 @@ window.onload = function() {
 function Cadastra_cliente() {
     const inputs = document.querySelectorAll('.form-grid input');
     data={}
-    inputs.forEach(input => {
-        if (input.value == "") {
-            alert("Preencha todos os campos");
-            return;
-        }
+    inputs.forEach(input => {        
         data[input.name]= input.value
     });
     console.log(data)
