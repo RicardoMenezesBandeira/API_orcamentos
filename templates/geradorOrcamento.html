@@ -6,14 +6,18 @@
   <title>Ficha de Cadastro</title>
   <link rel="stylesheet" href="../static/css/geradorOrcamento.css">
   <script src="../static/js/geradorOrcamento.js" defer></script>
+
 </head>
 <body>
   <header>
     <button class="back-button" onclick="back()">Voltar</button>
+    <button class='back-button' onclick='cadastra_cliente()'>Cadastrar Cliente</button>
   </header>
   <div class="form-container">
+    <input type="text" id="busca-nome" placeholder="Digite um nome..." autocomplete="off">
+<ul id="sugestoes" style="border: 1px solid #ccc; display: none;"></ul>
     <h2>Adicionar Orçamento</h2>
-    <form class="form-grid">
+    <form class="form-grid" id="form-grid">
 
       <!-- Dados Gerais -->
       <div class="section-title">Dados Gerais</div>
