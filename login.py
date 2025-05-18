@@ -41,9 +41,7 @@ def token_required(f):
             # Passa os dados do usuário para a função decorada
             return f(user_data=user_data, *args, **kwargs)
             
-        except jwt.ExpiredSignatureError:
-            return jsonify({'message': 'Token expirado', 'redirect': '/'}), 401
-
+        
         except Exception as e:
             return jsonify({'message': f'Erro na autenticação: {str(e)}'}), 401
     return decorated
@@ -51,7 +49,6 @@ def token_required(f):
 def create_token(username, secret_key):
     token = jwt.encode({
         'user': username,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
     }, secret_key, algorithm='HS256')
     return token
 
