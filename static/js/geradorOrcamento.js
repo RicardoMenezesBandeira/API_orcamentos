@@ -1,8 +1,19 @@
 // Contador de produtos inicial
 let produtoCount = 1;
+let clientes = [];
 // Função para formatar valores em dinheiro no padrão brasileiro
 const inputNumero = document.getElementById('numero');
+window.onload = function() {
+  fetch('/get_cliente')
+    .then(response => response.json())
+    .then(data => {
+    clientes = data;
+  console.log(clientes);})
+    .catch(error => {
+      console.error('Erro ao buscar clientes:', error);
+    });
 
+}
   // Ao sair do campo, já preenche os zeros
   inputNumero.addEventListener('blur', () => {
     let val = inputNumero.value;
@@ -157,6 +168,10 @@ document.querySelector('.form-grid').addEventListener('submit', function(e) {
 function back() {
   window.location.href = "/dashboard";
 }
+// avança para o cadastro de cliente
+function cadastra_cliente() {
+  window.location.href = "/p_cadastro_cliente";
+}
 
 
 // referência aos elementos
@@ -215,3 +230,43 @@ produtosContainer.addEventListener('click', e => {
 
 // recálculo inicial (caso tenha itens pré-existentes)
 document.addEventListener('DOMContentLoaded', recalcularResumo);
+
+
+const buscaInput = document.getElementById("busca-nome");
+const sugestoes = document.getElementById("sugestoes");
+
+buscaInput.addEventListener("input", () => {
+    const query = buscaInput.value.trim().toLowerCase();
+    if (query.length < 2) {
+        sugestoes.innerHTML = "";
+        sugestoes.style.display = "none";
+        return;
+    }
+
+     const encontrados = clientes.filter(c =>
+    (c.cliente && c.cliente.toLowerCase().includes(query)) ||
+    (c.cnpj && c.cnpj.toLowerCase().includes(query))
+  );
+
+    sugestoes.innerHTML = "";
+    encontrados.forEach(cliente => {
+        const li = document.createElement("li");
+        li.textContent = cliente.cliente+" - " + cliente.cnpj;
+        li.style.cursor = "pointer";
+        li.onclick = () => {
+            preencherFormulario(cliente);
+            sugestoes.innerHTML = "";
+            sugestoes.style.display = "none";
+        };
+        sugestoes.appendChild(li);
+    });
+
+    sugestoes.style.display = encontrados.length ? "block" : "none";
+});
+function preencherFormulario(cliente) {
+  const form = document.getElementById("form-grid");
+  Object.entries(cliente).forEach(([key, value]) => {
+    const input = form.querySelector(`[name="${key}"]`);
+    if (input) input.value = value;
+  });
+}
