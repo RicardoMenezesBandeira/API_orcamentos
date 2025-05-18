@@ -10,13 +10,22 @@
 </head>
 <body>
   <header>
-    <button class="back-button" onclick="back()">Voltar</button>
-    <button class='back-button' onclick='cadastra_cliente()'>Cadastrar Cliente</button>
+    
   </header>
   <div class="form-container">
-    <input type="text" id="busca-nome" placeholder="Digite um nome..." autocomplete="off">
-<ul id="sugestoes" style="border: 1px solid #ccc; display: none;"></ul>
+    <div class="menu">
+      <div>
+<input type="text" id="busca-nome" placeholder="Digite um nome..." autocomplete="off">
+      <ul id="sugestoes" style="border: 1px solid #ccc; display: none;"></ul>
+      </div>
+    
     <h2>Adicionar Orçamento</h2>
+    <div>
+    <button class="back-button" onclick="back()">Voltar</button>
+    <button class='back-button' onclick='cadastra_cliente()'>Cadastrar Cliente</button>
+    </div>
+  </div>
+  
     <form class="form-grid" id="form-grid">
 
       <!-- Dados Gerais -->
