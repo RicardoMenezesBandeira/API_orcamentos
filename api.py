@@ -403,19 +403,22 @@ def delete_usuario(user_data, username):
     except Exception as e:
         return jsonify({"error": "Erro ao atualizar lista de usuários."}), 500
 
+@app.route("/p_cadastro_cliente")
+@token_required
+def p_cadastro_cliente(user_data):   
+    return render_template('cadastro_cliente.html'), 200
 @app.route("/cadastra_cliente", methods=['POST'])
 @token_required
-def cadastra_cliente(user_data):
-    """
-    Recebe JSON com dados de cliente e chama a função cadastrar_cliente().
-    """
-    cliente  =request.get_json(force=True)
-    cnpj = cliente.get("cnpj")
+def cadastra_cliente(user_data):   
+    dados  = request.get_json()
+    print(dados)
+    cliente = dados
+    cnpj = dados['cnpj']
+    print(cnpj)
     if not cnpj:
         return jsonify({"message": "CNPJ não fornecido!"}), 400
     
     path= "bd/clientes"
-
     os.makedirs(path, exist_ok=True)
     path = os.path.join(path, f"{cnpj}.json")
     if os.path.exists(path):
@@ -426,9 +429,6 @@ def cadastra_cliente(user_data):
 @app.route("/get_cliente", methods=['GET'])
 @token_required
 def get_cliente(user_data):
-    """
-    Lê todos os arquivos JSON em bd/clientes e retorna como lista.
-    """
     diretorio   = './bd/clientes'
     todos_os_dados = []
     for nome_arquivo in os.listdir(diretorio):
