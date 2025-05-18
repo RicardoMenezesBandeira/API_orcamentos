@@ -33,9 +33,10 @@ header {
 }
 
 .logo-placeholder {
-  width: 120px;
+  width: 160px;
   height: auto;
-  max-height: 120px;
+  max-height: 160px;
+  margin-bottom: 5px;
 }
 
 /* Seções */
@@ -166,4 +167,11 @@ section{
 .b2 {
   font-size: 0.9em;
   background-color: rgb(255, 255, 255);
+}
+
+.align-items-center_nao-quebrar_header{
+  display: block;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
