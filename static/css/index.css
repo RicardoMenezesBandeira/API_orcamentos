@@ -187,3 +187,15 @@ body {
         align-items: center;
             justify-content: space-between;
 }
+.search{
+  
+    border-color: #ff000000;
+    width: 200px;
+    height: 30px;
+    border-radius: 5px;
+
+}
+.search:focus{
+    border-color: #ff000000;
+    outline: none;
+}
