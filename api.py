@@ -78,6 +78,7 @@ def receber_orcamento(user_data):
 
     # Converte produtos em HTML
     itens = dados.get("produtos", [])
+    
     html_rows = ''.join(
         f"<tr><td>{i['numero']}</td><td>{i['produto']}</td>"
         f"<td>{i['quantidade']}</td><td>{i['unidade']}</td>"
@@ -102,6 +103,9 @@ def receber_orcamento(user_data):
     ids = [int(f.split('.')[0]) for f in files if f.split('.')[0].isdigit()]
     nid = max(ids) + 1 if ids else 1
     dados["id"] = nid
+    if (dados.get("numero") =="0000"):
+        dados["numero"] = str(dados.get("id")).zfill(4)
+    print(f"[DEBUG] Set numero: {dados['numero']}")
     print(f"[INFO] Assigned new orcamento ID: {nid}")
 
     # Preenche vendedor a partir do usuário logado
