@@ -6,7 +6,8 @@
   function novoFuncionario(){
     // Redireciona para a página principal
     window.location.href = "/cadastro";
-  }async function atualizaOrcamento() {
+  }
+  async function atualizaOrcamento() {
   try {
     const response = await fetch('/orçaemnto', {
       method: 'GET',
@@ -27,7 +28,7 @@
     const orca = document.getElementById("orcamento");
     let lista = "<div class='content'>";
 
-    dados.forEach(function(dado) {
+    dados.reverse().forEach(function(dado) {
         let templates = dado.templates || [];
         let id = dado.id;
         let circulos = '';
@@ -50,6 +51,13 @@
             Editar
           </button>
         </div>`;
+        const deleteButton = 
+        `<div>
+          <button class='btn btn-warning btn-sm' onclick="deleteOrcamento(${dado.id})">
+            Deletar
+          </button>
+        </div>`;
+
 
 
         lista += `<div class='row'>
@@ -58,6 +66,7 @@
           <div>${dado.vendedor}</div>
           <div class='downloads'>${circulos}</div>
           <div class='editar'>${editButton}</div>
+          <div class='editar'>${deleteButton}</div>
         </div>`;
       
     });
@@ -169,4 +178,23 @@ function filtrarOrcamentos(valor) {
 
   lista += "</div>";
   orca.innerHTML = lista;
+}function deleteOrcamento(id) {
+  const href = "/delete/" + id;
+  fetch(href, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+  .then(response => {
+    if (response.ok) {
+      console.log("Orçamento deletado com sucesso.");
+      atualizaOrcamento(); // Certifique-se de que essa função exista
+    } else {
+      console.error("Erro ao deletar o orçamento.");
+    }
+  })
+  .catch(error => {
+    console.error("Erro na requisição:", error);
+  });
+  atualizaOrcamento(); // Atualiza a lista de orçamentos após a exclusão
 }
+

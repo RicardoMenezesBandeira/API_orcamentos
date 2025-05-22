@@ -103,7 +103,7 @@ def receber_orcamento(user_data):
     ids = [int(f.split('.')[0]) for f in files if f.split('.')[0].isdigit()]
     nid = max(ids) + 1 if ids else 1
     dados["id"] = nid
-    if (dados.get("numero") =="0000"):
+    if (dados.get("numero") ==""):
         dados["numero"] = str(dados.get("id")).zfill(4)
     print(f"[DEBUG] Set numero: {dados['numero']}")
     print(f"[INFO] Assigned new orcamento ID: {nid}")
@@ -245,6 +245,8 @@ def preview_template(user_data):
     # 4) Aplica as correções recebidas
     novo = orig.copy()
     novo['templates'] = [tpl]
+    if novo.get('numero') == '':
+        novo['numero'] = str(novo.get('id')).zfill(4)
     for k, v in correcoes.items():
         if k not in ('template', 'json_file'):
             novo[k] = v
@@ -444,7 +446,7 @@ def get_dashboard(user_data):
     dados =get_data(nome)
     nome = dados.get("nome")
     info     = f"Nome: {nome}"
-    btn = "<input type='text' class='search' placeholder='Buscar...' oninput='filtrarOrcamentos(this.value)'><button class='btn' onclick='novoOrcamento()'>gerar novo orçamento</button>"
+    btn = "<input type='text' class='search' placeholder='Buscar Nº de orçamento...' oninput='filtrarOrcamentos(this.value)'><button class='btn' onclick='novoOrcamento()'>gerar novo orçamento</button>"
     if dados.get("admin"):
         btn += " <button class='btn' onclick='novoFuncionario()'>cadastra empregado</button>"
 
@@ -494,10 +496,17 @@ def delete_orcamento(user_data, id):
     Deleta o arquivo de orçamento correspondente ao ID.
     """
     path = "bd/json_preenchimento"
+    path2 = "bd/edicoes"
+    pastas = ["PCasallas", "BossBR","Construcom"]
+
     file_path = os.path.join(path, f"{id}.json")
     if os.path.exists(file_path):
         os.remove(file_path)
-        return jsonify({"message": "Orçamento excluído com sucesso!"}), 200
+    for pasta in pastas:
+        file_path = os.path.join(path2, pasta, f"{id}.json")
+        if os.path.exists(file_path):
+            os.remove(file_path)
+       
     else:
         return jsonify({"message": "Arquivo não encontrado!"}), 404
 
