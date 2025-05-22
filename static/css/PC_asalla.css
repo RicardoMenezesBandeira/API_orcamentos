@@ -38,6 +38,7 @@
 .imposto{
     padding: 0px 5px;
     align-content: center;
+    font-size: 0.7rem;
 }
 .produtos{
     margin: 0 10px;
@@ -46,6 +47,5 @@
 }
 .text-center{
     text-align: center;
-    margin-top:5 px;
-    margin-bottom: 3px;
+    margin:10px;
 }
