@@ -4,33 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Revisão de Orçamento</title>
-  <!-- Estilos personalizados -->
-  <link rel="stylesheet" href="../static/css/geradorOrcamento.css">
-  <!-- Bootstrap para botões e spinner -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/geradorOrcamento.css') }}">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bibliotecas para PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     .container { display: flex; gap: 20px; }
     .preview { flex: 2; }
-    .preview iframe {
-      width: 210mm; height: 800px; border: 1px solid #ccc;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
+    .preview iframe { width: 210mm; height: 800px; border: 1px solid #ccc; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .correction { flex: 1; max-height: 840px; overflow-y: auto; }
     .botoes { margin-top: 20px; text-align: center; }
-    .botoes a,
-    .botoes button {
-      display: inline-block; margin: 10px; padding: 12px 20px;
-      background-color: #007BFF; color: white; text-decoration: none;
-      border: none; border-radius: 6px; transition: background-color 0.3s;
-      cursor: pointer;
-    }
-    .botoes a:hover,
-    .botoes button:hover { background-color: #0056b3; }
+    .botoes a, .botoes button { display: inline-block; margin: 10px; padding: 12px 20px;
+      background-color: #007BFF; color: white; text-decoration: none; border: none;
+      border-radius: 6px; transition: background-color 0.3s; cursor: pointer; }
+    .botoes a:hover, .botoes button:hover { background-color: #0056b3; }
     #orcamento-frame { width: 210mm; height: 100%; border: none; }
-
   </style>
 </head>
 <body>
@@ -43,55 +29,75 @@
     </div>
     <div class="correction form-container">
       <form id="correction-form" class="form-grid">
-        <input type="hidden" name="template" value="{{ template_nome }}">
-        <input type="hidden" name="json_file" value="{{ json_filename }}">
+        <input type="hidden" name="template"    value="{{ template_nome }}">
+        <input type="hidden" name="json_file"   value="{{ json_file }}">
 
         <!-- Dados Gerais -->
         <div class="section-title">Dados Gerais</div>
         {% for campo in ['id','cliente','cnpj','responsavel','endereco','cidade','data'] %}
         <div class="form-group">
           <label>{{ campo.replace('_',' ').capitalize() }}:</label>
-          <input type="{{ 'date' if campo=='data' else 'text' }}" name="{{ campo }}" value="{{ dados[campo] }}">
+          <input type="{{ 'date' if campo=='data' else 'text' }}"
+                 name="{{ campo }}"
+                 value="{{ dados[campo] }}">
         </div>
         {% endfor %}
-        
+
         <!-- Produtos -->
         <div class="section-title">Produtos</div>
         <div id="produtos-container">
           {% for item in dados['produtos'] %}
-
           <div class="produto form-group-set">
-            <div>
+            <div class="flex-row">
+              <div class="form-group">
+                <label>Número do item:</label>
+                <input type="number" name="numero[]" value="{{ item.numero }}" readonly>
+              </div>
+              <div class="form-group">
+                <label>Produto:</label>
+                <input type="text" name="produto[]" value="{{ item.produto }}">
+              </div>
             </div>
             <div class="flex-row">
-              <div class="form-group"><label>Número do item:</label><input type="number" name="numero[]" value="{{ item.numero }}" readonly></div>
-              <div class="form-group"><label>Produto:</label><input type="text" name="produto[]" value="{{ item.produto }}"></div>
+              <div class="form-group">
+                <label>Quantidade:</label>
+                <input type="number" name="qtd[]" value="{{ item.quantidade }}">
+              </div>
+              <div class="form-group">
+                <label>Unidade:</label>
+                <input type="text" name="un[]" value="{{ item.unidade }}">
+              </div>
             </div>
             <div class="flex-row">
-              <div class="form-group"><label>Quantidade:</label><input type="number" name="qtd[]" value="{{ item.quantidade }}"></div>
-              <div class="form-group"><label>Unidade:</label><input type="text" name="un[]" value="{{ item.unidade }}"></div>
-            </div>
-            <div class="flex-row">
-              <div class="form-group"><label>Valor Unitário (R$):</label><input type="text" step="0.01" name="valor_unitario[]" value="{{ item.valor_unitario }}"></div>
-              <div class="form-group"><input type="hidden" name="total_local[]" value="{{ item.total_local }}"></div>
+              <div class="form-group">
+                <label>Valor Unitário (R$):</label>
+                <input type="text" step="0.01" name="valor_unitario[]" value="{{ item.valor_unitario }}">
+              </div>
+              <div class="form-group">
+                <input type="hidden" name="total_local[]" value="{{ item.total_local }}">
+              </div>
             </div>
             <button type="button" class="remove-btn" onclick="this.parentNode.remove()">×</button>
           </div>
           {% endfor %}
         </div>
         <button type="button" id="add-produto">+ Adicionar Produto</button>
-
-        
         <!-- Condições Comerciais -->
         <div class="section-title">Condições Comerciais</div>
         {% for campo in ['dias_pagamento_comercial','valor_pagamento_comercial','obs_pagamento_comercial'] %}
-        <div class="form-group"><label>{{ campo.replace('_',' ').capitalize() }}:</label><input type="text" name="{{ campo }}" value="{{ dados[campo] }}"></div>
+        <div class="form-group">
+          <label>{{ campo.replace('_',' ').capitalize() }}:</label>
+          <input type="text" name="{{ campo }}" value="{{ dados[campo] }}">
+        </div>
         {% endfor %}
 
         <!-- Condições Gerais -->
         <div class="section-title">Condições Gerais</div>
         {% for campo in ['dias_entrega','dias_validade','dias_pagamento'] %}
-        <div class="form-group"><label>{{ campo.replace('_',' ').capitalize() }}:</label><input type="number" name="{{ campo }}" value="{{ dados[campo] }}"></div>
+        <div class="form-group">
+          <label>{{ campo.replace('_',' ').capitalize() }}:</label>
+          <input type="number" name="{{ campo }}" value="{{ dados[campo] }}">
+        </div>
         {% endfor %}
 
         <div class="form-actions">
@@ -108,6 +114,38 @@
   </div>
 
   <script>
+    function formDataToJson(fd) {
+        const data = {};
+        data.template = fd.get('template');
+        data.json_file = fd.get('json_file');
+  
+        const produtos = [];
+        const nums   = fd.getAll('numero[]'),
+              nomes  = fd.getAll('produto[]'),
+              qtds   = fd.getAll('qtd[]'),
+              uns    = fd.getAll('un[]'),
+              vus    = fd.getAll('valor_unitario[]'),
+              tls    = fd.getAll('total_local[]');
+  
+        for (let i = 0; i < nums.length; i++) {
+          produtos.push({
+            numero: nums[i],
+            produto: nomes[i],
+            quantidade: qtds[i],
+            unidade: uns[i],
+            valor_unitario: vus[i],
+            total_local: tls[i]
+          });
+        }
+        data.produtos = produtos;
+  
+        fd.forEach((v, k) => {
+          if (!k.endsWith('[]') && !['template','json_file'].includes(k)) {
+            data[k] = v;
+          }
+        });
+        return data;
+      }
     // Ao carregar a página, faz preview inicial
     window.onload = async function() {
       ajustarAlturaIframe();
@@ -249,38 +287,6 @@
       });
   
       // Monta objeto de dados a partir do formulário
-      function formDataToJson(fd) {
-        const data = {};
-        data.template = fd.get('template');
-        data.json_file = fd.get('json_file');
-  
-        const produtos = [];
-        const nums   = fd.getAll('numero[]'),
-              nomes  = fd.getAll('produto[]'),
-              qtds   = fd.getAll('qtd[]'),
-              uns    = fd.getAll('un[]'),
-              vus    = fd.getAll('valor_unitario[]'),
-              tls    = fd.getAll('total_local[]');
-  
-        for (let i = 0; i < nums.length; i++) {
-          produtos.push({
-            numero: nums[i],
-            produto: nomes[i],
-            quantidade: qtds[i],
-            unidade: uns[i],
-            valor_unitario: vus[i],
-            total_local: tls[i]
-          });
-        }
-        data.produtos = produtos;
-  
-        fd.forEach((v, k) => {
-          if (!k.endsWith('[]') && !['template','json_file'].includes(k)) {
-            data[k] = v;
-          }
-        });
-        return data;
-      }
   
       // Preview sem salvar
       previewBtn.addEventListener('click', async () => {
@@ -308,7 +314,7 @@
         });
         const js = await resp.json();
         if (resp.ok) {
-          window.location.href = `/verification?template_idx={{ proximo_idx }}&json_file={{ json_filename }}`;
+          window.location.href = `/verification?template_idx={{ proximo_idx }}&json_file={{ json_file }}`;
         } else {
           alert('Erro: ' + js.erro);
         }
@@ -346,6 +352,9 @@
           btn.disabled = false;
         });
     }
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('preview-btn').click();
+    })
   </script>
 </body>
 </html>

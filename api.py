@@ -64,12 +64,17 @@ def preencher(user_data):
     return render_template("geradorOrcamento.html")
 
 @app.route("/postTemplate", methods=['GET','POST'])
-@token_required
+@token_required  # presume decorator definido em outro lugar
 def receber_orcamento(user_data):
+    print(f"[INFO] receber_orcamento called by user: {user_data.get('nome')}")
     if request.method == 'GET':
+        print("[DEBUG] GET request para gerarOrcamento.html")
         return render_template("geradorOrcamento.html")
+
     dados = request.get_json(force=True)
-    # converte produtos em HTML
+    print(f"[DEBUG] Payload recebido: {dados}")
+
+    # Converte produtos em HTML
     itens = dados.get("produtos", [])
     html_rows = ''.join(
         f"<tr><td>{i['numero']}</td><td>{i['produto']}</td>"
@@ -78,172 +83,371 @@ def receber_orcamento(user_data):
         for i in itens
     )
     dados["produtos"] = html_rows
+    print(f"[DEBUG] Converted produtos to HTML rows.")
 
-    # salva JSON incremental
+    # Inicializa dinamicamente o campo edicoes
+    templates = dados.get('templates', [])
+    if isinstance(templates, str):
+        templates = [templates]
+    dados['templates'] = templates
+    dados['edicoes'] = [False] * len(templates)
+    print(f"[DEBUG] Inicialized edicoes: {dados['edicoes']}")
+
+    # Prepara diretório e identifica novo ID
     pasta = "bd/json_preenchimento"
     os.makedirs(pasta, exist_ok=True)
     files = [f for f in os.listdir(pasta) if f.endswith('.json')]
     ids = [int(f.split('.')[0]) for f in files if f.split('.')[0].isdigit()]
-    nid = max(ids)+1 if ids else 1
-    path = os.path.join(pasta, f"{nid}.json")
-    nome     = user_data.get("nome")
-    dados_funcionario = get_data(nome)
-    dados["vendedor"] = dados_funcionario.get("nome")
-    dados["id"]=nid
+    nid = max(ids) + 1 if ids else 1
+    dados["id"] = nid
+    print(f"[INFO] Assigned new orcamento ID: {nid}")
 
-    with open(path,'w',encoding='utf-8') as f:
-        json.dump(dados,f,indent=2,ensure_ascii=False)
-    # gera HTMLs iniciais para cada template
+    # Preenche vendedor a partir do usuário logado
+    nome_user = user_data.get("nome")
+    dados_func = get_data(nome_user)
+    dados["vendedor"] = dados_func.get("nome")
+    print(f"[DEBUG] Set vendedor: {dados['vendedor']}")
+
+    # Salva JSON base em json_preenchimento
+    path = os.path.join(pasta, f"{nid}.json")
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(dados, f, indent=2, ensure_ascii=False)
+    print(f"[INFO] Saved base JSON to {path}")
+
+    # Gera os HTMLs iniciais para cada template
     tpl_dir = 'template-PDF'
-    os.makedirs(tpl_dir,exist_ok=True)
-    templates = dados.get('templates',[])
-    if isinstance(templates,str): templates=[templates]
+    os.makedirs(tpl_dir, exist_ok=True)
     for emp in templates:
         tpl_file = os.path.join(tpl_dir, f"{emp.lower()}_placeholders.html")
-        if not os.path.exists(tpl_file): continue
-        tpl_html = open(tpl_file,encoding='utf-8').read()
-        for k,v in dados.items(): tpl_html = tpl_html.replace(f"{{{k}}}", str(v))
+        if not os.path.exists(tpl_file):
+            print(f"[WARNING] Template placeholder not found: {tpl_file}")
+            continue
+
+        print(f"[DEBUG] Generating initial HTML for template: {emp}")
+        tpl_html = open(tpl_file, encoding='utf-8').read()
+        for k, v in dados.items():
+            tpl_html = tpl_html.replace(f"{{{k}}}", str(v))
+
         out_name = f"orcamento_{str(nid).zfill(3)}_{emp.lower()}.html"
-        with open(os.path.join(tpl_dir,out_name),'w',encoding='utf-8') as f:
+        out_path = os.path.join(tpl_dir, out_name)
+        with open(out_path, 'w', encoding='utf-8') as f:
             f.write(tpl_html)
-    return jsonify({"mensagem":f"Orçamentos salvos para {', '.join(templates)}."}),200
+        print(f"[INFO] Generated HTML: {out_path}")
+
+    print(f"[INFO] receber_orcamento completed for ID {nid} with templates {templates}")
+    return jsonify({
+        "mensagem": f"Orçamentos salvos para {', '.join(templates)}.",
+        "id": nid
+    }), 200
 
 @app.route("/verification", methods=["GET"])
-def verificar_template():
+@token_required
+def verificar_template(user_data):
     json_dir = "bd/json_preenchimento"
+    # lista os JSONs por data de modificação
     arquivos = sorted(
         [f for f in os.listdir(json_dir) if f.endswith('.json')],
-        key=lambda f: os.path.getmtime(os.path.join(json_dir,f))
+        key=lambda f: os.path.getmtime(os.path.join(json_dir, f))
     )
     if not arquivos:
-        return "Nenhum JSON encontrado",404
+        return "Nenhum JSON encontrado", 404
+
+    # seleciona o json_file solicitado ou o último
     json_file = request.args.get('json_file', arquivos[-1])
-    if json_file not in arquivos: json_file = arquivos[-1]
-    dados = json.load(open(os.path.join(json_dir,json_file),'r',encoding='utf-8'))
-    # converte produtos
-    raw = dados.get('produtos','')
-    if isinstance(raw,str):
-        lst=[]
+    if json_file not in arquivos:
+        json_file = arquivos[-1]
+
+    # carrega os dados
+    path = os.path.join(json_dir, json_file)
+    with open(path, encoding='utf-8') as f:
+        dados = json.load(f)
+
+    # --- aqui reaplicamos o parsing antigo de produtos ---
+    raw = dados.get('produtos', '')
+    if isinstance(raw, str):
+        lst = []
         for trecho in raw.split('</tr>'):
-            if '<tr>' not in trecho: continue
+            if '<tr>' not in trecho:
+                continue
+            # extrai cada célula
             cells = re.findall(r'<td>(.*?)</td>', trecho, flags=re.DOTALL)
             lst.append({
-                'numero':cells[0] if len(cells)>0 else '',
-                'produto':cells[1] if len(cells)>1 else '',
-                'quantidade':cells[2] if len(cells)>2 else '',
-                'unidade':cells[3] if len(cells)>3 else '',
-                'valor_unitario':cells[4] if len(cells)>4 else '',
-                'total_local':cells[5] if len(cells)>5 else ''
+                'numero': cells[0] if len(cells) > 0 else '',
+                'produto': cells[1] if len(cells) > 1 else '',
+                'quantidade': cells[2] if len(cells) > 2 else '',
+                'unidade': cells[3] if len(cells) > 3 else '',
+                'valor_unitario': cells[4] if len(cells) > 4 else '',
+                'total_local': cells[5] if len(cells) > 5 else ''
             })
-        dados['produtos']=lst
-    templates = dados.get('templates',[])
-    if isinstance(templates,str): templates=[templates]
-    idx = int(request.args.get('template_idx',0) or 0)
-    if idx>=len(templates):
-        return ("<h2>Todos os templates foram revisados!</h2><a href='/dashboard'>Voltar para Início</a>",200)
+        dados['produtos'] = lst
+    # -------------------------------------------------------
+
+    # determina o template atual e próximo índice
+    templates = dados.get('templates', [])
+    if isinstance(templates, str):
+        templates = [templates]
+    idx = int(request.args.get('template_idx', 0) or 0)
+    if idx >= len(templates):
+        return ("<h2>Todos os templates foram revisados!</h2>"
+                "<a href='/dashboard'>Voltar para Início</a>"), 200
+
     emp = templates[idx]
-    # usa id do json_file
     base_id = int(json_file.split('.')[0])
     iframe_src = f"/template-PDF/orcamento_{str(base_id).zfill(3)}_{emp.lower()}.html"
-    return render_template('revisao.html', iframe_src=iframe_src,
-                           template_nome=emp, proximo_idx=idx+1,
-                           dados=dados, json_filename=json_file,id=base_id), 200
+
+    return render_template(
+        'revisao.html',
+        iframe_src=iframe_src,
+        template_nome=emp,
+        proximo_idx=idx+1,
+        dados=dados,
+        json_file=json_file,
+        id=base_id
+    ), 200
+
+
 
 @app.route("/verification/preview", methods=["POST"])
-def preview_template():
+@token_required
+def preview_template(user_data):
+    import traceback
+
+    print(f"[INFO] preview_template called by user: {user_data.get('nome')}")
     correcoes = request.get_json(force=True)
-    tpl = correcoes.get('template')
-    # load original
-    dirj = 'bd/json_preenchimento'
-    files = sorted([f for f in os.listdir(dirj) if f.endswith('.json')],
-                   key=lambda f: os.path.getmtime(os.path.join(dirj,f)))
-    jf = correcoes.get('json_file', files[-1])
-    orig = json.load(open(os.path.join(dirj,jf),'r',encoding='utf-8'))
-    novo = orig.copy(); novo['templates']=[tpl]
-    for k,v in correcoes.items():
-        if k not in ('template','json_file'): novo[k]=v
-    # convert produtos list to rows
-    if isinstance(novo.get('produtos'), list):
-        rows = []
-        valor_total = 0.0
-        for item in novo['produtos']:
-            q = float(item.get('quantidade',0))
-            v = float(item.get('valor_unitario',0))
-            total_local = q * v
-            valor_total += total_local
-            # formata cada célula em padrão brasileiro
-            rows.append(
-                '<tr>'
-                f'<td>{item["numero"]}</td>'
-                f'<td>{item["produto"]}</td>'
-                f'<td>{q}</td>'
-                f'<td>{item["unidade"]}</td>'
-                f'<td>{format_currency(v,"BRL", locale="pt_BR", format="¤#,##0.0000")}</td>'
-                f'<td>{format_currency(total_local,"BRL", locale="pt_BR", format="¤#,##0.0000")}</td>'
-                '</tr>'
-            )
-        novo['produtos'] = ''.join(rows)
-        # injeta também o valor total do orçamento
-        novo['valor_total'] = format_currency(valor_total, "BRL", 
-                                            locale="pt_BR", 
-                                            format="¤#,##0.0000")
-    # inject
-    tpl_path = os.path.join('template-PDF', f"{tpl.lower()}_placeholders.html")
-    html = open(tpl_path,encoding='utf-8').read()
-    for k,v in novo.items(): html = html.replace(f"{{{k}}}", str(v))
-    html = html.replace('href="/css/','href="'+url_for('static', filename='css/') )
-    html = html.replace('src="/img/','src="'+url_for('static', filename='img/') )
-    return jsonify({'preview_html':html}),200
+    print(f"[DEBUG] Correções recebidas keys: {list(correcoes.keys())}")
+    tpl       = correcoes.get('template')
+    json_file = correcoes.get('json_file')
+    print(f"[DEBUG] Preview for template={tpl}, json_file={json_file}")
+
+    # 1) Carrega JSON base
+    base_path = os.path.join('bd/json_preenchimento', json_file)
+    print(f"[DEBUG] Loading base JSON from {base_path}")
+    with open(base_path, 'r', encoding='utf-8') as f:
+        base_data = json.load(f)
+    templates = base_data.get('templates', [])
+    edicoes   = base_data.get('edicoes', [False] * len(templates))
+
+    # Ajusta tamanho de edicoes se necessário
+    if len(edicoes) != len(templates):
+        edicoes = [False] * len(templates)
+        print(f"[WARNING] Adjusted edicoes length: {edicoes}")
+
+    # 2) Carrega JSON editado se houver
+    orig = base_data
+    if tpl in templates:
+        idx = templates.index(tpl)
+        if edicoes[idx]:
+            edit_path = os.path.join('bd/edicoes', tpl, json_file)
+            if os.path.exists(edit_path):
+                print(f"[DEBUG] Loading edited JSON from {edit_path}")
+                with open(edit_path, 'r', encoding='utf-8') as f:
+                    orig = json.load(f)
+            else:
+                print(f"[WARNING] Edited JSON not found, falling back to base")
+        else:
+            print(f"[DEBUG] Using base JSON for preview")
+    else:
+        print(f"[ERROR] Template '{tpl}' not in templates list, using base")
+
+    # 3) Remover lista de produtos vazios se for o caso
+    prod_corr = correcoes.get('produtos')
+    if isinstance(prod_corr, list) and prod_corr:
+        todos_vazios = all(item.get('numero','') == '' for item in prod_corr)
+        if todos_vazios:
+            print("[DEBUG] Removendo correcoes['produtos'] porque todos itens estão vazios")
+            correcoes.pop('produtos')
+
+    # 4) Aplica as correções recebidas
+    novo = orig.copy()
+    novo['templates'] = [tpl]
+    for k, v in correcoes.items():
+        if k not in ('template', 'json_file'):
+            novo[k] = v
+            print(f"[DEBUG] Applied correction {k}={v!r}")
+
+    # 5) Reconstrói produtos apenas se vieram como lista válida
+    p = novo.get('produtos')
+    if isinstance(p, list):
+        try:
+            print(f"[DEBUG] Reconstruindo lista de produtos, {len(p)} itens")
+            rows = []
+            valor_total = 0.0
+            for item in p:
+                q = float(item.get('quantidade') or 0)
+                v = float(item.get('valor_unitario') or 0)
+                total = q * v
+                valor_total += total
+                rows.append(
+                    '<tr>'
+                    f'<td>{item.get("numero")}</td>'
+                    f'<td>{item.get("produto")}</td>'
+                    f'<td>{q}</td>'
+                    f'<td>{item.get("unidade")}</td>'
+                    f'<td>{format_currency(v, "BRL", locale="pt_BR", format="¤#,##0.0000")}</td>'
+                    f'<td>{format_currency(total, "BRL", locale="pt_BR", format="¤#,##0.0000")}</td>'
+                    '</tr>'
+                )
+            novo['produtos']    = ''.join(rows)
+            novo['valor_total'] = format_currency(valor_total, "BRL", locale="pt_BR", format="¤#,##0.0000")
+            print(f"[DEBUG] Reconstrução de produtos OK")
+        except Exception as e:
+            print(f"[ERROR] Falha ao reconstruir produtos: {e}")
+            traceback.print_exc()
+    else:
+        print("[DEBUG] Produto permanece como string HTML (não era lista)")
+
+    # 6) Injeta no template e retorna HTML
+    placeholder = os.path.join('template-PDF', f"{tpl.lower()}_placeholders.html")
+    if not os.path.exists(placeholder):
+        print(f"[WARNING] Placeholder not found: {placeholder}")
+        html = "<p>Template placeholder não encontrado.</p>"
+    else:
+        print(f"[DEBUG] Injecting data into {placeholder}")
+        html = open(placeholder, encoding='utf-8').read()
+        for k, v in novo.items():
+            html = html.replace(f"{{{k}}}", str(v))
+        html = html.replace('href="/css/', 'href="' + url_for('static', filename='css/'))
+        html = html.replace('src="/img/', 'src="' + url_for('static', filename='img/'))
+    print("[INFO] Returning preview HTML")
+    return jsonify({'preview_html': html}), 200
+
+
 
 @app.route("/verification/update", methods=["POST"])
-def update_template():
+@token_required
+def atualiza_orcamento(user_data):
+    print(f"[INFO] atualiza_orcamento called by user: {user_data.get('nome')}")
+    correcoes = request.get_json(force=True)
+    tpl = correcoes.get('template')
+    json_file = correcoes.get('json_file')
+    print(f"[DEBUG] Received corrections for template={tpl}, json_file={json_file}")
+
+    # Carrega JSON base
+    base_path = os.path.join('bd/json_preenchimento', json_file)
+    with open(base_path, 'r', encoding='utf-8') as f:
+        base_data = json.load(f)
+    templates = base_data.get('templates', [])
+    edicoes = base_data.get('edicoes', [False] * len(templates))
+
+    # Ajusta tamanho de edicoes se necessário
+    if len(edicoes) != len(templates):
+        edicoes = [False] * len(templates)
+        print(f"[WARNING] Adjusted edicoes length: {edicoes}")
+
+    # Marca edição
     try:
-        correcoes = request.get_json(force=True)
-        tpl = correcoes.get('template')
-        jf  = correcoes.get('json_file')
-        dirj= 'bd/json_preenchimento'
-        orig= json.load(open(os.path.join(dirj,jf),'r',encoding='utf-8'))
-        base_id = int(jf.split('.')[0])
-        novo = orig.copy(); novo['templates']=[tpl]
-        for k,v in correcoes.items():
-            if k not in ('template','json_file'): novo[k]=v
-        # detect change        
-        use_id = base_id
-        # generate html
-        itens = novo.get("produtos", [])
-        html_rows = ''.join(
-        f"<tr><td>{i['numero']}</td><td>{i['produto']}</td>"
-        f"<td>{i['quantidade']}</td><td>{i['unidade']}</td>"
-        f"<td>R$ {i['valor_unitario']}</td><td>R$ {i['total_local']}</td></tr>"
-        for i in itens
-         )
-        novo["produtos"] = html_rows
-        tpl_file = f"{tpl.lower()}_placeholders.html"
-        html = open(os.path.join('template-PDF',tpl_file),encoding='utf-8').read()
-        for k,v in novo.items(): html = html.replace(f"{{{k}}}",str(v))
-        html = html.replace('href="/css/','href="/static/css/')
-        html = html.replace('src="/img/','src="/static/img/')
-        out = f"orcamento_{str(use_id).zfill(3)}_{tpl.lower()}.html"
-        with open(os.path.join('template-PDF',out),'w',encoding='utf-8') as f: f.write(html)
-        return jsonify({'new_iframe_src':f"/template-PDF/{out}"}),200
-    except Exception as e:
-        return jsonify({'erro':str(e)}),500
+        idx = templates.index(tpl)
+        edicoes[idx] = True
+        print(f"[DEBUG] Marked edicoes[{idx}] = True")
+    except ValueError:
+        print(f"[ERROR] Template '{tpl}' not found in templates list")
 
-@app.route("/download/<id>/<template>", methods=["GET"])
-def download(id, template):
-    """
-    Renderiza a página de download com o iframe contendo o orçamento
-    """
-    print(f"Download solicitado: id={id}, template={template}")
-    # Gera o nome do arquivo do template
-    template_nome = f"/orcamento_{str(id).zfill(3)}_{template.lower()}.html"
-    
-    rendered_html = render_template(template_nome)
-    pdf = HTML(string=rendered_html).write_pdf()
+    base_data['edicoes'] = edicoes
 
-    response = make_response(pdf)
+    # Sobrescreve JSON base
+    with open(base_path, 'w', encoding='utf-8') as f:
+        json.dump(base_data, f, indent=2, ensure_ascii=False)
+    print(f"[INFO] Updated base JSON edicoes at: {base_path}")
+
+    # Prepara diretório de edições e salva JSON editado
+    edit_dir = os.path.join('bd/edicoes', tpl)
+    os.makedirs(edit_dir, exist_ok=True)
+    edit_path = os.path.join(edit_dir, json_file)
+    edited_data = base_data.copy()
+    for k, v in correcoes.items():
+        if k not in ('template', 'json_file'):
+            edited_data[k] = v
+            print(f"[DEBUG] Updated field '{k}' in edited_data")
+
+    with open(edit_path, 'w', encoding='utf-8') as f:
+        json.dump(edited_data, f, indent=2, ensure_ascii=False)
+    print(f"[INFO] Saved edited JSON to {edit_path}")
+
+    # Gera HTML atualizado para o template editado
+    tpl_dir = 'template-PDF'
+    placeholder_file = os.path.join(tpl_dir, f"{tpl.lower()}_placeholders.html")
+    if not os.path.exists(placeholder_file):
+        print(f"[WARNING] Placeholder file not found: {placeholder_file}")
+    else:
+        print(f"[DEBUG] Generating HTML for updated template: {tpl}")
+        tpl_html = open(placeholder_file, encoding='utf-8').read()
+        for k, v in edited_data.items():
+            tpl_html = tpl_html.replace(f"{{{k}}}", str(v))
+        out_name = f"orcamento_{str(int(json_file.split('.')[0])).zfill(3)}_{tpl.lower()}.html"
+        out_path = os.path.join(tpl_dir, out_name)
+        with open(out_path, 'w', encoding='utf-8') as f:
+            f.write(tpl_html)
+        print(f"[INFO] Generated updated HTML: {out_path}")
+
+    return jsonify({"mensagem": f"Template '{tpl}' atualizado e salvo."}), 200
+
+
+@app.route('/download/<int:orcamento_id>/<template>', methods=['GET'])
+@token_required
+def download_orcamento(user_data, orcamento_id, template):
+    tpl_lower = template.lower()
+
+    # 1) Monta paths possíveis
+    path_edicoes = os.path.join('bd', 'edicoes', tpl_lower, f'{orcamento_id}.json')
+    path_base    = os.path.join('bd', 'json_preenchimento', f'{orcamento_id}.json')
+    if os.path.exists(path_edicoes):
+        json_path = path_edicoes
+    elif os.path.exists(path_base):
+        json_path = path_base
+    else:
+        return jsonify({'erro': 'JSON não encontrado em edicoes nem em json_preenchimento'}), 404
+
+    # 2) Carrega JSON
+    with open(json_path, encoding='utf-8') as f:
+        data = json.load(f)
+
+    # 3) Converte lista de produtos em HTML + calcula valor_total
+    produtos = data.get('produtos')
+    if isinstance(produtos, list):
+        rows = []
+        valor_total = 0.0
+        for item in produtos:
+            q = float(item.get('quantidade', 0) or 0)
+            v = float(item.get('valor_unitario', 0) or 0)
+            total_local = q * v
+            valor_total += total_local
+
+            v_fmt = format_currency(v, "BRL", locale="pt_BR", format="¤#,##0.0000")
+            t_fmt = format_currency(total_local, "BRL", locale="pt_BR", format="¤#,##0.0000")
+
+            rows.append(
+                "<tr>"
+                f"<td>{item.get('numero','')}</td>"
+                f"<td>{item.get('produto','')}</td>"
+                f"<td>{int(q)}</td>"
+                f"<td>{item.get('unidade','')}</td>"
+                f"<td>{v_fmt}</td>"
+                f"<td>{t_fmt}</td>"
+                "</tr>"
+            )
+
+        data['produtos']    = "".join(rows)
+        data['valor_total'] = format_currency(valor_total, "BRL", locale="pt_BR", format="¤#,##0.0000")
+
+    # 4) Injeta no HTML de placeholders
+    tpl_file = os.path.join('template-PDF', f"{tpl_lower}_placeholders.html")
+    if not os.path.exists(tpl_file):
+        return jsonify({'erro': 'Template de placeholders não encontrado'}), 404
+
+    html = open(tpl_file, encoding='utf-8').read()
+    for k, v in data.items():
+        html = html.replace(f"{{{k}}}", str(v))
+
+    # 5) Gera PDF respeitando links estáticos
+    base_url = os.path.abspath(os.getcwd())
+    pdf_bytes = HTML(string=html, base_url=base_url).write_pdf()
+
+    # 6) Retorna anexo
+    response = make_response(pdf_bytes)
     response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = 'attachment; filename=orcamento.pdf'
+    response.headers['Content-Disposition'] = (
+        f'attachment; filename=orcamento_{str(orcamento_id).zfill(3)}.pdf'
+    )
     return response
 
 @app.route('/impressao', methods=['GET'])

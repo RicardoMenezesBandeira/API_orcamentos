@@ -138,15 +138,18 @@ function formDataToJson(formData) {
 // Envia orçamento para a API
 async function enviarOrcamento(data) {
   try {
-    const response = await fetch("http://127.0.0.1:8000/postTemplate", {
+    const response = await fetch("/postTemplate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: data
     });
+    const result = await response.json();
     if (response.ok) {
-      window.location.href = "/verification";
+      // agora temos result.id
+      const id = result.id;
+      // manda já o primeiro template (idx=0)
+      window.location.href = `/verification?json_file=${id}.json&template_idx=0`;
     } else {
-      const result = await response.json();
       alert("Erro: " + (result.erro || "Erro desconhecido"));
     }
   } catch (error) {
@@ -154,6 +157,7 @@ async function enviarOrcamento(data) {
     alert("Erro ao enviar os dados");
   }
 }
+
 
 // Manipula o submit do formulário principal
 document.querySelector('.form-grid').addEventListener('submit', function(e) {

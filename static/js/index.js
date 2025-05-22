@@ -45,8 +45,7 @@
         `<div>
           <button class='btn btn-warning btn-sm'
                   onclick="
-                    window.location.href=
-                      '/verification?json_file=${dado.id}.json'
+                    window.location.href = '/verification?json_file=${dado.id}.json&template_idx=0';
                   ">
             Editar
           </button>
