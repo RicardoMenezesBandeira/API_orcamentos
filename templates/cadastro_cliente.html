@@ -102,63 +102,103 @@
       </div>
     </div>
     <script>
-  /**
-   * Formata um número de telefone para o formato: +dd (xx) 12345-6789
-   *
-   * - +dd: código do país (2 dígitos)
-   * - (xx): código de área (2 dígitos)
-   * - 12345-6789: número do assinante (até 9 dígitos, com hífen após os primeiros 5)
-   *
-   * Exemplo:
-   *   formatTelefone("5511912345678")  -> "+55 (11) 12345-6789"
-   *   formatTelefone("+55 (11)91234-5678") -> "+55 (11) 91234-5678"
-   */
-  function formatTelefone(valor) {
-    // Remove tudo que não seja dígito
-    const apenasDigitos = (valor || '').replace(/\D/g, '');
+ function formataUmaStringDeDigitosParaTelefone(digitos) {
+      // Pede para ninguém passar algo que não seja string:
+      digitos = digitos || '';
+      // código do país (dois primeiros dígitos)
+      const codigoPais = digitos.slice(0, 2);
+      // DDD (próximos dois)
+      const ddd        = digitos.slice(2, 4);
+      // resto (a partir do quinto dígito)
+      const resto      = digitos.slice(4);
 
-    // Extrai cada parte:
-    const codigoPais = apenasDigitos.slice(0, 2);   // primeiros 2 dígitos
-    const ddd        = apenasDigitos.slice(2, 4);   // dígitos 3 e 4
-    const resto      = apenasDigitos.slice(4);      // a partir do 5º dígito
+      let resultado = '';
 
-    let numeroFormatado = '';
-
-    // Se houver código de país, começa com "+"
-    if (codigoPais) {
-      numeroFormatado += '+' + codigoPais;
-    }
-
-    // Se houver DDD, coloca entre parênteses
-    if (ddd) {
-      numeroFormatado += ' (' + ddd + ')';
-    }
-
-    // Formata os dígitos restantes como "12345-6789"
-    if (resto) {
-      // Se tiver mais de 5 dígitos, insere hífen após os primeiros 5
-      if (resto.length > 5) {
-        const parte1 = resto.slice(0, 5);
-        const parte2 = resto.slice(5, 9); // até 4 dígitos após os 5 primeiros
-        numeroFormatado += ' ' + parte1 + (parte2 ? ('-' + parte2) : '');
-      } else {
-        // Se tiver 5 ou menos, mostra só sem hífen
-        numeroFormatado += ' ' + resto;
+      // Se há pelo menos um dígito no código do país, coloca "+" e os dígitos (pode ser incompleto)
+      if (codigoPais.length > 0) {
+        resultado += '+' + codigoPais;
       }
+
+      // Se já houver 2 dígitos de país completos, podemos começar o "("
+      if (codigoPais.length === 2) {
+        // Se houver 1 ou 2 dígitos de DDD, monto "(x" ou "(xx"
+        resultado += ' (' + ddd;
+        // Se o DDD já tem 2 dígitos, fecha ")"
+        if (ddd.length === 2) {
+          resultado += ')';
+        }
+      }
+
+      // Se tiver 2 dígitos de país + 2 de DDD completos, formatamos o resto
+      if (resto.length > 0) {
+        // Garante que só adicionamos o espaço se já tivermos “+dd (xx)”
+        if (codigoPais.length === 2 && ddd.length === 2) {
+          resultado += ' ';
+        }
+        // Se o resto tiver mais de 5 dígitos, dividimos em “xxxxx-xxxx”
+        if (resto.length > 5) {
+          const parte1 = resto.slice(0, 5);
+          const parte2 = resto.slice(5, 9); // no máximo 4 dígitos após os 5 primeiros
+          resultado += parte1;
+          if (parte2.length > 0) {
+            resultado += '-' + parte2;
+          }
+        } else {
+          // Se tiver até 5 dígitos, exibimos tudo junto (sem hífen)
+          resultado += resto;
+        }
+      }
+
+      return resultado;
     }
 
-    return numeroFormatado.trim();
-  }
+    /**
+     * 2) Na hora do input:
+     *    - Capturamos o cursor (selectionStart).
+     *    - Contamos quantos dígitos existem ANTES desse cursor.
+     *    - Extraímos todos os dígitos da string.
+     *    - Reformatamos apenas pela “string limpa de dígitos”.
+     *    - Calculamos a nova posição do cursor para ficar justo depois do mesmo dígito.
+     */
+    document.addEventListener('DOMContentLoaded', () => {
+      const inp = document.getElementById('telefone');
 
-  // Quando o DOM terminar de carregar, anexamos o listener ao input
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputTelefone = document.getElementById('telefone');
+      inp.addEventListener('input', (e) => {
+        // 1) Captura o cursor antes de qualquer modificação
+        const valorAtual     = e.target.value;           // string possívelmente formatada / com dígitos e parênteses etc.
+        const posCursorAntes = e.target.selectionStart;  // posição do cursor no valor atual
 
-    inputTelefone.addEventListener('input', (e) => {
-      // A cada digitação, substitui o valor pelo formatado
-      e.target.value = formatTelefone(e.target.value);
+        // 2) Descobrimos “quantos dígitos” existem antes desse cursor:
+        let contagemDigitosAteCursor = 0;
+        for (let i = 0; i < posCursorAntes; i++) {
+          if (/\d/.test(valorAtual[i])) {
+            contagemDigitosAteCursor++;
+          }
+        }
+
+        // 3) Extraímos somente os dígitos (remove tudo que não for [0-9])
+        const soDigitos = valorAtual.replace(/\D/g, '');
+
+        // 4) Reformatamos todos os dígitos (mesma lógica anterior, mas agora só recebe string de dígitos)
+        const textoFormatado = formataUmaStringDeDigitosParaTelefone(soDigitos);
+
+        // 5) Calculamos onde o cursor deve ficar de acordo com “contagemDigitosAteCursor”
+        //    Ou seja: andamos no textoFormatado contando dígitos até chegar a “contagemDigitosAteCursor”,
+        //    então posicionamos o cursor logo após este dígito.
+        let novaPosCursor = 0;
+        let digitosContados = 0;
+        while (novaPosCursor < textoFormatado.length && digitosContados < contagemDigitosAteCursor) {
+          if (/\d/.test(textoFormatado[novaPosCursor])) {
+            digitosContados++;
+          }
+          novaPosCursor++;
+        }
+
+        // 6) Reatribui o valor e reposiciona o cursor
+        e.target.value = textoFormatado;
+        e.target.setSelectionRange(novaPosCursor, novaPosCursor);
+      });
     });
-  });
 </script>
 </body>
 </html>
