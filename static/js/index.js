@@ -167,13 +167,30 @@ function filtrarOrcamentos(valor) {
         circulos += "<div>⚪</div>";
       }
     });
+    const editButton = 
+        `<div>
+          <button class='btn btn-warning btn-sm'
+                  onclick="
+                    window.location.href = '/verification?json_file=${dado.id}.json&template_idx=0';
+                  ">
+            Editar
+          </button>
+        </div>`;
+        const deleteButton = 
+        `<div>
+          <button class='btn btn-warning btn-sm' onclick="deleteOrcamento(${dado.id})">
+            Deletar
+          </button>
+        </div>`;
 
-    lista += "<div class='row'>" +
-      "<div>" + dado.numero + "</div>" +
-      "<div>" + dado.cliente + "</div>" +
-      "<div>" + dado.vendedor + "</div>" +
-      "<div class='downloads'>" + circulos + "</div>" +
-      "</div>";
+     lista += `<div class='row'>
+          <div>${dado.numero}</div>
+          <div>${dado.cliente}</div>
+          <div>${dado.vendedor}</div>
+          <div class='downloads'>${circulos}</div>
+          <div class='editar'>${editButton}</div>
+          <div class='editar'>${deleteButton}</div>
+        </div>`;
   });
 
   lista += "</div>";
