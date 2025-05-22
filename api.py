@@ -15,6 +15,13 @@ def formatar_dinheiro_brl(valor: float, casas: int = 4) -> str:
     fmt = '¤#,##0.' + '0' * casas
     return format_currency(valor, 'BRL', locale='pt_BR', format=fmt)
 
+def formatar_cnpj(cnpj):
+    cnpj = re.sub(r'\D', '', cnpj)  # Remove tudo que não for dígito
+    return re.sub(r'^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$', r'\1.\2.\3/\4-\5', cnpj)
+def formatar_cpf(cpf):
+    cpf = re.sub(r'\D', '', cpf)  # Remove tudo que não for dígito
+    return re.sub(r'^(\d{3})(\d{3})(\d{3})(\d{2})$', r'\1.\2.\3-\4', cpf)
+
 app = Flask(__name__)
 # Permite carregar templates também de template-PDF
 app.jinja_loader = ChoiceLoader([
@@ -285,6 +292,11 @@ def preview_template(user_data):
 
     # 6) Injeta no template e retorna HTML
     placeholder = os.path.join('template-PDF', f"{tpl.lower()}_placeholders.html")
+    if len(novo.get('cnpj')) == 14:
+        novo['cnpj'] = formatar_cnpj(novo['cnpj'])
+    else:
+        novo['cnpj'] = formatar_cpf(novo['cnpj'])
+    
     if not os.path.exists(placeholder):
         print(f"[WARNING] Placeholder not found: {placeholder}")
         html = "<p>Template placeholder não encontrado.</p>"
@@ -412,9 +424,11 @@ def download_orcamento(user_data, orcamento_id, template):
         return jsonify({'erro': 'Template de placeholders não encontrado'}), 404
 
     html = open(tpl_file, encoding='utf-8').read()
+    data['cnpj'] = formatar_cnpj(data['cnpj']) if len(data['cnpj']) == 14 else formatar_cpf(data['cnpj'])
     for k, v in data.items():
+        
         html = html.replace(f"{{{k}}}", str(v))
-
+    
     # 5) Gera PDF respeitando links estáticos
     base_url = os.path.abspath(os.getcwd())
     pdf_bytes = HTML(string=html, base_url=base_url).write_pdf()
@@ -430,6 +444,7 @@ def download_orcamento(user_data, orcamento_id, template):
 @app.route('/impressao', methods=['GET'])
 def imprimir_template():
     arquivo = request.args.get('arquivo')
+    arquivo["cnpj"] = formatar_cnpj(arquivo["cnpj"])
     html = open(os.path.join('template-PDF',arquivo),'r',encoding='utf-8').read()
     return render_template(html),200
 
