@@ -85,6 +85,7 @@ function Cadastra_cliente() {
     inputs.forEach(input => {        
         data[input.name]= input.value
     });
+    data['cnpj'] = data['cnpj'].replace(/\D/g, ''); // Remove caracteres não numéricos
     console.log(data)
     fetch('/cadastra_cliente', {
         method: 'POST',
