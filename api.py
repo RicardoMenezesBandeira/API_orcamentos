@@ -421,8 +421,6 @@ def cadastra_cliente(user_data):
     path= "bd/clientes"
     os.makedirs(path, exist_ok=True)
     path = os.path.join(path, f"{cnpj}.json")
-    if os.path.exists(path):
-        return jsonify({"message": "Cliente já cadastrado!"}), 400
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(cliente, f, indent=2, ensure_ascii=False)
     return jsonify({"message": "Cliente cadastrado com sucesso!"}), 200

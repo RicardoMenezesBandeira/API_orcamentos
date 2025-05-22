@@ -14,6 +14,64 @@
         align-items: center;
             justify-content: space-between;
 }
+    .clientes-cadastrados {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+
+        
+    }
+    .clientes-cadastrados ul {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: start;
+        align-items: start;
+        align-content: start;
+        gap: 20px;
+    }
+    .clientes-cadastrados ul li  {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: start;
+        align-items: start;
+        align-content: start;
+        gap: 20px;
+        
+        padding: 10px;
+        background-color: aliceblue;
+        width: 300px;
+        border:1px solid #ccc;
+        border-radius: 5px;
+        
+    } .alerta {
+    padding: 15px;
+    margin: 20px auto;
+    width: 300px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  .sucesso {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+
+  .erro {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+
+  .fade-out {
+    opacity: 0;
+  }
     </style>
 </head>
 <body>
@@ -23,7 +81,9 @@
 </div>
     <div class="form-container">
      <form class="form-grid">
-      <div class="section-title">Dados Gerais</div>
+      <div class="section-title">Dados Gerais <div id="mensagem-flash" class="alerta" style="display: none;"></div>
+</div>
+      
         <div class="form-group"><label>Cliente:</label><input type="text"           required    name="cliente"></div>
         <div class="form-group"><label>CNPJ do Cliente:</label><input type="text"   required    name="cnpj"></div>
         <div class="form-group"><label>Responsável:</label><input type="text"                   name="responsavel"></div>
@@ -34,6 +94,13 @@
         <div class="form-group"><label>Nome Fantasia:</label><input type="text"                 name="nome"></div>
         <div class="form-group"><label>CEP:</label><input type="text"                           name="cep"></div>
       </form>
+      <div class="clientes-cadastrados">
+        <h2>Já cadastradso</h2><input type="text" name="search" id="search" placeholder="Pesquisar cliente" onkeyup="filtrarPorCNPJ(this.value)">
+        <ul id="clientes">
+
+        </ul>
       </div>
+    </div>
+    
 </body>
 </html>
