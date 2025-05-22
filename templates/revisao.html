@@ -37,7 +37,7 @@
         {% for campo in ['id','cliente','cnpj','responsavel','endereco','cidade','data'] %}
         <div class="form-group">
           <label>{{ campo.replace('_',' ').capitalize() }}:</label>
-          <input type="{{ 'date' if campo=='data' else 'text' }}"
+          <input type="text"
                  name="{{ campo }}"
                  value="{{ dados[campo] }}">
         </div>

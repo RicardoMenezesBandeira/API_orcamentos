@@ -120,27 +120,6 @@ def receber_orcamento(user_data):
         json.dump(dados, f, indent=2, ensure_ascii=False)
     print(f"[INFO] Saved base JSON to {path}")
 
-    # Gera os HTMLs iniciais para cada template
-    tpl_dir = 'template-PDF'
-    os.makedirs(tpl_dir, exist_ok=True)
-    for emp in templates:
-        tpl_file = os.path.join(tpl_dir, f"{emp.lower()}_placeholders.html")
-        if not os.path.exists(tpl_file):
-            print(f"[WARNING] Template placeholder not found: {tpl_file}")
-            continue
-
-        print(f"[DEBUG] Generating initial HTML for template: {emp}")
-        tpl_html = open(tpl_file, encoding='utf-8').read()
-        for k, v in dados.items():
-            tpl_html = tpl_html.replace(f"{{{k}}}", str(v))
-
-        out_name = f"orcamento_{str(nid).zfill(3)}_{emp.lower()}.html"
-        out_path = os.path.join(tpl_dir, out_name)
-        with open(out_path, 'w', encoding='utf-8') as f:
-            f.write(tpl_html)
-        print(f"[INFO] Generated HTML: {out_path}")
-
-    print(f"[INFO] receber_orcamento completed for ID {nid} with templates {templates}")
     return jsonify({
         "mensagem": f"Orçamentos salvos para {', '.join(templates)}.",
         "id": nid
@@ -374,16 +353,6 @@ def atualiza_orcamento(user_data):
     placeholder_file = os.path.join(tpl_dir, f"{tpl.lower()}_placeholders.html")
     if not os.path.exists(placeholder_file):
         print(f"[WARNING] Placeholder file not found: {placeholder_file}")
-    else:
-        print(f"[DEBUG] Generating HTML for updated template: {tpl}")
-        tpl_html = open(placeholder_file, encoding='utf-8').read()
-        for k, v in edited_data.items():
-            tpl_html = tpl_html.replace(f"{{{k}}}", str(v))
-        out_name = f"orcamento_{str(int(json_file.split('.')[0])).zfill(3)}_{tpl.lower()}.html"
-        out_path = os.path.join(tpl_dir, out_name)
-        with open(out_path, 'w', encoding='utf-8') as f:
-            f.write(tpl_html)
-        print(f"[INFO] Generated updated HTML: {out_path}")
 
     return jsonify({"mensagem": f"Template '{tpl}' atualizado e salvo."}), 200
 
