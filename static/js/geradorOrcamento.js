@@ -14,6 +14,59 @@ window.onload = function() {
     });
 
 }
+
+
+  
+   //Formata um número de telefone para o formato: +dd (xx) 12345-6789
+   
+  function formatTelefone(valor) {
+    // Remove tudo que não seja dígito
+    const apenasDigitos = (valor || '').replace(/\D/g, '');
+
+    // Extrai cada parte:
+    const codigoPais = apenasDigitos.slice(0, 2);   // primeiros 2 dígitos
+    const ddd        = apenasDigitos.slice(2, 4);   // dígitos 3 e 4
+    const resto      = apenasDigitos.slice(4);      // a partir do 5º dígito
+
+    let numeroFormatado = '';
+
+    // Se houver código de país, começa com "+"
+    if (codigoPais) {
+      numeroFormatado += '+' + codigoPais;
+    }
+
+    // Se houver DDD, coloca entre parênteses
+    if (ddd) {
+      numeroFormatado += ' (' + ddd + ')';
+    }
+
+    // Formata os dígitos restantes como "12345-6789"
+    if (resto) {
+      // Se tiver mais de 5 dígitos, insere hífen após os primeiros 5
+      if (resto.length > 5) {
+        const parte1 = resto.slice(0, 5);
+        const parte2 = resto.slice(5, 9); // até 4 dígitos após os 5 primeiros
+        numeroFormatado += ' ' + parte1 + (parte2 ? ('-' + parte2) : '');
+      } else {
+        // Se tiver 5 ou menos, mostra só sem hífen
+        numeroFormatado += ' ' + resto;
+      }
+    }
+
+    return numeroFormatado.trim();
+  }
+
+  // Quando o DOM terminar de carregar, anexamos o listener ao input
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputTelefone = document.getElementById('telefone');
+
+    inputTelefone.addEventListener('input', (e) => {
+      // A cada digitação, substitui o valor pelo formatado
+      e.target.value = formatTelefone(e.target.value);
+    });
+  });
+
+
   // Ao sair do campo, já preenche os zeros
   inputNumero.addEventListener('blur', () => {
     let val = inputNumero.value;
