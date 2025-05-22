@@ -7,13 +7,27 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="http://127.0.0.1:8000/static/css/contrucom.css">
   <style>
-  
+   
     .pagina {
       page-break-after: auto;
     }
 
     .nao-quebrar {
       page-break-inside: avoid;
+    }
+      @page {
+      size: A4;
+      margin: 0.5cm;
+      margin-bottom: 2cm;
+
+
+      @bottom-center {
+        content: "CNPJ: 20.175.290/0001-11  \A  CONSTRUCOM COMÉRCIO E SERVIÇO LTDA \A Rua José Rodrigues Félix, Nº 145 - Botafogo - Macaé/RJ - CEP: 27947-730 \A Tel: (22) 3083-0882 | E-mail: comercial@construcom.srv.br  |  www.construcom.srv.br";
+        font-size: 9pt;
+        color: #444;
+        white-space: pre;
+        text-align: center;
+      }
     }
   </style>
 </head>
@@ -23,17 +37,7 @@
       <div class="d-flex align-items-center">
         <div class="me-3"> <img src="http://127.0.0.1:8000/static/img/contrucom.png"></div>
         <div>
-          <h2 class="mb-0"></h2>
-          <div class="empresa-info">
-            
-
-            <p>CONSTRUCOM COMERCIO E SERVIÇO EIREL
-            R JOSÉ RODRIGUES FÉLIX, N° 145
-            CEP: 27.947-730 - Macaé, RJ
-            Telefone: (22) 3083-0882<br>
-            CNPJ: 20.175.290/0001-11</p>
-          
-          </div>
+          <h2 class="mb-0"></h2>          
         </div>
       </div>
       <div class="text-end">
@@ -66,7 +70,7 @@
         </tbody>
       </table>
       <div class= "nao-quebrar">
-        <p class="total mt-3 ">Total do orçamento: <strong>R$ {valor_total}</strong></p>
+        <p class="total mt-3 ">Total do orçamento: <strong>{valor_total}</strong></p>
         <p>Obs {obs}</p>
         <p><strong>Previsão Entrega: </strong> {dias_entrega}<br>
         <strong>Validade da proposta:</strong> {dias_validade}<br>
