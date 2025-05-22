@@ -48,6 +48,7 @@ def login():
         httponly=True, secure=True, samesite='Strict'
     )
     return response
+
 @app.route("/logout",methods=["GET"])
 @token_required
 def logout_route(user_data):
@@ -58,6 +59,7 @@ def logout_route(user_data):
     else:
         print("Erro ao fazer logout")
         return jsonify({"message":"Erro ao fazer logout!"}), 500
+
 @app.route("/preencher")
 @token_required
 def preencher(user_data):
@@ -495,6 +497,7 @@ def orcamento(user_data):
                 todos.append(dados)
         
     return jsonify(todos), 200
+
 @app.route("/user", methods=['GET'])
 @token_required
 def user(user_data):
@@ -511,6 +514,19 @@ def get_template():
     # OPTIONS já liberado globalmente pelo CORS
     return send_file('orcamento.pdf', as_attachment=True)
 
+@app.route('/delete/<id>', methods=['DELETE'])# ajeitar para deletar os #
+@token_required
+def delete_orcamento(user_data, id):
+    """
+    Deleta o arquivo de orçamento correspondente ao ID.
+    """
+    path = "bd/json_preenchimento"
+    file_path = os.path.join(path, f"{id}.json")
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        return jsonify({"message": "Orçamento excluído com sucesso!"}), 200
+    else:
+        return jsonify({"message": "Arquivo não encontrado!"}), 404
 
 @app.route("/cadastro")
 @token_required
@@ -553,17 +569,6 @@ def usuario_page(user_data):
                 dados = json.load(f)
                 todos_os_dados.append(dados)
     return jsonify(todos_os_dados), 200
-
-
-@app.after_request
-def after_request(response):
-    """
-    Ajusta cabeçalhos CORS adicionais após cada resposta.
-    """
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,x-access-token')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
-    return response
-
 
 @app.route("/delete_usuario/<username>", methods=['DELETE'])
 @token_required
@@ -611,6 +616,7 @@ def delete_usuario(user_data, username):
 @token_required
 def p_cadastro_cliente(user_data):   
     return render_template('cadastro_cliente.html'), 200
+
 @app.route("/cadastra_cliente", methods=['POST'])
 @token_required
 def cadastra_cliente(user_data):   
@@ -625,11 +631,10 @@ def cadastra_cliente(user_data):
     path= "bd/clientes"
     os.makedirs(path, exist_ok=True)
     path = os.path.join(path, f"{cnpj}.json")
-    if os.path.exists(path):
-        return jsonify({"message": "Cliente já cadastrado!"}), 400
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(cliente, f, indent=2, ensure_ascii=False)
     return jsonify({"message": "Cliente cadastrado com sucesso!"}), 200
+
 @app.route("/get_cliente", methods=['GET'])
 @token_required
 def get_cliente(user_data):
@@ -641,6 +646,8 @@ def get_cliente(user_data):
                 dados = json.load(f)
                 todos_os_dados.append(dados)
     return jsonify(todos_os_dados), 200
+
+
 @app.route("/dev_god", methods=['GET'])
 def dev_god():
     return "Bernardo Ribeiro , Caio Ferreira , Ricardo Bandeira",200
@@ -650,5 +657,17 @@ def get_data(nome):
         dados = json.load(f)
    
     return dados
+
+@app.after_request
+def after_request(response):
+    """
+    Ajusta cabeçalhos CORS adicionais após cada resposta.
+    """
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,x-access-token')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+    return response
+
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
