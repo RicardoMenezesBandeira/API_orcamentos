@@ -1,4 +1,6 @@
   let orcamento  = []
+  
+  url =window.location.origin
   function novoOrcamento(){
     // Redireciona para a página principal
     window.location.href = "/preencher";
@@ -9,7 +11,7 @@
   }
   async function atualizaOrcamento() {
   try {
-    const response = await fetch('/orçaemnto', {
+    const response = await fetch(url+'/orçaemnto', {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -83,7 +85,7 @@
     console.log("Baixando PDF para o orçamento com ID:", id);
     
   
-    fetch(`/download/${id}/${template}`, {
+    fetch(url+`/download/${id}/${template}`, {
       method: "GET",
     })
       .then(response => {
@@ -114,7 +116,7 @@
     atualizaOrcamento();
   }
 function Logout() {
-  const href = "/logout";
+  const href = url+"/logout";
   fetch(href, {
     method: 'GET',
     credentials: 'include',
@@ -126,7 +128,7 @@ function Logout() {
           // Caso venha JSON com mensagem de sucesso
           const data = await response.json();
           console.log(data.message||"mensagem vazia");
-          window.location.href = "http://127.0.0.1:8000"; // Redireciona manualmente
+          window.location.href =url; // Redireciona manualmente
         }
     } else {
       // Se for um erro (status HTTP 4xx ou 5xx)

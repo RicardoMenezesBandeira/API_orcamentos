@@ -28,7 +28,7 @@ formCadastro.addEventListener('submit', function(event) {
   const dados = { nome, user, telefone, senha ,admin}; // Monta o JSON
 
   // Envia o JSON para o servidor
-  fetch('http://127.0.0.1:8000/add_usuario', {
+  fetch(url+'/add_usuario', {
     method: 'POST', // método POST para enviar dados
     headers: {
       'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ async function excluirUsuario(index) {
   if (confirm('Tem certeza que deseja excluir este usuário?')) {
     username = usuarios[index].user;
     try {
-      const response = await fetch(`http://127.0.0.1:8000/delete_usuario/${encodeURIComponent(username)}`, {
+      const response = await fetch(url+`/delete_usuario/${encodeURIComponent(username)}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -93,7 +93,7 @@ function editarUsuario(index) {
   renderizarUsuarios();
 }
 window.onload = function() {
-  fetch('http://127.0.0.1:8000/usuario')  // faz uma requisição para o endpoint /usuarios
+  fetch(url+'/usuario')  // faz uma requisição para o endpoint /usuarios
   .then(response => response.json())  // converte a resposta para JSON
   .then(data => {
     console.log(data)

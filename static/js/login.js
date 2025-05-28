@@ -3,9 +3,10 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 
   const usuario = document.getElementById('usuario').value;
   const senha = document.getElementById('senha').value;
+  url =window.location.origin
   
   try {
-      const response = await fetch("http://127.0.0.1:8000/login", {
+      const response = await fetch(url+"/login", {
           method: "POST",
           headers: {
               "Content-Type": "application/json",
@@ -29,7 +30,8 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
       }
       
       // Redireciona para a página principal
-      window.location.href = "/dashboard";
+
+      window.location.href ="/dashboard";
 
   } catch (error) {
       console.error("Erro ao enviar:", error);

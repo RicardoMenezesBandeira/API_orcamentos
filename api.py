@@ -29,7 +29,8 @@ app.jinja_loader = ChoiceLoader([
     app.jinja_loader,
 ])
 
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+# Aplica CORS com função personalizada
+CORS(app,  supports_credentials=True)
 app.config['SECRET_KEY'] = 'meusegredosecreto'
 
 # Serve arquivos estáticos com CORS
@@ -52,7 +53,7 @@ def login():
     response = make_response(jsonify({'message':'Login bem-sucedido','user':auth.get("username")}))
     response.set_cookie(
         'auth_token', token,
-        httponly=True, secure=True, samesite='Strict'
+        httponly=True, secure=False, samesite='Lax'
     )
     return response
 
@@ -648,12 +649,18 @@ def get_cliente(user_data):
 @app.route("/dev_god", methods=['GET'])
 def dev_god():
     return "Bernardo Ribeiro , Caio Ferreira , Ricardo Bandeira",200
+
 def get_data(nome):
     path = os.path.join('bd/funcionarios', f"{nome}.json")
     with open(path, 'r', encoding='utf-8') as f:
         dados = json.load(f)
    
     return dados
+@app.route("/logout_all")
+def logout_all():
+    clean_tolkens()  # Limpa todos os tokens armazenados
+    print("Todos os tokens foram limpos da memória.")
+    return jsonify({"message": "Todos os tokens foram invalidados."}), 200
 
 @app.after_request
 def after_request(response):
