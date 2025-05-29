@@ -101,13 +101,13 @@ function Cadastra_cliente() {
         if (response.status === 200) {
             mostrarMensagem('sucesso', 'Cliente salvo com sucesso!');
 
+clientes()
         } else {
             mostrarMensagem('erro', 'Erro ao cadastrar o cliente');
 
             
         }
     })
-clientes()
 }
 
 function voltar() {

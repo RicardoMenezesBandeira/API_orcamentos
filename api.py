@@ -535,7 +535,7 @@ def cadastro_page(user_data):
     return render_template('cadastro_usuario.html')
 
 
-@app.route("/cadastro/add_usuario", methods=['POST'])
+@app.route("/add_usuario", methods=['POST'])
 @token_required
 def add_usuario(user_data):
     """
@@ -553,7 +553,7 @@ def add_usuario(user_data):
         return jsonify({"message": "Erro ao adicionar usuário!"}), 500
 
 
-@app.route("/cadastro/usuario", methods=['GET'])
+@app.route("/usuario", methods=['GET'])
 @token_required
 def usuario_page(user_data):
     """
