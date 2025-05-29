@@ -12,6 +12,8 @@ USERS_TOKENS=[]
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        
+        USERS = json.load(open('bd/funcionarios.json', 'r'))  # Load users from a JSON file
         if request.method == 'OPTIONS':
             return '', 200
 
@@ -53,7 +55,14 @@ def create_token(username, secret_key):
     return token
 
 def logon(username, password, secret_key):  
+    
+    USERS = json.load(open('bd/funcionarios.json', 'r'))
     user_data = USERS.get(username)
+    if not user_data:
+        return {
+            "token": "erro", 
+            "user": "erro"
+        }
     print(user_data)
     print(password)
     if user_data and user_data["senha"] == password:  # Verifica usuário e senha

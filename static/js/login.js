@@ -3,7 +3,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 
   const usuario = document.getElementById('usuario').value;
   const senha = document.getElementById('senha').value;
-  url =window.location.origin
+  let url =window.location.origin
   
   try {
       const response = await fetch(url+"/login", {

@@ -3,8 +3,10 @@ window.onload = function() {
 
 };
 lista_clientes = []
+let url = window.location.origin
 function clientes(){
-    fetch('/get_cliente', {
+    
+    fetch(url+'/get_cliente', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -87,7 +89,7 @@ function Cadastra_cliente() {
     });
     data['cnpj'] = data['cnpj'].replace(/\D/g, ''); // Remove caracteres não numéricos
     console.log(data)
-    fetch('/cadastra_cliente', {
+    fetch(url+'/cadastra_cliente', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

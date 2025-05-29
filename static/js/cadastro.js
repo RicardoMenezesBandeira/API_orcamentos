@@ -1,7 +1,7 @@
 const formCadastro = document.getElementById('form-cadastro');
 const listaUsuarios = document.getElementById('lista-usuarios');
 let usuarios = [];
-
+let url = window.location.href;
 function renderizarUsuarios() {
   listaUsuarios.innerHTML = '';
   usuarios.forEach((usuario, index) => {

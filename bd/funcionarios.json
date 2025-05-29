@@ -1,6 +1,5 @@
 {
-    "admin":{
+    "admin": {
         "senha": "admin"
     }
-
- }
+}

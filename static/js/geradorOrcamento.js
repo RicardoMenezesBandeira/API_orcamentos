@@ -1,10 +1,11 @@
 // Contador de produtos inicial
 let produtoCount = 1;
 let clientes = [];
+let url = window.location.origin;
 // Função para formatar valores em dinheiro no padrão brasileiro
 const inputNumero = document.getElementById('numero');
 window.onload = function() {
-  fetch('/get_cliente')
+  fetch(url+'/get_cliente')
     .then(response => response.json())
     .then(data => {
     clientes = data;
@@ -242,7 +243,7 @@ function formDataToJson(formData) {
 // Envia orçamento para a API
 async function enviarOrcamento(data) {
   try {
-    const response = await fetch("/postTemplate", {
+    const response = await fetch(url+"/postTemplate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: data

@@ -1,6 +1,6 @@
   let orcamento  = []
   
-  url =window.location.origin
+  let url =window.location.origin
   function novoOrcamento(){
     // Redireciona para a página principal
     window.location.href = "/preencher";
@@ -198,7 +198,7 @@ function filtrarOrcamentos(valor) {
   lista += "</div>";
   orca.innerHTML = lista;
 }function deleteOrcamento(id) {
-  const href = "/delete/" + id;
+  const href = url+"/delete/" + id;
   fetch(href, {
     method: 'DELETE',
     credentials: 'include',

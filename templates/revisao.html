@@ -326,8 +326,8 @@
       const id = '{{id}}';
       const template = '{{ template_nome }}';
       console.log("Baixando PDF para o orçamento com ID:", id);
-  
-      fetch(`/download/${id}/${template}`, { method: "GET" })
+      url = window.location.href;
+      fetch(url+`/download/${id}/${template}`, { method: "GET" })
         .then(response => {
           if (!response.ok) throw new Error("Erro ao gerar PDF.");
           return response.blob();

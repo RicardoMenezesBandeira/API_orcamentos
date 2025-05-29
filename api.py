@@ -47,9 +47,9 @@ def login_page():
 @app.route("/login", methods=["POST"])
 def login():
     auth = request.get_json()
-    token = logon(auth.get("username"), auth.get("password"), app.config['SECRET_KEY'])["token"]
-    if not isinstance(token, str):
-        return jsonify({'messagem':'erro ao logar'}), 401
+    token =logon(auth.get("username"), auth.get("password"), app.config['SECRET_KEY'])["token"]
+    if token == "erro":
+        return jsonify({'message': 'Usuário ou senha inválidos!'}), 401
     response = make_response(jsonify({'message':'Login bem-sucedido','user':auth.get("username")}))
     response.set_cookie(
         'auth_token', token,
@@ -535,7 +535,7 @@ def cadastro_page(user_data):
     return render_template('cadastro_usuario.html')
 
 
-@app.route("/add_usuario", methods=['POST'])
+@app.route("/cadastro/add_usuario", methods=['POST'])
 @token_required
 def add_usuario(user_data):
     """
@@ -553,7 +553,7 @@ def add_usuario(user_data):
         return jsonify({"message": "Erro ao adicionar usuário!"}), 500
 
 
-@app.route("/usuario", methods=['GET'])
+@app.route("/cadastro/usuario", methods=['GET'])
 @token_required
 def usuario_page(user_data):
     """
