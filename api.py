@@ -645,6 +645,20 @@ def get_cliente(user_data):
                 todos_os_dados.append(dados)
     return jsonify(todos_os_dados), 200
 
+@app.route('/delete_cliente/<cnpj>', methods=['DELETE'])
+@token_required
+def delete_cliente(cnpj, user_data):
+    try:
+        clientes_path = f'bd/clientes/{cnpj}.json'
+
+        if not os.path.exists(clientes_path):
+            return jsonify({'message': 'Arquivo de clientes não encontrado'}), 404
+
+        os.remove(clientes_path)
+        return jsonify({'message': 'Cliente deletado com sucesso'}), 200
+
+    except Exception as e:
+        return jsonify({'message': f'Erro ao deletar cliente: {str(e)}'}), 500
 
 @app.route("/dev_god", methods=['GET'])
 def dev_god():

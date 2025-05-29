@@ -30,6 +30,7 @@ function clientes(){
       "<div>Cliente: " + element.cliente + "</div>" +
       "<div>CNPJ: " + formatarCNPJ(element.cnpj) + "</div>" +
       "<div>Nome fantasia: " + element.nome + "</div>" +
+      "button class='btn btn-danger btn-sm' onclick='excluirCliente(" + element.cnpj + ")'>Excluir</button>" +
       "</li>";
         });
         clientes.innerHTML = line;
@@ -129,4 +130,27 @@ function mostrarMensagem(tipo, texto) {
     msg.style.display = "none";
     msg.classList.remove("fade-out");
   }, 5000);
-}s
+}
+function excluirCliente(cnpj){
+    if (confirm('Tem certeza que deseja excluir este cliente?')) {
+        fetch(url+`/delete_cliente/${cnpj}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        })
+        .then(response => {
+            if (response.status === 200) {
+                mostrarMensagem('sucesso', 'Cliente excluído com sucesso!');
+                clientes();
+            } else {
+                mostrarMensagem('erro', 'Erro ao excluir o cliente');
+            }
+        })
+        .catch(error => {
+            console.error('Erro na requisição:', error);
+            mostrarMensagem('erro', 'Erro ao excluir o cliente');
+        });
+    }
+}
