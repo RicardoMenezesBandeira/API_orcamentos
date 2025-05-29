@@ -568,7 +568,7 @@ def usuario_page(user_data):
                 todos_os_dados.append(dados)
     return jsonify(todos_os_dados), 200
 
-@app.route("/delete_usuario/<username>", methods=['DELETE'])
+@app.route("/cadastro/delete_usuario/<username>", methods=['DELETE'])
 @token_required
 def delete_usuario(user_data, username):
     BASE_DIR = os.path.dirname(__file__)
@@ -580,7 +580,8 @@ def delete_usuario(user_data, username):
     Remove a chave username do JSON em bd/funcionarios.json
     """
     user_file = os.path.join(USERS_DIR, f"{username}.json")
-
+    print(f"Tentando deletar o arquivo: {user_file}") # DEBUG
+    print(f"O arquivo existe? {os.path.exists(user_file)}") # DEBUG
     
     try:
         os.remove(user_file)
