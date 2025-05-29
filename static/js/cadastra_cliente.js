@@ -30,7 +30,7 @@ function clientes(){
       "<div>Cliente: " + element.cliente + "</div>" +
       "<div>CNPJ: " + formatarCNPJ(element.cnpj) + "</div>" +
       "<div>Nome fantasia: " + element.nome + "</div>" +
-      "button class='btn btn-danger btn-sm' onclick='excluirCliente(" + element.cnpj + ")'>Excluir</button>" +
+      "<button class='btn btn-danger btn-sm' onclick='excluirCliente(" + element.cnpj + ")'>Excluir</button>" +
       "</li>";
         });
         clientes.innerHTML = line;
@@ -107,7 +107,7 @@ function Cadastra_cliente() {
             
         }
     })
-
+clientes()
 }
 
 function voltar() {
@@ -143,7 +143,6 @@ function excluirCliente(cnpj){
         .then(response => {
             if (response.status === 200) {
                 mostrarMensagem('sucesso', 'Cliente excluído com sucesso!');
-                clientes();
             } else {
                 mostrarMensagem('erro', 'Erro ao excluir o cliente');
             }
@@ -153,4 +152,6 @@ function excluirCliente(cnpj){
             mostrarMensagem('erro', 'Erro ao excluir o cliente');
         });
     }
+    
+    clientes();
 }
