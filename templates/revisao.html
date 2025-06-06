@@ -108,7 +108,7 @@
   </div>
 
   <div class="botoes">
-    <button id="download-pdf" class="btn btn-primary" onclick="download()">Baixar PDF</button>
+  <!-- <button id="download-pdf" class="btn btn-primary" onclick="download()">Baixar PDF</button>-->
     <button id="save-next" class="btn btn-primary">Aprovar e Continuar</button>
     <a href="/postTemplate" class="btn btn-secondary">Voltar ao Início</a>
   </div>
@@ -321,7 +321,7 @@
       });
     })();
   
-    // Função de download inalterada
+    // Função de download que não esta sendo usada mais.
     async function download() {
       const id = '{{id}}';
       const template = '{{ template_nome }}';
