@@ -568,7 +568,7 @@ def usuario_page(user_data):
                 todos_os_dados.append(dados)
     return jsonify(todos_os_dados), 200
 
-@app.route("/cadastro/delete_usuario/<username>", methods=['DELETE'])
+@app.route("/delete_usuario/<username>", methods=['DELETE'])
 @token_required
 def delete_usuario(user_data, username):
     BASE_DIR = os.path.dirname(__file__)

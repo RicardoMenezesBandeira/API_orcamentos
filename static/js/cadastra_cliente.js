@@ -1,10 +1,11 @@
 window.onload = function() {
-    clientes();
+    get_clientes();
 
 };
 lista_clientes = []
 let url = window.location.origin
-function clientes(){
+console.log(url)
+function get_clientes(){
     
     fetch(url+'/get_cliente', {
         method: 'GET',
@@ -99,9 +100,10 @@ function Cadastra_cliente() {
         body: JSON.stringify(data)
     }).then(response => {
         if (response.status === 200) {
+            get_clientes()
             mostrarMensagem('sucesso', 'Cliente salvo com sucesso!');
 
-clientes()
+
         } else {
             mostrarMensagem('erro', 'Erro ao cadastrar o cliente');
 
@@ -142,6 +144,7 @@ function excluirCliente(cnpj){
         })
         .then(response => {
             if (response.status === 200) {
+                get_clientes()
                 mostrarMensagem('sucesso', 'Cliente excluído com sucesso!');
             } else {
                 mostrarMensagem('erro', 'Erro ao excluir o cliente');
