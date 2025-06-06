@@ -72,13 +72,14 @@ async function excluirUsuario(index) {
 
       // remove do array local e re-renderiza
       alert(`Usuário "${username}" excluído com sucesso!`);
+      usuarios.splice(index, 1);
+      renderizarUsuarios();
     } catch (error) {
       alert(`Falha ao excluir usuário: ${error.message}`);
       console.error(error);
     }
   }
-    usuarios.splice(index, 1);
-    renderizarUsuarios();
+   
   }
 
 

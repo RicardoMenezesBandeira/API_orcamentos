@@ -571,6 +571,12 @@ def usuario_page(user_data):
 @app.route("/delete_usuario/<username>", methods=['DELETE'])
 @token_required
 def delete_usuario(user_data, username):
+    user = get_data(user_data.get("nome"))
+    name = user.get("user")
+    username = username.lower()
+    if name == username:
+        return jsonify({"error": "Você não pode excluir a si mesmo!"}),401
+
     BASE_DIR = os.path.dirname(__file__)
     BD_DIR = os.path.join(BASE_DIR, 'bd')
     USERS_DIR = os.path.join(BD_DIR, 'funcionarios')       # pasta com os arquivos {username}.json
