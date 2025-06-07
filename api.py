@@ -181,8 +181,7 @@ def verificar_template(user_data):
         templates = [templates]
     idx = int(request.args.get('template_idx', 0) or 0)
     if idx >= len(templates):
-        return ("<h2>Todos os templates foram revisados!</h2>"
-                "<a href='/dashboard'>Voltar para Início</a>"), 200
+        return get_dashboard(user_data)
 
     emp = templates[idx]
     base_id = int(json_file.split('.')[0])
@@ -197,8 +196,6 @@ def verificar_template(user_data):
         json_file=json_file,
         id=base_id
     ), 200
-
-
 
 @app.route("/verification/preview", methods=["POST"])
 @token_required
@@ -310,8 +307,6 @@ def preview_template(user_data):
         html = html.replace('src="/img/', 'src="' + url_for('static', filename='img/'))
     print("[INFO] Returning preview HTML")
     return jsonify({'preview_html': html}), 200
-
-
 
 @app.route("/verification/update", methods=["POST"])
 @token_required
