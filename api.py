@@ -145,7 +145,12 @@ def verificar_template(user_data):
 
     json_file = request.args.get('json_file')  # Padrão para o primeiro orçamento
     index = request.args.get('idx')  # Padrão para o primeiro template
-    index=int(index)
+    print(index)
+    try:
+        index = int(request.args.get('idx', 0))  # Usa 0 como padrão
+    except ValueError:
+        index = 0  # Se for inválido, também usa 0
+
 
     path=   ''
 
