@@ -136,54 +136,63 @@ def receber_orcamento(user_data):
 @app.route("/verification", methods=["GET"])
 @token_required
 def verificar_template(user_data):
+    
+    json_dir_controle = "bd/json_preenchimento"  # Renomeado para clareza
 
-    json_dir = "bd/json_preenchimento"
-
-    json_edicoes = "bd/edicoes"
-
-    templates=[ "BossBR","Construcom","PCasallas"]
-
-    json_file = request.args.get('json_file')  # Padrão para o primeiro orçamento
-    index = request.args.get('idx')  # Padrão para o primeiro template
-    print(index)
+    # 1. Lista os JSONs de controle para saber qual orçamento analisar
     try:
-        index = int(request.args.get('idx', 0))  # Usa 0 como padrão
-    except ValueError:
-        index = 0  # Se for inválido, também usa 0
+        arquivos = sorted(
+            [f for f in os.listdir(json_dir_controle) if f.endswith('.json')],
+            key=lambda f: os.path.getmtime(os.path.join(json_dir_controle, f))
+        )
+        if not arquivos:
+            return "Nenhum JSON encontrado no diretório de controle.", 404
+    except FileNotFoundError:
+        return f"Diretório de controle '{json_dir_controle}' não encontrado.", 404
 
-
-    path=   ''
-
-    if not json_file:
-        return jsonify({"error": "json_file parameter is required"}), 400
+    # 2. Seleciona o arquivo de controle (ex: 21.json)
+    json_file = request.args.get('json_file', arquivos[-1])
+    if json_file not in arquivos:
+        json_file = arquivos[-1]
     
-    # seleciona o json_file solicitado ou o último
-    for temp in templates:
-        if os.path.exists(os.path.join(json_edicoes, temp)):
-            if index == 0:
-                path = os.path.join(json_edicoes, json_file)
-            else:
-                index -= 1
-            
-            break
-    if path == '':
-        path = os.path.join(json_dir, json_file)
-    if os.path.exists(path)==False:
-        return jsonify({"error": f"Arquivo {json_file} não encontrado em edições ou preenchimento"}), 404
+    base_id = int(json_file.split('.')[0])
+
+    # 3. Carrega o JSON de controle APENAS para pegar a lista de templates
+    path_controle = os.path.join(json_dir_controle, json_file)
+    with open(path_controle, encoding='utf-8') as f:
+        dados_controle = json.load(f)
+
+    templates = dados_controle.get('templates', [])
+    if isinstance(templates, str):
+        templates = [templates]
     
+    # 4. Determina o índice do template atual (ex: 0 para Big, 1 para BossBR)
+    idx = int(request.args.get('template_idx', 0) or 0)
+    if idx >= len(templates):
+        return ("<h2>Todos os templates foram revisados!</h2>"
+                "<a href='/dashboard'>Voltar para Início</a>"), 200
 
-    # carrega os dados
-    with open(path, encoding='utf-8') as f:
-        dados = json.load(f)
+    emp = templates[idx]  # Nome do template atual, ex: "Big"
 
-    # --- aqui reaplicamos o parsing antigo de produtos ---
+    # 5. [NOVA LÓGICA] Carrega os dados do JSON específico do template
+    # O caminho agora aponta para bd/edicoes/NOME_EMPRESA/XX.json
+    path_especifico = os.path.join("bd", "edicoes", emp, json_file)
+    
+    try:
+        with open(path_especifico, encoding='utf-8') as f:
+            dados = json.load(f)  # 'dados' agora contém o conteúdo específico
+    except FileNotFoundError:
+        return f"Erro: Arquivo JSON não encontrado para o template '{emp}' em '{path_especifico}'", 404
+    except json.JSONDecodeError:
+        return f"Erro ao decodificar o JSON em '{path_especifico}'. Verifique o formato do arquivo.", 500
+
+    # 6. [LÓGICA MOVIDA] O parsing de produtos agora opera nos 'dados' específicos do template
     raw = dados.get('produtos', '')
     if isinstance(raw, str):
         lst = []
         for trecho in raw.split('</tr>'):
             if '<tr>' not in trecho:
                 continue
-            # extrai cada célula
             cells = re.findall(r'<td>(.*?)</td>', trecho, flags=re.DOTALL)
             lst.append({
                 'numero': cells[0] if len(cells) > 0 else '',
@@ -194,27 +203,16 @@ def verificar_template(user_data):
                 'total_local': cells[5] if len(cells) > 5 else ''
             })
         dados['produtos'] = lst
-    # -------------------------------------------------------
 
-    # determina o template atual e próximo índice
-    templates = dados.get('templates', [])
-    if isinstance(templates, str):
-        templates = [templates]
-    idx = int(request.args.get('template_idx', 0) or 0)
-    if idx >= len(templates):
-        print(user_data)
-        return get_dashboard()
-
-    emp = templates[idx]
-    base_id = int(json_file.split('.')[0])
+    # 7. O restante da lógica permanece o mesmo
     iframe_src = f"/template-PDF/orcamento_{str(base_id).zfill(3)}_{emp.lower()}.html"
 
     return render_template(
         'revisao.html',
         iframe_src=iframe_src,
         template_nome=emp,
-        proximo_idx=idx+1,
-        dados=dados,
+        proximo_idx=idx + 1,
+        dados=dados,  # Passa os dados específicos do template para o frontend
         json_file=json_file,
         id=base_id
     ), 200
