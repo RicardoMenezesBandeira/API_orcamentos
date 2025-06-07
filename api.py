@@ -375,7 +375,7 @@ def atualiza_orcamento(user_data):
 @app.route('/download/<int:orcamento_id>/<template>', methods=['GET'])
 @token_required
 def download_orcamento(user_data, orcamento_id, template):
-    template
+    tpl_lower = template.lower()
     
     # 1) Monta paths possíveis
     path_edicoes = os.path.join('bd', 'edicoes', template, f'{orcamento_id}.json')
