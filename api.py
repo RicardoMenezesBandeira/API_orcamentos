@@ -375,10 +375,10 @@ def atualiza_orcamento(user_data):
 @app.route('/download/<int:orcamento_id>/<template>', methods=['GET'])
 @token_required
 def download_orcamento(user_data, orcamento_id, template):
-    tpl_lower = template.lower()
-
+    template
+    
     # 1) Monta paths possíveis
-    path_edicoes = os.path.join('bd', 'edicoes', tpl_lower, f'{orcamento_id}.json')
+    path_edicoes = os.path.join('bd', 'edicoes', template, f'{orcamento_id}.json')
     path_base    = os.path.join('bd', 'json_preenchimento', f'{orcamento_id}.json')
     if os.path.exists(path_edicoes):
         print(f"[DEBUG] Found edited JSON at {path_edicoes}")
