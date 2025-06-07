@@ -136,22 +136,38 @@ def receber_orcamento(user_data):
 @app.route("/verification", methods=["GET"])
 @token_required
 def verificar_template(user_data):
-    json_dir = "bd/json_preenchimento"
-    # lista os JSONs por data de modificação
-    arquivos = sorted(
-        [f for f in os.listdir(json_dir) if f.endswith('.json')],
-        key=lambda f: os.path.getmtime(os.path.join(json_dir, f))
-    )
-    if not arquivos:
-        return "Nenhum JSON encontrado", 404
 
+    json_dir = "bd/json_preenchimento"
+
+    json_edicoes = "bd/edicoes"
+
+    templates=[ "BossBR","Construcom","PCasallas"]
+
+    json_file = request.args.get('json_file')  # Padrão para o primeiro orçamento
+    index = request.args.get('idx')  # Padrão para o primeiro template
+    index=int(index)
+
+    path=   ''
+
+    if not json_file:
+        return jsonify({"error": "json_file parameter is required"}), 400
+    
     # seleciona o json_file solicitado ou o último
-    json_file = request.args.get('json_file', arquivos[-1])
-    if json_file not in arquivos:
-        json_file = arquivos[-1]
+    for temp in templates:
+        if os.path.exists(os.path.join(json_edicoes, temp)):
+            if index == 0:
+                path = os.path.join(json_edicoes, json_file)
+            else:
+                index -= 1
+            
+            break
+    if path == '':
+        path = os.path.join(json_dir, json_file)
+    if os.path.exists(path)==False:
+        return jsonify({"error": f"Arquivo {json_file} não encontrado em edições ou preenchimento"}), 404
+    
 
     # carrega os dados
-    path = os.path.join(json_dir, json_file)
     with open(path, encoding='utf-8') as f:
         dados = json.load(f)
 
