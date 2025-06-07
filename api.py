@@ -169,8 +169,7 @@ def verificar_template(user_data):
     # 4. Determina o índice do template atual (ex: 0 para Big, 1 para BossBR)
     idx = int(request.args.get('template_idx', 0) or 0)
     if idx >= len(templates):
-        return ("<h2>Todos os templates foram revisados!</h2>"
-                "<a href='/dashboard'>Voltar para Início</a>"), 200
+        return get_dashboard()
 
     emp = templates[idx]  # Nome do template atual, ex: "Big"
 
