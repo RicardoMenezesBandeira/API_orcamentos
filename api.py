@@ -181,7 +181,7 @@ def verificar_template(user_data):
         templates = [templates]
     idx = int(request.args.get('template_idx', 0) or 0)
     if idx >= len(templates):
-        return get_dashboard(user_data)
+        return get_dashboard()
 
     emp = templates[idx]
     base_id = int(json_file.split('.')[0])
