@@ -7,10 +7,7 @@
   <link rel="stylesheet" href="http://10.0.0.131/static/css/big.css">
  
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Alumni+Sans+SC:ital,wght@0,100..900;1,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
+  
   <style>
     
     @page {
@@ -31,75 +28,99 @@
 </head>
 <body >
   <div class="container">
-  <div class="item"><img class="logo-placeholder" src="http://10.0.0.131/static/img/big.png" alt="">
+<div class="item n1">
+  <img class="logo-placeholder" src="http://10.0.0.131/static/img/big.png" alt="">
+</div>
+<div class="item n2">
+  <div>
+
   </div>
-  <div class="item">
+  <div>
+
 	<p>
 	      Rua Valdelina Viana<br>  
               Santana, 46 Tel.: (22) 9 9801-0015<br>  
               Macaé, RJ/CEP: 27940-450<br>  
               suprimentos@bigsupplybr.com<br>          
-              www.bigsupplybr.com
+              www.bigsupplybr.com<br><br>
+              <strong>Data:</strong> {data}
   </p>
-  <div>
-          <strong>Orçamento Nº:</strong> {numero}<br>
-          <strong>Data:</strong> {data}
-    </div>
-</div>
- 
-  <div class="item">
-    <div>
-     <strong>Vendedor:</strong> {vendedor}<br>
-    <strong>Aos cuidados de:</strong> {responsavel}<br>   
-  
-</div>
-<table class="table table-bordered mt-3">
+   
     
-	<thead class="table-light">
-        	<tr>
-			<th>Item</th><th>Descrição</th><th>Qtd</th><th>Un</th><th>Preço Unit.</th><th>Total</th>
-			</tr>
-	</thead>
-        <tbody>            
-        	{produtos}
-	</tbody>
+  </div>
+</div>
+<div class="item n9"></divclass>
+  <div class="proposta-box nao-quebrar">
+    <h3 class="text-center">Proposta Comercial</h3>
+    <p class="text-center">Orçamento nº {numero}</p>
+  </div>
+</div>
+<div class="item n3">
+   
+    <div>
+      <div>
+ <strong>Vendedor:</strong> {vendedor}
+      </div>
+      <div>
+<strong>Aos cuidados de:</strong> {responsavel}<br>   
+
+      </div>
+    </div>
+   
+     
+    
+    
+    
+
+
+<table class="table table-bordered mt-3">
+
+<thead class="table-light">
+      <tr>
+  <th>Item</th><th>Descrição</th><th>Qtd</th><th>Un</th><th>Preço Unit.</th><th>Total</th>
+  </tr>
+</thead>
+    <tbody>            
+      {produtos}
+</tbody>
 </table>
 </div>
-  <div class="item">
-    <div class="proposta-box nao-quebrar">
-          <p>
-              <strong>Razão social:</strong> {cliente}<br>
-              <strong>Endereço:</strong> {endereco}<br>
-              <strong>CPF/CNPJ:</strong> {cnpj}<br>
-              <strong>Telefone:</strong> {telefone}<br>
-          </p>
-        
-      </div>
+<div class="item n4">
+<div class="proposta-box nao-quebrar">
+      <p>
+          <strong>Razão social:</strong> {cliente}<br>
+          <strong>Endereço:</strong> {endereco}<br>
+          <strong>CPF/CNPJ:</strong> {cnpj}<br>
+          <strong>Telefone:</strong> {telefone}<br>
+      </p>
+    
   </div>
-            <div class="item">
-              <div class="proposta-box nao-quebrar">
-                  <p>
-              <strong>Email:</strong> {email}<br>
-              <strong>Nome fantasia:</strong> {nome}<br>
-              <strong>Cidade/UF:</strong> {cidade}<br>
-              <strong>CEP:</strong> {cep}<br>
-                </p>
-                
-            </div>
-          </div>
-    <div class="item">
+</div>
+<div class="item n5">
+<div class="proposta-box nao-quebrar">
+    <p>
+<strong>Email:</strong> {email}<br>
+<strong>Nome fantasia:</strong> {nome}<br>
+<strong>Cidade/UF:</strong> {cidade}<br>
+<strong>CEP:</strong> {cep}<br>
+  </p>
+  
+</div>
+</div>
+<div class="item n6 linha-escrita">
+  <strong>OBS:</strong> {obs}
+</div>
+<div class="item n7">
   <div class="info"><strong>Prazo para pagamento:</strong> {dias_pagamento}</div>
   <div class="info"><strong>Previsão de entrega:</strong> {dias_entrega}</div>
   <div class="info"><strong>Validade da proposta:</strong> {dias_validade}</div>
 </div>
-
-     
-  <div class="item">
+<div class="item n8">
    
     <p class="total mt-3 nao-quebrar">Total do orçamento: <strong> {valor_total}</strong></p>
     <div class="nao-quebrar">
       Atensiosamente, <br>Departamento de vendas
-      <p class="assin nao-quebrar">Assinatura do cliente<br><br>_____________________________________________________</p>
+      <p class="assin nao-quebrar">_____________________________________________________<br>Assinatura do cliente</p>
     </div>
 
   </div>
