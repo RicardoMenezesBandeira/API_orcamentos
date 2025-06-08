@@ -21,54 +21,49 @@ window.onload = function() {
    //Formata um número de telefone para o formato: +dd (xx) 12345-6789
    
   function formataUmaStringDeDigitosParaTelefone(digitos) {
-      // Pede para ninguém passar algo que não seja string:
-      digitos = digitos || '';
-      // código do país (dois primeiros dígitos)
-      const codigoPais = digitos.slice(0, 2);
-      // DDD (próximos dois)
-      const ddd        = digitos.slice(2, 4);
-      // resto (a partir do quinto dígito)
-      const resto      = digitos.slice(4);
+  digitos = digitos || '';
+  const total = digitos.length;
+  let resultado = '';
 
-      let resultado = '';
+  if (total > 11) {
+    // Formato internacional: +cc (xx) xxxxx-xxxx
+    const codigoPais = digitos.slice(0, 2);
+    const ddd = digitos.slice(2, 4);
+    const parte1 = digitos.slice(4, 9);
+    const parte2 = digitos.slice(9, 13);
 
-      // Se há pelo menos um dígito no código do país, coloca "+" e os dígitos (pode ser incompleto)
-      if (codigoPais.length > 0) {
-        resultado += '+' + codigoPais;
-      }
-
-      // Se já houver 2 dígitos de país completos, podemos começar o "("
-      if (codigoPais.length === 2) {
-        // Se houver 1 ou 2 dígitos de DDD, monto "(x" ou "(xx"
-        resultado += ' (' + ddd;
-        // Se o DDD já tem 2 dígitos, fecha ")"
-        if (ddd.length === 2) {
-          resultado += ')';
-        }
-      }
-
-      // Se tiver 2 dígitos de país + 2 de DDD completos, formatamos o resto
-      if (resto.length > 0) {
-        // Garante que só adicionamos o espaço se já tivermos “+dd (xx)”
-        if (codigoPais.length === 2 && ddd.length === 2) {
-          resultado += ' ';
-        }
-        // Se o resto tiver mais de 5 dígitos, dividimos em “xxxxx-xxxx”
-        if (resto.length > 5) {
-          const parte1 = resto.slice(0, 5);
-          const parte2 = resto.slice(5, 9); // no máximo 4 dígitos após os 5 primeiros
-          resultado += parte1;
-          if (parte2.length > 0) {
-            resultado += '-' + parte2;
-          }
-        } else {
-          // Se tiver até 5 dígitos, exibimos tudo junto (sem hífen)
-          resultado += resto;
-        }
-      }
-
-      return resultado;
+    resultado = `+${codigoPais} (${ddd}) ${parte1}`;
+    if (parte2) {
+      resultado += `-${parte2}`;
     }
+
+  } else if (total === 11) {
+    // Nacional com 9 dígitos (celular): (xx) x xxxx-xxxx
+    const ddd = digitos.slice(0, 2);
+    const parte1 = digitos.slice(2, 3);
+    const parte2 = digitos.slice(3, 7);
+    const parte3 = digitos.slice(7, 11);
+
+    resultado = `(${ddd}) ${parte1} ${parte2}`;
+    if (parte3) {
+      resultado += `-${parte3}`;
+    }
+
+  } else {
+    // Nacional com 8 dígitos (fixo): (xx) xxxx-xxxx
+    const ddd = digitos.slice(0, 2);
+    const parte1 = digitos.slice(2, 6);
+    const parte2 = digitos.slice(6, 10);
+
+    resultado = `(${ddd}) ${parte1}`;
+    if (parte2) {
+      resultado += `-${parte2}`;
+    }
+  }
+
+  return resultado;
+}
+
 
     /**
      * 2) Na hora do input:
