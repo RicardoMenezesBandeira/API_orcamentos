@@ -136,7 +136,8 @@ def receber_orcamento(user_data):
 @app.route("/verification", methods=["GET"])
 @token_required
 def verificar_template(user_data):
-    base_path = os.path.join("bd", "json_preenchimento", json_file)
+    json_file = request.args.get('json_file')  # Padrão para 21.json
+    base_path = "bd/json_preenchimento"  # Renomeado para clareza
 
     # 1. Lista os JSONs de controle para saber qual orçamento analisar
     try:
@@ -174,6 +175,8 @@ def verificar_template(user_data):
 
     # 5. [NOVA LÓGICA] Carrega os dados do JSON específico do template
     # O caminho agora aponta para bd/edicoes/NOME_EMPRESA/XX.json
+    
+    base_path = os.path.join("bd", "json_preenchimento", json_file)
     edit_path = os.path.join("bd", "edicoes", emp, json_file)
     
     try:
