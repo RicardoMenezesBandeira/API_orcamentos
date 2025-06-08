@@ -82,14 +82,16 @@
           {% endfor %}
         </div>
         <button type="button" id="add-produto">+ Adicionar Produto</button>
-        <!-- Condições Comerciais -->
+       <!-- Condições Comerciais -->
         <div class="section-title">Condições Comerciais</div>
-        {% for campo in ['dias_pagamento_comercial','valor_pagamento_comercial','obs_pagamento_comercial'] %}
         <div class="form-group">
-          <label>{{ campo.replace('_',' ').capitalize() }}:</label>
-          <input type="text" name="{{ campo }}" value="{{ dados[campo] }}">
+          <label>Obs pagamento comercial:</label>
+          <input 
+            type="text" 
+            name="obs_pagamento_comercial" 
+            value="{{ dados['obs_pagamento_comercial'] }}"
+          >
         </div>
-        {% endfor %}
 
         <!-- Condições Gerais -->
         <div class="section-title">Condições Gerais</div>
