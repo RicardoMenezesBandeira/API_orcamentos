@@ -136,19 +136,18 @@ def receber_orcamento(user_data):
 @app.route("/verification", methods=["GET"])
 @token_required
 def verificar_template(user_data):
-    
-    json_dir_controle = "bd/json_preenchimento"  # Renomeado para clareza
+    base_path = os.path.join("bd", "json_preenchimento", json_file)
 
     # 1. Lista os JSONs de controle para saber qual orçamento analisar
     try:
         arquivos = sorted(
-            [f for f in os.listdir(json_dir_controle) if f.endswith('.json')],
-            key=lambda f: os.path.getmtime(os.path.join(json_dir_controle, f))
+            [f for f in os.listdir(base_path) if f.endswith('.json')],
+            key=lambda f: os.path.getmtime(os.path.join(base_path, f))
         )
         if not arquivos:
             return "Nenhum JSON encontrado no diretório de controle.", 404
     except FileNotFoundError:
-        return f"Diretório de controle '{json_dir_controle}' não encontrado.", 404
+        return f"Diretório de controle '{base_path}' não encontrado.", 404
 
     # 2. Seleciona o arquivo de controle (ex: 21.json)
     json_file = request.args.get('json_file', arquivos[-1])
@@ -158,7 +157,7 @@ def verificar_template(user_data):
     base_id = int(json_file.split('.')[0])
 
     # 3. Carrega o JSON de controle APENAS para pegar a lista de templates
-    path_controle = os.path.join(json_dir_controle, json_file)
+    path_controle = os.path.join(base_path, json_file)
     with open(path_controle, encoding='utf-8') as f:
         dados_controle = json.load(f)
 
@@ -175,15 +174,19 @@ def verificar_template(user_data):
 
     # 5. [NOVA LÓGICA] Carrega os dados do JSON específico do template
     # O caminho agora aponta para bd/edicoes/NOME_EMPRESA/XX.json
-    path_especifico = os.path.join("bd", "edicoes", emp, json_file)
+    edit_path = os.path.join("bd", "edicoes", emp, json_file)
     
     try:
-        with open(path_especifico, encoding='utf-8') as f:
-            dados = json.load(f)  # 'dados' agora contém o conteúdo específico
+        if os.path.exists(edit_path):
+            with open(edit_path, encoding='utf-8') as f:
+                dados = json.load(f)
+        else:
+            with open(base_path, encoding='utf-8') as f:
+                dados = json.load(f)
     except FileNotFoundError:
-        return f"Erro: Arquivo JSON não encontrado para o template '{emp}' em '{path_especifico}'", 404
+        return f"Erro: Arquivo JSON não encontrado para o template '{emp}' em '{edit_path}' e  '{base_path}'", 404
     except json.JSONDecodeError:
-        return f"Erro ao decodificar o JSON em '{path_especifico}'. Verifique o formato do arquivo.", 500
+        return f"Erro ao decodificar o JSON em '{edit_path}' ou e  '{base_path}'. Verifique o formato do arquivo.", 500
 
     # 6. [LÓGICA MOVIDA] O parsing de produtos agora opera nos 'dados' específicos do template
     raw = dados.get('produtos', '')
