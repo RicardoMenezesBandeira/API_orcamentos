@@ -34,7 +34,7 @@
         let templates = dado.templates || [];
         let id = dado.id;
         let circulos = '';
-        const tipos = ['BossBR', 'PCasallas', 'Construcom'];
+        const tipos = ['BossBR', 'PCasallas', 'Construcom','Big'];
 
         tipos.forEach(tipo => {
           if (templates.includes(tipo)) {
@@ -160,7 +160,7 @@ function filtrarOrcamentos(valor) {
     let templates = dado.templates || [];
     let id = dado.id;
     let circulos = '';
-    const tipos = ['BossBR', 'PCasallas', 'Construcom'];
+    const tipos = ['BossBR', 'PCasallas', 'Construcom','Big'];
 
     tipos.forEach(tipo => {
       if (templates.includes(tipo)) {

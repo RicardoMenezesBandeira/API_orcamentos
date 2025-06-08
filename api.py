@@ -529,7 +529,7 @@ def delete_orcamento(user_data, id):
     """
     path = "bd/json_preenchimento"
     path2 = "bd/edicoes"
-    pastas = ["PCasallas", "BossBR","Construcom"]
+    pastas = ["PCasallas", "BossBR","Construcom","Big"]
 
     file_path = os.path.join(path, f"{id}.json")
     if os.path.exists(file_path):
