@@ -104,7 +104,6 @@ table td {
   margin-bottom: 15px;
   background-color: #f9f9f9;
   max-width: 50%;
-  height: 150px;
 }
 .b2{
  
@@ -146,7 +145,6 @@ section{
 .infos {
   display: flex;
   flex-direction: column;
-  gap: 10px;
   width: 100%;
 }
 

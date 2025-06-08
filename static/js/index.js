@@ -29,8 +29,20 @@
 
     const orca = document.getElementById("orcamento");
     let lista = "<div class='content'>";
+    dados.forEach(function(dado) {
+    const dataAtual = new Date();
+    const dataDado = new Date(dado['data']);
 
+    // Verifica se dataDado é mais de 1 ano atrás
+    const umAnoAtras = new Date();
+    umAnoAtras.setFullYear(dataAtual.getFullYear() - 1);
+
+    if (dataDado < umAnoAtras) {
+        deleteOrcamento(dado['id']); // Supondo que a função se chame deleteDado
+    }
+});
     dados.reverse().forEach(function(dado) {
+
         let templates = dado.templates || [];
         let id = dado.id;
         let circulos = '';
