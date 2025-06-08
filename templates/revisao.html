@@ -34,7 +34,7 @@
 
         <!-- Dados Gerais -->
         <div class="section-title">Dados Gerais</div>
-        {% for campo in ['id','cliente','cnpj','responsavel','endereco','cidade','data'] %}
+        {% for campo in ['id','cliente','cnpj','responsavel','endereco','email','cidade','data'] %}
         <div class="form-group">
           <label>{{ campo.replace('_',' ').capitalize() }}:</label>
           <input type="text"

@@ -135,6 +135,11 @@ function mostrarMensagem(tipo, texto) {
 }
 function excluirCliente(cnpj){
     if (confirm('Tem certeza que deseja excluir este cliente?')) {
+        if (typeof cnpj !== 'string') {
+            cnpj = cnpj.toString();
+            cnpj = cnpj.padStart(14, '0')
+                }
+
         fetch(url+`/delete_cliente/${cnpj}`, {
             method: 'DELETE',
             headers: {
