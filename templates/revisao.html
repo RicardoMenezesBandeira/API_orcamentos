@@ -34,7 +34,7 @@
 
         <!-- Dados Gerais -->
         <div class="section-title">Dados Gerais</div>
-        {% for campo in ['id','cliente','cnpj','responsavel','endereco','email','cidade','data'] %}
+        {% for campo in ['numero','cliente','cnpj','responsavel','endereco','email','cidade','data'] %}
         <div class="form-group">
           <label>{{ campo.replace('_',' ').capitalize() }}:</label>
           <input type="text"
@@ -55,7 +55,8 @@
               </div>
               <div class="form-group">
                 <label>Produto:</label>
-                <input type="text" name="produto[]" value="{{ item.produto }}">
+                <textarea name="produto[]" required rows="1" oninput="autoGrow(this)">{{ item.produto }}</textarea>
+
               </div>
             </div>
             <div class="flex-row">
@@ -85,12 +86,8 @@
        <!-- Condições Comerciais -->
         <div class="section-title">Condições Comerciais</div>
         <div class="form-group">
-          <label>Obs pagamento comercial:</label>
-          <input 
-            type="text" 
-            name="obs_pagamento_comercial" 
-            value="{{ dados['obs_pagamento_comercial'] }}"
-          >
+          <label>Obs:</label>
+                  <textarea name="obs_pagamento_comercial" required rows="1" oninput="autoGrow(this)">{{dados['obs']}}</textarea>
         </div>
 
         <!-- Condições Gerais -->
@@ -356,6 +353,10 @@
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('preview-btn').click();
     })
+      function autoGrow(element) {
+  element.style.height = "auto";
+  element.style.height = (element.scrollHeight) + "px";
+}
   </script>
 </body>
 </html>
