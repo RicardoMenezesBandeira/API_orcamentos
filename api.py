@@ -410,8 +410,10 @@ def download_orcamento(user_data, orcamento_id, template):
         return jsonify({'erro': 'JSON não encontrado em edicoes nem em json_preenchimento'}), 404
 
     # 2) Carrega JSON
+    print("[DEBUG] Loading JSON from", json_path)
     with open(json_path, encoding='utf-8') as f:
         data = json.load(f)
+    print("[DEBUG] JSON loaded successfully")
 
     # 3) Converte lista de produtos em HTML + calcula valor_total
     produtos = data.get('produtos')
@@ -419,8 +421,9 @@ def download_orcamento(user_data, orcamento_id, template):
         rows = []
         valor_total = 0.0
         for item in produtos:
-            q = float(item.get('quantidade', 0) or 0)
-            v = float(item.get('valor_unitario', 0) or 0)
+            q = float((item.get('quantidade') or '0').replace(',', '.'))
+            v = float((item.get('valor_unitario') or '0').replace(',', '.'))
+
             total_local = q * v
             valor_total += total_local
 
