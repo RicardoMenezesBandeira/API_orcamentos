@@ -290,8 +290,8 @@ def preview_template(user_data):
             rows = []
             valor_total = 0.0
             for item in p:
-                q = float(item.get('quantidade') or 0)
-                v = float(item.get('valor_unitario') or 0)
+                q = float((item.get('quantidade') or '0').replace(',', '.'))
+                v = float((item.get('valor_unitario') or '0').replace(',', '.'))
                 total = q * v
                 valor_total += total
                 rows.append(
