@@ -295,7 +295,7 @@ def preview_template(user_data):
                 total = q * v
                 valor_total += total
                 rows.append(
-                    '<tr>'
+                    '<tr class="nao-quebrar">'
                     f'<td>{item.get("numero")}</td>'
                     f'<td>{item.get("produto")}</td>'
                     f'<td>{q}</td>'
@@ -431,7 +431,7 @@ def download_orcamento(user_data, orcamento_id, template):
             t_fmt = format_currency(total_local, "BRL", locale="pt_BR", format="¤#,##0.0000")
 
             rows.append(
-                "<tr>"
+                '<tr class="nao-quebrar">'
                 f"<td>{item.get('numero','')}</td>"
                 f"<td>{item.get('produto','')}</td>"
                 f"<td>{int(q)}</td>"
