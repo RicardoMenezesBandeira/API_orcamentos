@@ -336,11 +336,18 @@ produtosContainer.addEventListener('click', e => {
 document.addEventListener('DOMContentLoaded', recalcularResumo);
 
 
-const buscaInput = document.getElementById("busca-nome");
+const cliente_campo = document.getElementById("cliente");
+const cnpj_campo = document.getElementById("cnpj");
 const sugestoes = document.getElementById("sugestoes");
 
-buscaInput.addEventListener("input", () => {
-    const query = buscaInput.value.trim().toLowerCase();
+cliente_campo.addEventListener("input", () => {
+  buscarCliente(cliente_campo.value);
+});
+cnpj_campo.addEventListener("input", () => {
+  buscarCliente(cnpj_campo.value);
+});
+function buscarCliente(inp){
+    const query = inp.trim().toLowerCase();
     if (query.length < 2) {
         sugestoes.innerHTML = "";
         sugestoes.style.display = "none";
@@ -366,7 +373,8 @@ buscaInput.addEventListener("input", () => {
     });
 
     sugestoes.style.display = encontrados.length ? "block" : "none";
-});
+}
+
 function preencherFormulario(cliente) {
   const form = document.getElementById("form-grid");
   Object.entries(cliente).forEach(([key, value]) => {

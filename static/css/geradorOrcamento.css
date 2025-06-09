@@ -134,3 +134,22 @@ body {
     margin-bottom: 20px;
     gap: 100px;
   }
+.clientes-sugeridos{
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  padding: 20px;
+  z-index: 9999;
+}
+.clientes-sugeridos ul{
+  list-style-type: none;
+      /* border: 1px solid rgb(204, 204, 204); */
+    margin: 0px;
+    padding: 0px;
+}
+.clientes-sugeridos ul li {
+    padding: 5px;
+    text-decoration: none;
+    border: 1px solid rgb(204, 204, 204);
+    margin: 15px 5px;
+  }
