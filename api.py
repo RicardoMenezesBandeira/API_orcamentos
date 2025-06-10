@@ -487,7 +487,7 @@ def get_dashboard(user_data):
     dados =get_data(nome)
     nome = dados.get("nome")
     info     = f"Nome: {nome}"
-    btn = "<input type='text' class='search' placeholder='Buscar Nº de orçamento...' oninput='filtrarOrcamentos(this.value)'><button class='btn' onclick='novoOrcamento()'>gerar novo orçamento</button>"
+    btn = "<button class='btn' onclick='novoOrcamento()'>gerar novo orçamento</button>"
     if dados.get("admin"):
         btn += " <button class='btn' onclick='novoFuncionario()'>cadastra empregado</button>"
 
