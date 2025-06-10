@@ -92,12 +92,15 @@
 
         <!-- Condições Gerais -->
         <div class="section-title">Condições Gerais</div>
-        {% for campo in ['dias_entrega','dias_validade','dias_pagamento'] %}
         <div class="form-group">
-          <label>{{ campo.replace('_',' ').capitalize() }}:</label>
-          <input type="number" name="{{ campo }}" value="{{ dados[campo] }}">
+          <label>Dias validade:</label>
+          <input type="number" name="dias_validade" value="{{dados['dias_validade']}}">
+          <label>Dias pagamento:</label>
+          <input type="number" name="dias_pagamento" value="{{ dados['dias_pagamento']}}">
+          <label>Dias entrega:</label>
+          <textarea type="number" name="dias_entrega" >{{dados['dias_entrega']}}</textarea>
         </div>
-        {% endfor %}
+       
 
         <div class="form-actions">
           <button type="button" id="preview-btn">Aplicar Correções</button>
