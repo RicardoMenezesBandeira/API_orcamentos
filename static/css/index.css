@@ -33,10 +33,11 @@ body {
   text-align: center;
   align-content: center;
   padding: 10px;
+  width: 100px;
 }
 .row > div:nth-child(1) {
   /* coluna 1 (ID) */
-  width: 40px;
+  width: 65px;
   background-color: #007bff;
   height: 40px;
   border-radius: 20px;
@@ -74,15 +75,7 @@ body {
   width: 121px;
   justify-content: center;
 }
-.info-box {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-weight: 500;
-  min-width: 200px;
-  text-align: center;
-}
+
 
 .btn {
   background-color: #007bff;
@@ -100,14 +93,7 @@ body {
   background-color: #0056b3;
 }
 
-.main-content {
-  background-color: white;
-  width: 90%;
-  max-width: 1100px;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+
 
 .item-bar {
   display: flex;
@@ -160,7 +146,10 @@ body {
   gap: 0.5rem;
   align-items: center;
 }
-
+.downloads{
+  position: relative;
+  left: 25px;
+}
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -176,26 +165,88 @@ body {
 .table tbody tr:nth-child(even) {
   background-color: #003f7e57; /* cor 2 */
 }
+
+
 .table td:nth-child(1) { width: 38%; }
 .table td:nth-child(2) { width: 8%; }
 .table td:nth-child(3) { width: 11%; }
 .table td:nth-child(4) { width: 35%; }
 .table td:nth-child(5) { width: 8%; }
-       .menu{
-        display: flex;
-        gap: 10px;
-        align-items: center;
-            justify-content: space-between;
+
+
+
+
+
+.info-box {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  min-width: 200px;
+  text-align: center;
+  
+  margin: 10px 15px;
+}.menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 97%;
+  height: 80px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* distribui itens entre esquerda e direita */
+  padding: 0 20px;
+  z-index: 1000;
+  transition: top 0.3s ease;
+}
+
+/* Exemplo para os botões dentro do menu */
+.menu .btns button {
+  margin: 0 10px;
+  height: 36px;
+  padding: 0 15px;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+
+
+/* Info-box pode ficar à esquerda */
+.menu .info-box {
+  font-weight: bold;
+  font-size: 18px;
+  color: #333;
+}.menu .btns .btn {
+  margin-left: 10px;
+}
+
+.main-content {
+  background-color: white;
+  width: 90%;
+  position: relative;
+  top:80px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 .search{
   
-    border-color: #ff000000;
-    width: 200px;
+    border-color: #000000ba;
+    width: 30%;
     height: 30px;
     border-radius: 5px;
 
 }
 .search:focus{
-    border-color: #ff000000;
-    outline: none;
+    border-color: #f60000d2;
 }
+.menu.hidden {
+    top: -100px; /* ou altura da barra de menu */
+  }
