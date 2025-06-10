@@ -229,3 +229,21 @@ function filtrarOrcamentos(valor) {
   atualizaOrcamento(); // Atualiza a lista de orçamentos após a exclusão
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    let lastScroll = 0;
+    const menu = document.querySelector('.menu');
+
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.scrollY;
+
+      if (currentScroll > lastScroll) {
+        // Rolar para baixo: esconder menu
+        menu.classList.add('hidden');
+      } else {
+        // Rolar para cima: mostrar menu
+        menu.classList.remove('hidden');
+      }
+
+      lastScroll = currentScroll;
+    });
+  });
