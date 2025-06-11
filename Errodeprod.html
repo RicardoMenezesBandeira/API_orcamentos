@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modelos de Orçamento</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="http://191.252.181.160:80/static/css/contrucom.css">
+  <style>
+   
+    .pagina {
+      page-break-after: auto;
+    }
+
+    .nao-quebrar {
+      page-break-inside: avoid;
+    }
+      @page {
+      size: A4;
+      margin: 0.5cm;
+      margin-bottom: 2cm;
+
+
+      @bottom-center {
+        content: "CNPJ: 20.175.290/0001-11  \A  CONSTRUCOM COMÉRCIO E SERVIÇO LTDA \A Rua José Rodrigues Félix, Nº 145 - Botafogo - Macaé/RJ - CEP: 27947-730 \A Tel: (22) 3083-0882 | E-mail: comercial@construcom.srv.br  |  www.construcom.srv.br";
+        font-size: 9pt;
+        color: #444;
+        white-space: pre;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body >
+  <div class="container  shadow rounded template-style-vintage">
+    <header class="d-flex justify-content-between align-items-start pb-3 mb-3 nao-quebrar">
+      <div class="d-flex align-items-center">
+        <div class="me-3"> <img src="http://191.252.181.160:80/static/img/contrucom.png"></div>
+        <div>
+          <h2 class="mb-0"></h2>          
+        </div>
+      </div>
+      <div class="text-end">
+        <h2 class="mb-0">ORÇAMENTO</h2>
+        <p class="mb-0">Nº {numero} - {data}</p>
+      </div>
+    </header>
+    <section>
+      
+      <p><strong>Cliente:</strong>PETROLEO BRASILEIRO S A PETROBRAS<br>
+        <strong>E-mail:</strong><br>
+         <strong>Endereço:</strong> AV ELIAS AGOSTINHO,655,MACAÉ,<br>{cidade}<br>
+         <strong>Telefone:</strong><br>
+         <strong>CNPJ:</strong> 33.000.167/1007-50</p>
+         <p style="font-size: 0.8em;">TRIBUTADA PELO LUCRO PRESUMIDO<br>
+         PIS/COFINS 3,65%<br>
+         ICMS 22% A INCLUIR<br>
+         FRETE CIF<br>
+         Aos cuidados de:</p>
+      <table class="table table-bordered mt-3 nao-quebrar">
+        <thead>
+          <tr>
+            <th>Cod.</th>
+            <th>Item</th>
+            <th>Qtd</th>
+            <th>un</th>
+            <th>Preço Unitário</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Corrimão Tubo aço carbono Ø1 ½”
+SHC 40</td>
+            <td>620</td>
+            <td>m</td>
+            <td>R$ 245,00</td>
+            <td>R$ 151.900,00</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Montantes (pilares verticais) Tubo
+aço carbono Ø1 ½” SHC 40</td>
+            <td>1140</td>
+            <td>m</td>
+            <td>R$ 245,00</td>
+            <td>R$ 279.300,00</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Travessas horizontais Tubo aço
+carbono Ø1 ½” SHC 40</td>
+            <td>620</td>
+            <td>m</td>
+            <td>R$ 245,00</td>
+            <td>R$ 151.900,00</td>
+          </tr><tr>
+            <td>4</td>
+            <td>Base de fixação Tubo aço carbono Ø
+2” SHC 40</td>
+            <td>108</td>
+            <td>m</td>
+            <td>R$ 337,00</td>
+            <td>R$ 36.396,00</td>
+          </tr><tr>
+            <td>5</td>
+            <td>Rodapes horizontais Barra Chata 1/4"
+x 4"</td>
+            <td>620</td>
+            <td>m</td>
+            <td>R$ 289,00</td>
+            <td>R$ 179.180,00</td>
+          </tr><tr>
+            <td>6</td>
+            <td>Base de fixação Chapa de aço 5/16" x
+3"</td>
+            <td>108</td>
+            <td>m</td>
+            <td>R$ 187,00</td>
+            <td>R$ 20.196,00</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>Base de fixação Chapa de aço 1/2" x
+4" </td>
+            <td>108</td>
+            <td>m</td>
+            <td>R$ 415,00</td>
+            <td>R$ 44.820,00</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>Parafuso fixação Kit Parafuso 3/8" x
+3.1/2" c/ arruela e porca</td>
+            <td>1200</td>
+            <td>und</td>
+            <td>R$ 14,00</td>
+            <td>R$ 16.800,00</td>
+          </tr>
+          <!-- Adicione mais linhas conforme necessário -->
+        </tbody>
+      </table>
+        <p class="obs ">Total do orçamento: <strong>R$ 880.492,00</strong></p>
+        <p>Obs: Confecção de guarda corpo aço carbono: tubo redondo de 1 1/2″ e 2″ sch 40, barra chata 1/4″, 5.1/6″ e 1/2″, com pintura epóxi N-2913.
+(Informamos que o orçamento contempla fabricação e documentação técnica dos processos de soldagem e pintura, incluindo: Soldagem: WPS, PQR, WPQ e relatórios de inspeção. Pintura: Plano e procedimento de pintura, fichas técnicas, registros ambientais e relatórios de espessura e inspeção).</p>
+        <p><strong>Previsão Entrega: </strong> 45 dias<br>
+        <strong>Validade da proposta:</strong> 15 dias<br>
+        <strong>Prazo para pagamento:</strong> 30 dias<br></p>
+           
+  
+        <p>Atenciosamente,<br>
+           Departamento Comercial </p>
+        <p style="text-align: center;">_________________________________________________________<br>
+      
+      
+     </section>
+  </div>
+
+</body>
+</html>
