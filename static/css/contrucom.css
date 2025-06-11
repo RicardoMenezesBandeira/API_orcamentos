@@ -2,18 +2,22 @@
   color: black;
 }
 @page {
-  size: A4;
-  margin: 0.5cm;
-}
+      size: A4;
+      margin: 0.5cm;
+      margin-bottom: 2cm;
+
+
+      @bottom-center {
+        content: "CNPJ: 20.175.290/0001-11  \A  CONSTRUCOM COMÉRCIO E SERVIÇO LTDA \A Rua José Rodrigues Félix, Nº 145 - Botafogo - Macaé/RJ - CEP: 27947-730 \A Tel: (22) 3083-0882 | E-mail: comercial@construcom.srv.br  |  www.construcom.srv.br";
+        font-size: 9pt;
+        color: #444;
+        white-space: pre;
+        text-align: center;
+      } }
 body {
   font-family: 'Georgia', serif;
 }
-html, body {
-  height: 100%;
-  min-height: 100%;
-  margin: 0;
-  padding: 0;
-}
+
 img {
   width: 200px;
 }
@@ -65,13 +69,8 @@ table th, table td {
   margin: 5px;
   min-height: 200mm;
 }
-.pagina {
-  page-break-after: auto;
-}
-
-.nao-quebrar {
-  page-break-inside: avoid;
-}
 .text-end{
   padding: 5px;
+}.nao-quebrar {
+  page-break-inside: avoid;
 }
