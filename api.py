@@ -127,7 +127,7 @@ def receber_orcamento(user_data):
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(dados, f, indent=2, ensure_ascii=False)
     print(f"[INFO] Saved base JSON to {path}")
-
+    
     return jsonify({
         "mensagem": f"Orçamentos salvos para {', '.join(templates)}.",
         "id": nid
@@ -222,6 +222,16 @@ def verificar_template(user_data):
         id=base_id
     ), 200
 
+def parse_valor_brasileiro(valor):
+    if not valor:
+        return 0.0
+    valor = str(valor).replace('.', '').replace(',', '.')
+    try:
+        return float(valor)
+    except ValueError:
+        return 0.0
+
+
 @app.route("/verification/preview", methods=["POST"])
 @token_required
 def preview_template(user_data):
@@ -290,8 +300,9 @@ def preview_template(user_data):
             rows = []
             valor_total = 0.0
             for item in p:
-                q = float((item.get('quantidade') or '0').replace(',', '.'))
-                v = float((item.get('valor_unitario') or '0').replace(',', '.'))
+                q = parse_valor_brasileiro(item.get('quantidade'))
+                v = parse_valor_brasileiro(item.get('valor_unitario'))
+                print(f"[DEBUG] Processing item: {item.get('numero')} - {item.get('produto')} - Q: {q}, V: {v}")
                 total = q * v
                 valor_total += total
                 rows.append(
@@ -421,9 +432,9 @@ def download_orcamento(user_data, orcamento_id, template):
         rows = []
         valor_total = 0.0
         for item in produtos:
-            q = float((item.get('quantidade') or '0').replace(',', '.'))
-            v = float((item.get('valor_unitario') or '0').replace(',', '.'))
-
+            q = parse_valor_brasileiro(item.get('quantidade'))
+            v = parse_valor_brasileiro(item.get('valor_unitario'))
+            print(f"[DEBUG] Processing item: {item.get('numero')} - {item.get('produto')} - Q: {q}, V: {v}")
             total_local = q * v
             valor_total += total_local
 
