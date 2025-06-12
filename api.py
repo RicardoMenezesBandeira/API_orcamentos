@@ -223,6 +223,7 @@ def verificar_template(user_data):
     ), 200
 
 def parse_valor_brasileiro(valor):
+    print(f"[DEBUG] Parsing valor: {valor}")
     if not valor:
         return 0.0
     valor = str(valor).replace('.', '').replace(',', '.')
