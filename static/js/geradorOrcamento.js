@@ -392,14 +392,3 @@ function preencherFormulario(cliente) {
   element.style.height = "auto";
   element.style.height = (element.scrollHeight) + "px";
 }
-function blockDotComma(e) {
-  const key = e.key;
-
-  // Bloqueia "." e "," e "e" (exponencial)
-  if (key === "." || key === "e" || key === "E") {
-    e.preventDefault();
-    return false;
-  }
-
-  return true;
-}
