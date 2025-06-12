@@ -62,7 +62,7 @@
             <div class="flex-row">
               <div class="form-group">
                 <label>Quantidade:</label>
-                <input type="number" name="qtd[]" value="{{ item.quantidade }}">
+                <input type="text" name="qtd[]" step="0.0001"  onkeydown="return blockDotComma(event)">
               </div>
               <div class="form-group">
                 <label>Unidade:</label>
@@ -159,6 +159,7 @@
       const js = await resp.json();
       if (resp.ok) {
         document.getElementById('orcamento-frame').srcdoc = js.preview_html;
+        console.log(js)
       } else {
         alert('Erro: ' + js.erro);
       }
@@ -268,7 +269,7 @@
         '<div class="flex-row">',
           '<div class="form-group">',
             '<label>Quantidade:</label>',
-            '<input type="number" name="qtd[]">',
+            '<input type="text" name="qtd[]" step="0.0001"  onkeydown="return blockDotComma(event)">',
           '</div>',
           '<div class="form-group">',
             '<label>Unidade:</label>',
