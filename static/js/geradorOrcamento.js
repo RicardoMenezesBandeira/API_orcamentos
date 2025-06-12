@@ -172,7 +172,7 @@ document.getElementById('add-produto').addEventListener('click', () => {
     <div class="flex-row">
       <div class="form-group">
         <label>Quantidade:</label>
-        <input type="number" name="qtd[]">
+        <input type="number" name="qtd[]" step="1" min="0" onkeydown="return blockDotComma(event)">
       </div>
       <div class="form-group">
         <label>Unidade:</label>
