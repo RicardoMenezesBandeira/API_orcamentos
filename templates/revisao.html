@@ -187,6 +187,12 @@
       }).format(valor);
     }
   
+    function parseValorBrasileiro(valor) {
+  if (!valor) return 0;
+  return parseFloat(
+    valor.replace(/\./g, '').replace(',', '.')
+  ) || 0;
+}
     // percorre cada produto, calcula total local, atualiza total de itens e valor total
     function recalcResumo() {
       const container = document.getElementById('produtos-container');
@@ -198,8 +204,8 @@
         const valInput = row.querySelector('input[name="valor_unitario[]"]');
         const totInput = row.querySelector('input[name="total_local[]"]');
   
-        const quantidade = parseFloat(qtdInput.value.toString().replace(',', '.')) || 0;
-        const valorUnit = parseFloat(valInput.value.toString().replace(',', '.')) || 0;
+        const quantidade = parseValorBrasileiro(qtdInput.value.toString()) || 0;
+        const valorUnit = parseValorBrasileiro(valInput.value.toString()) || 0;
         const totalLocal = quantidade * valorUnit;
   
         totalItens++;

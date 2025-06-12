@@ -166,8 +166,7 @@ document.getElementById('add-produto').addEventListener('click', () => {
         <input type="number" name="numero[]" value="${produtoCount}" readonly>
       </div>
       <div class="form-group">
-        <label>Produto:</label>
-        <input type="text" name="produto[]">
+        <div class="form-group"><label>Produto:</label><textarea name="produto[]" required rows="1" oninput="autoGrow(this)"></textarea></div>
       </div>
     </div>
     <div class="flex-row">
@@ -282,7 +281,12 @@ function cadastra_cliente() {
 const produtosContainer = document.getElementById('produtos-container');
 const totalItensInput    = document.getElementById('total-itens');
 const valorTotalInput    = document.getElementById('valor-total');
-
+function parseValorBrasileiro(valor) {
+  if (!valor) return 0;
+  return parseFloat(
+    valor.replace(/\./g, '').replace(',', '.')
+  ) || 0;
+}
 // função que recalcula totais
 function recalcularResumo() {
   const linhas = produtosContainer.querySelectorAll('.produto');
@@ -293,9 +297,10 @@ function recalcularResumo() {
     const qtdInput   = linha.querySelector('input[name="qtd[]"]');
     const unitInput  = linha.querySelector('input[name="valor_unitario[]"]');
     const totalInput = linha.querySelector('input[name="total_local[]"]');
+    
 
-    const qtd  = parseFloat(qtdInput.value)   || 0;
-    const unit = parseFloat(unitInput.value)  || 0;
+    const qtd  = parseValorBrasileiro(qtdInput.value)   || 0;
+    const unit = parseValorBrasileiro(unitInput.value)  || 0;
     const total = qtd * unit;
 
     // atualiza total da linha
