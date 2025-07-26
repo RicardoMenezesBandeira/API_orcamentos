@@ -34,7 +34,7 @@
 
         <!-- Dados Gerais -->
         <div class="section-title">Dados Gerais</div>
-        {% for campo in ['id','cliente','cnpj','responsavel','endereco','cidade','data'] %}
+        {% for campo in ['numero','vendedor','responsavel','cliente','cnpj','responsavel','endereco','email','cidade','data'] %}
         <div class="form-group">
           <label>{{ campo.replace('_',' ').capitalize() }}:</label>
           <input type="text"
@@ -55,13 +55,14 @@
               </div>
               <div class="form-group">
                 <label>Produto:</label>
-                <input type="text" name="produto[]" value="{{ item.produto }}">
+                <textarea name="produto[]" required rows="1" oninput="autoGrow(this)">{{ item.produto }}</textarea>
+
               </div>
             </div>
             <div class="flex-row">
               <div class="form-group">
                 <label>Quantidade:</label>
-                <input type="number" name="qtd[]" value="{{ item.quantidade }}">
+                <input type="text" name="qtd[]" value="{{ item.quantidade }}">
               </div>
               <div class="form-group">
                 <label>Unidade:</label>
@@ -82,23 +83,24 @@
           {% endfor %}
         </div>
         <button type="button" id="add-produto">+ Adicionar Produto</button>
-        <!-- Condições Comerciais -->
+       <!-- Condições Comerciais -->
         <div class="section-title">Condições Comerciais</div>
-        {% for campo in ['dias_pagamento_comercial','valor_pagamento_comercial','obs_pagamento_comercial'] %}
         <div class="form-group">
-          <label>{{ campo.replace('_',' ').capitalize() }}:</label>
-          <input type="text" name="{{ campo }}" value="{{ dados[campo] }}">
+          <label>Obs:</label>
+                  <textarea name="obs" required rows="1" oninput="autoGrow(this)">{{dados['obs']}}</textarea>
         </div>
-        {% endfor %}
 
         <!-- Condições Gerais -->
         <div class="section-title">Condições Gerais</div>
-        {% for campo in ['dias_entrega','dias_validade','dias_pagamento'] %}
         <div class="form-group">
-          <label>{{ campo.replace('_',' ').capitalize() }}:</label>
-          <input type="number" name="{{ campo }}" value="{{ dados[campo] }}">
+          <label>Dias validade:</label>
+          <input type="number" name="dias_validade" value="{{dados['dias_validade']}}">
+          <label>Dias pagamento:</label>
+          <input type="number" name="dias_pagamento" value="{{ dados['dias_pagamento']}}">
+          <label>Dias entrega:</label>
+          <textarea type="number" name="dias_entrega" oninput="autoGrow(this)">{{dados['dias_entrega']}}</textarea>
         </div>
-        {% endfor %}
+       
 
         <div class="form-actions">
           <button type="button" id="preview-btn">Aplicar Correções</button>
@@ -108,7 +110,6 @@
   </div>
 
   <div class="botoes">
-  <!-- <button id="download-pdf" class="btn btn-primary" onclick="download()">Baixar PDF</button>-->
     <button id="save-next" class="btn btn-primary">Aprovar e Continuar</button>
     <a href="/postTemplate" class="btn btn-secondary">Voltar ao Início</a>
   </div>
@@ -186,6 +187,12 @@
       }).format(valor);
     }
   
+    function parseValorBrasileiro(valor) {
+  if (!valor) return 0;
+  return parseFloat(
+    valor.replace(/\./g, '').replace(',', '.')
+  ) || 0;
+}
     // percorre cada produto, calcula total local, atualiza total de itens e valor total
     function recalcResumo() {
       const container = document.getElementById('produtos-container');
@@ -197,8 +204,8 @@
         const valInput = row.querySelector('input[name="valor_unitario[]"]');
         const totInput = row.querySelector('input[name="total_local[]"]');
   
-        const quantidade = parseFloat(qtdInput.value.toString().replace(',', '.')) || 0;
-        const valorUnit = parseFloat(valInput.value.toString().replace(',', '.')) || 0;
+        const quantidade = parseValorBrasileiro(qtdInput.value.toString()) || 0;
+        const valorUnit = parseValorBrasileiro(valInput.value.toString()) || 0;
         const totalLocal = quantidade * valorUnit;
   
         totalItens++;
@@ -261,7 +268,7 @@
         '<div class="flex-row">',
           '<div class="form-group">',
             '<label>Quantidade:</label>',
-            '<input type="number" name="qtd[]">',
+            '<input type="text" name="qtd[]">',
           '</div>',
           '<div class="form-group">',
             '<label>Unidade:</label>',
@@ -321,7 +328,7 @@
       });
     })();
   
-    // Função de download que não esta sendo usada mais.
+    // Função de download inalterada
     async function download() {
       const id = '{{id}}';
       const template = '{{ template_nome }}';
@@ -355,6 +362,10 @@
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('preview-btn').click();
     })
+      function autoGrow(element) {
+  element.style.height = "auto";
+  element.style.height = (element.scrollHeight) + "px";
+}
   </script>
 </body>
 </html>
