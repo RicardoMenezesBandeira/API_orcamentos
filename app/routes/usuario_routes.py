@@ -2,7 +2,6 @@ from flask import Blueprint, request, jsonify, render_template
 
 from ..decorators.auth import token_required
 from ..services import usuario_service as svc
-from cadastra import cadastrar
 from ..utils.helpers import get_data
 bp = Blueprint("usuario", __name__)
 
@@ -29,7 +28,7 @@ def cadastrar_usuario(user_data):
     if not permision:
         return jsonify({"message": "Acesso não autorizado!"}), 401 # Não mudar esta mensagem, pois o front-end depende dela.
     data = request.get_json(force=True)
-    success = cadastrar(data)
+    success = svc.cadastrar(data)
     if success:
         return jsonify({"message": "Usuário adicionado com sucesso!"}), 200
     else:
