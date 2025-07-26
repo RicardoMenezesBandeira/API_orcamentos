@@ -1,11 +1,15 @@
-version: '3.9'
+version: "3.9"
 
 services:
   flask-api:
     build: .
     ports:
-      - "80:8000"
+      - "80:8000"          # continua mapeando porta 80 do host → 8000 no contêiner
     volumes:
-      - .:/app  # 🔁 Bind mount atual
+      - .:/app            # bind-mount: código, templates e static ao vivo
     environment:
-      - FLASK_ENV=development
+      FLASK_ENV: development   # ativa reloader
+      FLASK_APP: wsgi          # (ou deixe só no command com --app)
+    command: >
+      flask --app wsgi run
+            --host=0.0.0.0 --port=8000

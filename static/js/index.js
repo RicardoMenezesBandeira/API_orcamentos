@@ -11,7 +11,7 @@
   }
   async function atualizaOrcamento() {
   try {
-    const response = await fetch(url+'/orçaemnto', {
+    const response = await fetch(url+'/orcamento', {
       method: 'GET',
       credentials: 'include',
       headers: {
