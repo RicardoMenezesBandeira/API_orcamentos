@@ -9,15 +9,20 @@
   <script src="../static/js/index.js"></script>
 </head>
 <body>
-  <div class="top-bar">
-    <div class="info-box">{{info}}</div>
+
+    
     <div class="menu">
-      {{btns|safe}}
-      <button class="btn logout"  onclick="Logout()">Logout</button>
-  </div>
-  </div>
+      <div class="info-box">
+        {{info}}
+      </div>     
+      <div class="btns">
+        {{btns|safe}}
+        <button class="btn" style="background-color: rgb(206, 12, 12);" onclick="Logout()">Logout</button>
+      </div>
+     </div>
 
   <div class="main-content">
+    <input type='text' class='search' placeholder='Buscar Nº de orçamento...' oninput='filtrarOrcamentos(this.value)'>
     <div class="item-bar">
       <span class="id-label">Nº</span>
       
