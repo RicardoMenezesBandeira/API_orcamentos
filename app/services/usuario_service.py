@@ -6,13 +6,11 @@ from pathlib import Path
 import json
 import os
 from typing import Tuple, Any
+from flask import jsonify, request
 
-# Importa a função legacy de cadastro para reaproveitar lógica
-try:
-    from cadastra import cadastrar as _legacy_cadastrar
-except ImportError:  # caso removida, define stub
-    def _legacy_cadastrar(data):
-        return False
+from ..utils.helpers import get_data
+from cadastra import cadastrar
+
 
 BASE_DIR   = Path(__file__).resolve().parents[2]
 BD_DIR     = BASE_DIR / "bd"
@@ -32,15 +30,10 @@ def _is_admin(user_data: dict) -> bool:
 # A) cadastrar_usuario  (POST /add_usuario)
 # ---------------------------------------------------------------------------
 
-def cadastrar_usuario(data: dict, current_user: dict) -> Tuple[dict, int]:
-    """Chama lógica legacy de cadastro se current_user é admin."""
-    if not _is_admin(current_user):
-        return {"message": "Acesso não autorizado!"}, 401
 
-    success = _legacy_cadastrar(data)
-    if success:
-        return {"message": "Usuário adicionado com sucesso!"}, 200
-    return {"message": "Erro ao adicionar usuário!"}, 500
+
+
+
 
 # ---------------------------------------------------------------------------
 # B) get_usuario  (GET /usuario)
@@ -87,3 +80,4 @@ def delete_usuario(username: str, current_user: dict) -> Tuple[dict, int]:
         return {"error": "Erro ao atualizar lista de usuários."}, 500
 
     return {"message": f"Usuário '{username}' excluído com sucesso."}, 200
+
