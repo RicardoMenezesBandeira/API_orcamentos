@@ -17,6 +17,8 @@ def token_required(fn):
         if request.method == "OPTIONS":
             return "", 200
         token = request.headers.get("Authorization") or request.cookies.get("auth_token")
+        if (token):
+            print(token)
         if not token:
             return jsonify({"message": "Token é necessário"}), 401
 
@@ -27,7 +29,7 @@ def token_required(fn):
             if username not in users:
                 return jsonify({"message": "Usuário não encontrado"}), 401
 
-            user_file = os.path.join("bd", "funcionarios", f"{username}.json")
+            user_file = os.path.join("../../bd", "funcionarios", f"{username}.json")
             user_data = json.load(open(user_file)) if os.path.exists(user_file) else {"nome": username}
             return fn(user_data=user_data, *args, **kwargs)
         except Exception as e:

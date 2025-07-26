@@ -1,12 +1,16 @@
 from flask import Blueprint, request, jsonify, render_template, send_file
 import os, json, re
+from pathlib import Path
 
 from ..decorators.auth import token_required  # mantém o mesmo décorator
 from ..services import orcamento_service as svc
+from ..utils.helpers import get_data
+from ..routes.misc_routes import get_dashboard
 
 bp = Blueprint("orcamento", __name__)
 
-
+BD_PREENCH = Path("bd/json_preenchimento")
+BD_EDICOES = Path("bd/edicoes")
 # ---------------------------------------------------------------------------
 # Rotas equivalentes às que existiam em api.py
 # ---------------------------------------------------------------------------
@@ -47,43 +51,65 @@ def download(user_data, orcamento_id: int, template: str):
     return svc.download_orcamento(user_data, orcamento_id, template)
 
 
-
-@bp.route("/orcamento", methods=['GET'])
-@token_required
-def exibir_orcamento(user_data):
-    """Exibe os orçamentos feitos pelo usuário"""
-    return svc.orcamento(user_data)
-
-
-
-
 @bp.route("/verification", methods=["GET"])
 @token_required
 def verificar_template(user_data):
-    """Mostra revisão do orçamento, permitindo correções campo a campo.
-    Lógica copiada do api.py original para manter compatibilidade.
-    """
-    json_dir = "bd/json_preenchimento"
+    json_file = request.args.get('json_file')  # Padrão para 21.json
+    base_path = "bd/json_preenchimento"  # Renomeado para clareza
 
-    # Lista arquivos JSON por data de modificação
-    arquivos = sorted(
-        [f for f in os.listdir(json_dir) if f.endswith('.json')],
-        key=lambda f: os.path.getmtime(os.path.join(json_dir, f))
-    )
-    if not arquivos:
-        return "Nenhum JSON encontrado", 404
+    # 1. Lista os JSONs de controle para saber qual orçamento analisar
+    try:
+        arquivos = sorted(
+            [f for f in os.listdir(base_path) if f.endswith('.json')],
+            key=lambda f: os.path.getmtime(os.path.join(base_path, f))
+        )
+        if not arquivos:
+            return "Nenhum JSON encontrado no diretório de controle.", 404
+    except FileNotFoundError:
+        return f"Diretório de controle '{base_path}' não encontrado.", 404
 
-    # Seleciona json_file solicitado ou o último
+    # 2. Seleciona o arquivo de controle (ex: 21.json)
     json_file = request.args.get('json_file', arquivos[-1])
     if json_file not in arquivos:
         json_file = arquivos[-1]
+    
+    base_id = int(json_file.split('.')[0])
 
-    # Carrega dados
-    path = os.path.join(json_dir, json_file)
-    with open(path, encoding='utf-8') as f:
-        dados = json.load(f)
+    # 3. Carrega o JSON de controle APENAS para pegar a lista de templates
+    path_controle = os.path.join(base_path, json_file)
+    with open(path_controle, encoding='utf-8') as f:
+        dados_controle = json.load(f)
 
-    # Reaplica parsing de produtos se for string
+    templates = dados_controle.get('templates', [])
+    if isinstance(templates, str):
+        templates = [templates]
+    
+    # 4. Determina o índice do template atual (ex: 0 para Big, 1 para BossBR)
+    idx = int(request.args.get('template_idx', 0) or 0)
+    if idx >= len(templates):
+        return get_dashboard()
+
+    emp = templates[idx]  # Nome do template atual, ex: "Big"
+
+    # 5. [NOVA LÓGICA] Carrega os dados do JSON específico do template
+    # O caminho agora aponta para bd/edicoes/NOME_EMPRESA/XX.json
+    
+    base_path = os.path.join("bd", "json_preenchimento", json_file)
+    edit_path = os.path.join("bd", "edicoes", emp, json_file)
+    
+    try:
+        if os.path.exists(edit_path):
+            with open(edit_path, encoding='utf-8') as f:
+                dados = json.load(f)
+        else:
+            with open(base_path, encoding='utf-8') as f:
+                dados = json.load(f)
+    except FileNotFoundError:
+        return f"Erro: Arquivo JSON não encontrado para o template '{emp}' em '{edit_path}' e  '{base_path}'", 404
+    except json.JSONDecodeError:
+        return f"Erro ao decodificar o JSON em '{edit_path}' ou e  '{base_path}'. Verifique o formato do arquivo.", 500
+
+    # 6. [LÓGICA MOVIDA] O parsing de produtos agora opera nos 'dados' específicos do template
     raw = dados.get('produtos', '')
     if isinstance(raw, str):
         lst = []
@@ -101,25 +127,27 @@ def verificar_template(user_data):
             })
         dados['produtos'] = lst
 
-    # Determina template atual / próximo índice
-    templates = dados.get('templates', [])
-    if isinstance(templates, str):
-        templates = [templates]
-    idx = int(request.args.get('template_idx', 0) or 0)
-    if idx >= len(templates):
-        return ("<h2>Todos os templates foram revisados!</h2>"
-                "<a href='/dashboard'>Voltar para Início</a>"), 200
-
-    emp = templates[idx]
-    base_id = int(json_file.split('.')[0])
+    # 7. O restante da lógica permanece o mesmo
     iframe_src = f"/template-PDF/orcamento_{str(base_id).zfill(3)}_{emp.lower()}.html"
 
     return render_template(
         'revisao.html',
         iframe_src=iframe_src,
         template_nome=emp,
-        proximo_idx=idx+1,
-        dados=dados,
+        proximo_idx=idx + 1,
+        dados=dados,  # Passa os dados específicos do template para o frontend
         json_file=json_file,
         id=base_id
     ), 200
+
+
+@bp.route("/orcamento", methods=["GET"])      # já existia
+@token_required
+def mostrar_orcamentos_usuario(user_data):
+    return svc.listar_orcamentos(user_data)
+
+
+@bp.route('/delete/<id>', methods=['DELETE'])# ajeitar para deletar os #
+@token_required
+def deletar_orcamento(user_data, id):
+    return svc.delete_orcamento(user_data,id)
