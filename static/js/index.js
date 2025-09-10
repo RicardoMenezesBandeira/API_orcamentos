@@ -197,7 +197,9 @@ function filtrarOrcamentos(valor) {
 
   lista += "</div>";
   orca.innerHTML = lista;
-}function deleteOrcamento(id) {
+}
+
+function deleteOrcamento(id) {
   const href = url+"/delete/" + id;
   fetch(href, {
     method: 'DELETE',

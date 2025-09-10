@@ -3,7 +3,8 @@ import os, json, re
 
 from ..decorators.auth import token_required  # mantém o mesmo décorator
 from ..services import orcamento_service as svc
-
+BD_PREENCH = os.path.join("../../bd", "json_preenchimento")
+from ..utils.helpers import get_data
 bp = Blueprint("orcamento", __name__)
 
 
@@ -47,14 +48,29 @@ def download(user_data, orcamento_id: int, template: str):
     return svc.download_orcamento(user_data, orcamento_id, template)
 
 
-
-@bp.route("/orcamento", methods=['GET'])
+@bp.route("/orcamento", methods=["GET"])    
 @token_required
-def exibir_orcamento(user_data):
-    """Exibe os orçamentos feitos pelo usuário"""
-    return svc.orcamento(user_data)
+def listar_orcamentos(user_data):
+    print("aqui")
+    """
+    Devolve todos os JSONs em bd/json_preenchimento
+    visíveis ao usuário atual (vendedor ou admin).
+    """
+    arquivos = (BD_PREENCH.glob("*.json"))
+    todos    = []
 
+    # ➋  Nome e privilégio do usuário logado
+    vendedor = get_data(user_data.get("nome"))
+    is_admin = vendedor.get("admin", False)
 
+    for arq in arquivos:
+        with arq.open(encoding="utf-8") as f:
+            dados = json.load(f)
+
+        if dados.get("vendedor") == vendedor.get("nome") or is_admin:
+            todos.append(dados)
+
+    return jsonify(todos), 200
 
 
 @bp.route("/verification", methods=["GET"])

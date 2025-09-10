@@ -9,7 +9,9 @@ def _load_users():
         return json.load(f)
 
 def create_token(username: str, secret: str):
-    return jwt.encode({"user": username}, secret, algorithm="HS256")
+    token = jwt.encode({"user": username}, secret, algorithm="HS256")
+    print(f"Token criado para {username}: {token}")
+    return token
 
 def token_required(fn):
     @wraps(fn)
@@ -17,21 +19,24 @@ def token_required(fn):
         if request.method == "OPTIONS":
             return "", 200
         token = request.headers.get("Authorization") or request.cookies.get("auth_token")
-        if not token:
-            return jsonify({"message": "Token é necessário"}), 401
+        #if not token:
+            #return "", 200
+            #return jsonify({"message": "Token é necessário"}), 401
 
-        try:
-            payload = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
-            username = payload["user"]
-            users = _load_users()
-            if username not in users:
-                return jsonify({"message": "Usuário não encontrado"}), 401
+  
+        payload = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
+        print(f"Payload decodificado: {payload}")
+        username = payload["user"]
+        users = _load_users()
+        if username not in users:
+            return jsonify({"message": "Usuário não encontrado"}), 401
 
-            user_file = os.path.join("bd", "funcionarios", f"{username}.json")
-            user_data = json.load(open(user_file)) if os.path.exists(user_file) else {"nome": username}
-            return fn(user_data=user_data, *args, **kwargs)
-        except Exception as e:
-            return jsonify({"message": f"Erro na autenticação: {e}"}), 401
+        user_file = os.path.join("../../bd", "funcionarios", f"{username}.json")
+        print(f"Carregando dados do usuário de: {user_file}")
+        user_data = json.load(open(user_file)) if os.path.exists(user_file) else {"nome": username}
+        print(f"Dados do usuário: {user_data}" )
+        return fn(user_data=user_data, *args, **kwargs)
+        
     return wrapper
 
 def logon(username: str, senha: str, secret: str):
