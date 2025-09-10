@@ -341,10 +341,12 @@ produtosContainer.addEventListener('click', e => {
 document.addEventListener('DOMContentLoaded', recalcularResumo);
 
 
-const buscaInput = document.getElementById("busca-nome");
+const busca =    document.querySelectorAll(".busca-nome");
+
 const sugestoes = document.getElementById("sugestoes");
 
-buscaInput.addEventListener("input", () => {
+busca.forEach(buscaInput => {
+  buscaInput.addEventListener("input", () => {
     const query = buscaInput.value.trim().toLowerCase();
     if (query.length < 2) {
         sugestoes.innerHTML = "";
@@ -371,6 +373,7 @@ buscaInput.addEventListener("input", () => {
     });
 
     sugestoes.style.display = encontrados.length ? "block" : "none";
+});
 });
 function preencherFormulario(cliente) {
   const form = document.getElementById("form-grid");
