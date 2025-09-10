@@ -8,7 +8,7 @@ bp = Blueprint("misc", __name__)
 @token_required
 def get_dashboard(user_data):
 
-    nome     = user_data.get("nome")
+    nome     = user_data.get("user")
     dados =   get_data(nome)
     nome = dados.get("nome")
     info     = f"Nome: {nome}"

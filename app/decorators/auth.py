@@ -1,11 +1,12 @@
 from flask import request, jsonify, current_app
 from functools import wraps
 import jwt, json, os
-
+from pathlib import Path
 TOKENS = []                       # memória volátil
+BASE_DIR = Path("/app")  # ALTERADO
 
 def _load_users():
-    with open("bd/funcionarios.json", encoding="utf-8") as f:
+    with open(BASE_DIR / "bd" / "funcionarios.json", encoding="utf-8") as f: 
         return json.load(f)
 
 def create_token(username: str, secret: str):
@@ -31,9 +32,13 @@ def token_required(fn):
         if username not in users:
             return jsonify({"message": "Usuário não encontrado"}), 401
 
-        user_file = os.path.join("../../bd", "funcionarios", f"{username}.json")
+        user_file = BASE_DIR / "bd" / "funcionarios" / f"{username}.json"
         print(f"Carregando dados do usuário de: {user_file}")
-        user_data = json.load(open(user_file)) if os.path.exists(user_file) else {"nome": username}
+        #user_data = json.load(open(user_file)) if os.path.exists(user_file) else {"nome": username}
+        if user_file.exists():  # ALTERADO
+            user_data = json.load(user_file.open(encoding="utf-8"))  # ALTERADO
+        else:
+            user_data = {"nome": username}
         print(f"Dados do usuário: {user_data}" )
         return fn(user_data=user_data, *args, **kwargs)
         

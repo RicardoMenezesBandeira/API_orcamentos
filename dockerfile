@@ -4,6 +4,8 @@
 FROM python:3.11-slim
 ENV PYTHONUNBUFFERED=1
 
+
+
 # Dependências de sistema para o WeasyPrint
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -21,10 +23,12 @@ RUN apt-get update && apt-get install -y \
 #  Código da aplicação
 # ------------------------------------------------------------
 WORKDIR /app
+
 COPY . /app
 
-# Instala dependências Python
-RUN pip install --no-cache-dir -r requirements.txt
+# Antes do pip install
+RUN pip install --upgrade pip setuptools wheel \
+ && pip install --no-cache-dir --default-timeout=100 -r requirements.txt
 
 # ------------------------------------------------------------
 #  Porta exposta e comando de entrada

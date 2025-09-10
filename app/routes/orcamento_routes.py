@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify, render_template, send_file
 import os, json, re
-
+from pathlib import Path  # ADICIONADO
 from ..decorators.auth import token_required  # mantém o mesmo décorator
 from ..services import orcamento_service as svc
-BD_PREENCH = os.path.join("../../bd", "json_preenchimento")
+# BD_PREENCH = os.path.join("../bd", "json_preenchimento")
+BD_PREENCH = Path("/app/bd/json_preenchimento")  # ALTERADO
 from ..utils.helpers import get_data
 bp = Blueprint("orcamento", __name__)
 
@@ -60,7 +61,7 @@ def listar_orcamentos(user_data):
     todos    = []
 
     # ➋  Nome e privilégio do usuário logado
-    vendedor = get_data(user_data.get("nome"))
+    vendedor = get_data(user_data.get("user"))
     is_admin = vendedor.get("admin", False)
 
     for arq in arquivos:
