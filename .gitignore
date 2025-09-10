@@ -1,5 +1,5 @@
 template.pdf
-__pycache__/login.cpython-311.pyc
+__pycache__/*.pyc
 
 bd/json_preenchimento
 
