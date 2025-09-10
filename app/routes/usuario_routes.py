@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, render_template
 
 from ..decorators.auth import token_required
 from ..services import usuario_service as svc
-
+from ..utils.helpers import get_data
 bp = Blueprint("usuario", __name__)
 
 # ---------------------------------------------------------------------------
@@ -17,13 +17,22 @@ def cadastro_page(user_data):
 # ---------------------------------------------------------------------------
 # Ações CRUD
 # ---------------------------------------------------------------------------
-
 @bp.route("/add_usuario", methods=["POST"])
 @token_required
-def add_usuario(user_data):
+def cadastrar_usuario(user_data):
+    """
+    Recebe JSON com dados de usuário e chama a função cadastrar().
+    """
+    dados = get_data(user_data.get("nome"))
+    permision = dados.get("admin")
+    if not permision:
+        return jsonify({"message": "Acesso não autorizado!"}), 401 # Não mudar esta mensagem, pois o front-end depende dela.
     data = request.get_json(force=True)
-    payload, status = svc.cadastrar_usuario(data, user_data)
-    return jsonify(payload), status
+    success = svc.cadastrar(data)
+    if success:
+        return jsonify({"message": "Usuário adicionado com sucesso!"}), 200
+    else:
+        return jsonify({"message": "Erro ao adicionar usuário!"}), 500
 
 
 @bp.route("/usuario", methods=["GET"])

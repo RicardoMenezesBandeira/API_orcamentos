@@ -156,10 +156,12 @@ def preview_template(user_data):
                     f'<td>{item.get("unidade")}</td>'
                     f'<td>{formatar_dinheiro_brl(v,  fmt="¤#,##0.0000")}</td>'
                     f'<td>{formatar_dinheiro_brl(total,  fmt="¤#,##0.0000")}</td>'
+                    f'<td>{formatar_dinheiro_brl(v)}</td>'
+                    f'<td>{formatar_dinheiro_brl(total)}</td>'
                     '</tr>'
                 )
             novo['produtos']    = ''.join(rows)
-            novo['valor_total'] = formatar_dinheiro_brl(valor_total,  fmt="¤#,##0.0000")
+            novo['valor_total'] = formatar_dinheiro_brl(valor_total)
             print(f"[DEBUG] Reconstrução de produtos OK")
         except Exception as e:
             print(f"[ERROR] Falha ao reconstruir produtos: {e}")
@@ -275,8 +277,8 @@ def download_orcamento(user_data, orcamento_id, template):
             total_local = q * v
             valor_total += total_local
 
-            v_fmt = formatar_dinheiro_brl(v, fmt="¤#,##0.0000")
-            t_fmt = formatar_dinheiro_brl(total_local,  fmt="¤#,##0.0000")
+            v_fmt = formatar_dinheiro_brl(v)
+            t_fmt = formatar_dinheiro_brl(total_local)
 
             rows.append(
                 "<tr>"
@@ -290,7 +292,7 @@ def download_orcamento(user_data, orcamento_id, template):
             )
 
         data['produtos']    = "".join(rows)
-        data['valor_total'] = formatar_dinheiro_brl(valor_total,  fmt="¤#,##0.0000")
+        data['valor_total'] = formatar_dinheiro_brl(valor_total)
 
     # 4) Injeta no HTML de placeholders
     tpl_file = os.path.join('template-PDF', f"{tpl_lower}_placeholders.html")
@@ -334,3 +336,55 @@ def orcamento(user_data):
                 todos.append(dados)
         
     return jsonify(todos), 200
+
+
+def delete_orcamento(user_data, id):
+    """
+    Deleta o arquivo de orçamento correspondente ao ID.
+    """
+    path = "bd/json_preenchimento"
+    path2 = "bd/edicoes"
+    pastas = ["PCasallas", "BossBR","Construcom","Big"]
+
+    file_path = os.path.join(path, f"{id}.json")
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    for pasta in pastas:
+        file_path = os.path.join(path2, pasta, f"{id}.json")
+        if os.path.exists(file_path):
+            os.remove(file_path)
+       
+    else:
+        return jsonify({"message": "Arquivo não encontrado!"}), 404
+    
+
+
+def listar_orcamentos(user_data):
+    """
+    Retorna todos os orçamentos visíveis ao usuário.
+    1) Procura versões editadas em bd/edicoes/<template>/<id>.json
+    2) Caso não exista, usa o JSON original em bd/json_preenchimento/<id>.json
+    """
+    nome_usuario = get_data(user_data.get("nome"))
+    resultados   = []
+
+    for base_json in BD_PREENCH.glob("*.json"):
+        with base_json.open(encoding="utf-8") as f:
+            dados_base = json.load(f)
+
+        # VERIFICA PERMISSÃO (vendedor ou admin)
+        if dados_base["vendedor"] != nome_usuario["nome"] and not nome_usuario["admin"]:
+            continue
+
+        # === Tenta encontrar edição ===
+        dados = dados_base        # fallback
+        for tpl in dados_base.get("templates", []):
+            edit_path = BD_EDICOES / tpl / base_json.name
+            if edit_path.exists():
+                with edit_path.open(encoding="utf-8") as f:
+                    dados = json.load(f)
+                break            # achou a primeira edição; usa-a
+
+        resultados.append(dados)
+
+    return jsonify(resultados), 200

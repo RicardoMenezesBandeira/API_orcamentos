@@ -31,6 +31,7 @@ def login():
         secure=False,  # troque para True se usar HTTPS em produção
         samesite="Lax"
     )
+    print(resp)
     return resp
 
 

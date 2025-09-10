@@ -14,9 +14,8 @@
   </header>
   <div class="form-container">
     <div class="menu">
-      <div>
-<input type="text" id="busca-nome" placeholder="Digite um nome..." autocomplete="off">
-      <ul id="sugestoes" style="border: 1px solid #ccc; display: none;"></ul>
+      <div class="clientes-sugeridos">
+      <ul id="sugestoes" style="border: 1px solid #ccc; display: none;"></ul> 
       </div>
     
     <h2>Adicionar Orçamento</h2>
@@ -31,8 +30,8 @@
       <!-- Dados Gerais -->
       <div class="section-title">Dados Gerais</div>
       <div class="form-group"><label>Número:</label><input type="number" name="numero" id="numero"></div>
-      <div class="form-group"><label>Cliente:</label><input type="text" name="cliente"></div>
-      <div class="form-group"><label>CNPJ do Cliente:</label><input type="text" name="cnpj"></div>
+      <div class="form-group"><label>Cliente:</label><input type="text" name="cliente" id="cliente"></div>
+      <div class="form-group"><label>CNPJ do Cliente:</label><input type="text" name="cnpj" id="cnpj"></div>
       <div class="form-group"><label>Responsável:</label><input type="text" name="responsavel"></div>
       <div class="form-group"><label>Endereço:</label><input type="text" name="endereco"></div>
       <div class="form-group"><label>Cidade:</label><input type="text" name="cidade"></div>
@@ -52,7 +51,7 @@
       <div class="form-group"><label>CEP:</label><input type="text" name="cep"></div>
       
 
-
+ 
 
 
       <!-- Produtos -->
@@ -61,10 +60,12 @@
         <div class="produto form-group-set">
           <div class="flex-row">
             <div class="form-group"><label>Número do item:</label><input type="number" name="numero[]" value="1" readonly></div>
-            <div class="form-group"><label>Produto:</label><input type="text" required name="produto[]"></div>
+            <div class="form-group"><label>Produto:</label><textarea name="produto[]" required rows="1" oninput="autoGrow(this)"></textarea></div>
           </div>
           <div class="flex-row">
             <div class="form-group"><label>Quantidade:</label><input type="number" name="qtd[]" step="0.0001"></div>
+            <div class="form-group"><label>Quantidade:</label><input type="text" name="qtd[]" step="0.0001"  onkeydown="return blockDotComma(event)">
+</div>
             <div class="form-group"><label>Unidade:</label><input type="text" name="un[]"></div>
           </div>
           <div class="flex-row">
@@ -93,11 +94,11 @@
 
       <!-- Condições Comerciais -->
       <div class="section-title">Condições </div>
-      <div class="form-group"><label>Observações:</label><input type="text" name="obs"></div>
+      <div class="form-group"><label>Observações:</label><textarea  name="obs"  rows="1" oninput="autoGrow(this)"></textarea></div>
 
       <!-- Condições Gerais -->
       <div class="section-title">Condições Gerais</div>
-      <div class="form-group"><label>Previsão de entrega (dias):</label><input type="number" name="dias_entrega"></div>
+      <div class="form-group"><label>Previsão de entrega (dias):</label><textarea name="dias_entrega" rows="1" oninput="autoGrow(this)"></textarea></div>
       <div class="form-group"><label>Validade da proposta (dias):</label><input type="number" name="dias_validade"></div>
       <div class="form-group"><label>Prazo de pagamento (dias):</label><input type="number" name="dias_pagamento"></div>
 
@@ -106,6 +107,7 @@
       <div class="form-group">
         <label><input type="checkbox" name="templates[]" value="BossBR"> BossBR</label>
         <label><input type="checkbox" name="templates[]" value="Construcom"> Construcom</label>
+    
         <label><input type="checkbox" name="templates[]" value="PCasallas"> PCasallas</label>
         <label><input type="checkbox" name="templates[]" value="Big"> Big</label>
       </div>
@@ -118,5 +120,17 @@
   </div>
 
 </body>
-</html>
+<script>
+  function blockDotComma(e) {
+  const key = e.key;
 
+  // Bloqueia "." e "," e "e" (exponencial)
+  if (key === "." || key === "e" || key === "E"|| key === ",") {
+    e.preventDefault();
+    return false;
+  }
+
+  return true;
+}
+</script>
+</html>

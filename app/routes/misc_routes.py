@@ -6,17 +6,9 @@ bp = Blueprint("misc", __name__)
 
 @bp.route("/dashboard", methods=['GET'])
 @token_required
-def get_dashboard(user_data):
+def dashboard(user_data):
+    return render_template("index.html")
 
-    nome     = user_data.get("user")
-    dados =   get_data(nome)
-    nome = dados.get("nome")
-    info     = f"Nome: {nome}"
-    btn = "<button class='btn' onclick='novoOrcamento()'>gerar novo orçamento</button>"
-    if dados.get("admin"):
-        btn += " <button class='btn' onclick='novoFuncionario()'>cadastra empregado</button>"
-
-    return render_template('index.html', info=info, btns=btn), 200
 @bp.route("/template-PDF/<path:filename>")
 def serve_template(filename):
     return send_from_directory("template-PDF", filename)

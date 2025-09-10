@@ -23,6 +23,10 @@ def token_required(fn):
         #if not token:
             #return "", 200
             #return jsonify({"message": "Token é necessário"}), 401
+        if (token):
+            print(token)
+        if not token:
+            return jsonify({"message": "Token é necessário"}), 401
 
   
         payload = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
