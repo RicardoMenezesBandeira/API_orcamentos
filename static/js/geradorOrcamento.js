@@ -172,7 +172,7 @@ document.getElementById('add-produto').addEventListener('click', () => {
       </div>
       <div class="form-group">
         <label>Produto:</label>
-        <input type="text" name="produto[]">
+        <input type="text" name="produto[]" required rows="1" oninput="autoGrow(this)">
       </div>
     </div>
     <div class="flex-row">
@@ -188,7 +188,7 @@ document.getElementById('add-produto').addEventListener('click', () => {
     <div class="flex-row">
       <div class="form-group">
         <label>Valor Unitário (R$):</label>
-        <input type="text" step="0.0001" name="valor_unitario[]">
+        <input type="text" step="0.0001">
       </div>
       <div class="form-group">
         <label>Valor Total (R$):</label>
