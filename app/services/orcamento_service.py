@@ -154,12 +154,12 @@ def preview_template(user_data):
                     f'<td>{item.get("produto")}</td>'
                     f'<td>{q}</td>'
                     f'<td>{item.get("unidade")}</td>'
-                    f'<td>{formatar_dinheiro_brl(v,  format="¤#,##0.0000")}</td>'
-                    f'<td>{formatar_dinheiro_brl(total,  format="¤#,##0.0000")}</td>'
+                    f'<td>{formatar_dinheiro_brl(v,  fmt="¤#,##0.0000")}</td>'
+                    f'<td>{formatar_dinheiro_brl(total,  fmt="¤#,##0.0000")}</td>'
                     '</tr>'
                 )
             novo['produtos']    = ''.join(rows)
-            novo['valor_total'] = formatar_dinheiro_brl(valor_total,  format="¤#,##0.0000")
+            novo['valor_total'] = formatar_dinheiro_brl(valor_total,  fmt="¤#,##0.0000")
             print(f"[DEBUG] Reconstrução de produtos OK")
         except Exception as e:
             print(f"[ERROR] Falha ao reconstruir produtos: {e}")
@@ -275,8 +275,8 @@ def download_orcamento(user_data, orcamento_id, template):
             total_local = q * v
             valor_total += total_local
 
-            v_fmt = formatar_dinheiro_brl(v,  format="¤#,##0.0000")
-            t_fmt = formatar_dinheiro_brl(total_local,  format="¤#,##0.0000")
+            v_fmt = formatar_dinheiro_brl(v, fmt="¤#,##0.0000")
+            t_fmt = formatar_dinheiro_brl(total_local,  fmt="¤#,##0.0000")
 
             rows.append(
                 "<tr>"
@@ -290,7 +290,7 @@ def download_orcamento(user_data, orcamento_id, template):
             )
 
         data['produtos']    = "".join(rows)
-        data['valor_total'] = formatar_dinheiro_brl(valor_total,  format="¤#,##0.0000")
+        data['valor_total'] = formatar_dinheiro_brl(valor_total,  fmt="¤#,##0.0000")
 
     # 4) Injeta no HTML de placeholders
     tpl_file = os.path.join('template-PDF', f"{tpl_lower}_placeholders.html")

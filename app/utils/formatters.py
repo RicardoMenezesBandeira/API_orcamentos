@@ -1,8 +1,9 @@
 import re
 from babel.numbers import format_currency
 
-def formatar_dinheiro_brl(valor: float, casas: int = 4) -> str:
-    fmt = "¤#,##0." + "0" * casas
+def formatar_dinheiro_brl(valor: float, casas: int = 4, fmt: str = None) -> str:
+    if fmt is None:
+        fmt = "¤#,##0." + "0" * casas
     return format_currency(valor, "BRL", locale="pt_BR", format=fmt)
 
 def formatar_cnpj(cnpj: str) -> str:       # :contentReference[oaicite:6]{index=6}
