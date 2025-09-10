@@ -60,7 +60,7 @@ def receber_orcamento(user_data):
     print(f"[INFO] Assigned new orcamento ID: {nid}")
 
     # Preenche vendedor a partir do usuário logado
-    nome_user = user_data.get("nome")
+    nome_user = user_data.get("user")
     dados_func = get_data(nome_user)
     dados["vendedor"] = dados_func.get("nome")
     print(f"[DEBUG] Set vendedor: {dados['vendedor']}")
@@ -282,7 +282,7 @@ def download_orcamento(user_data, orcamento_id, template):
                 "<tr>"
                 f"<td>{item.get('numero','')}</td>"
                 f"<td>{item.get('produto','')}</td>"
-                f"<td>{int(q)}</td>"
+                f"<td>{(q)}</td>"
                 f"<td>{item.get('unidade','')}</td>"
                 f"<td>{v_fmt}</td>"
                 f"<td>{t_fmt}</td>"
@@ -323,14 +323,14 @@ def orcamento(user_data):
     path     = "./bd/json_preenchimento"
     arquivos = [f for f in os.listdir(path) if f.endswith(".json")]
     todos    = []
-    nome    = user_data.get("nome")
-    nome = get_data(nome)
+    user    = user_data.get("user")
+    data = get_data(user)
     for arquivo in arquivos:
         with open(os.path.join(path, arquivo), 'r', encoding='utf-8') as f:
 
             dados = json.load(f)
             print(dados["vendedor"])
-            if dados["vendedor"] == nome["nome"] or nome["admin"]:
+            if dados["vendedor"] == data["nome"] or data["admin"]:
                 todos.append(dados)
         
     return jsonify(todos), 200

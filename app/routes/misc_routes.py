@@ -8,8 +8,8 @@ bp = Blueprint("misc", __name__)
 @token_required
 def get_dashboard(user_data):
 
-    nome     = user_data.get("user")
-    dados =   get_data(nome)
+    user     = user_data.get("user")
+    dados =   get_data(user)
     nome = dados.get("nome")
     info     = f"Nome: {nome}"
     btn = "<button class='btn' onclick='novoOrcamento()'>gerar novo orçamento</button>"
