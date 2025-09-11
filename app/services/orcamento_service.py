@@ -144,8 +144,10 @@ def preview_template(user_data):
             rows = []
             valor_total = 0.0
             for item in p:
-                q = float(item.get('quantidade') or 0)
-                v = float(item.get('valor_unitario') or 0)
+                quantidade_item = item.get('quantidade', '0').replace(',', '.')
+                q = float(quantidade_item or 0)
+                valor_unit = item.get('valor_unitario', '0').replace(',', '.')
+                v = float(valor_unit or 0)
                 total = q * v
                 valor_total += total
                 rows.append(
@@ -270,8 +272,10 @@ def download_orcamento(user_data, orcamento_id, template):
         rows = []
         valor_total = 0.0
         for item in produtos:
-            q = float(item.get('quantidade', 0) or 0)
-            v = float(item.get('valor_unitario', 0) or 0)
+            quantidade_item = item.get('quantidade', '0').replace(',', '.')
+            q = float(quantidade_item or 0)
+            valor_unit = item.get('valor_unitario', '0').replace(',', '.')
+            v = float(valor_unit or 0)
             total_local = q * v
             valor_total += total_local
 
