@@ -74,3 +74,36 @@ table th, table td {
 }.nao-quebrar {
   page-break-inside: avoid;
 }
+
+
+/* ====== Ajustes para quebra de linha sem cortar colunas ====== */
+.template-style-vintage .table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.template-style-vintage .table th:nth-child(1),
+.template-style-vintage .table td:nth-child(1) { width: 6%;  }
+
+.template-style-vintage .table th:nth-child(2),
+.template-style-vintage .table td:nth-child(2) { width: 46%; } /* Item/Descrição */
+
+.template-style-vintage .table th:nth-child(3),
+.template-style-vintage .table td:nth-child(3) { width: 10%; }
+
+.template-style-vintage .table th:nth-child(4),
+.template-style-vintage .table td:nth-child(4) { width: 8%;  }
+
+.template-style-vintage .table th:nth-child(5),
+.template-style-vintage .table td:nth-child(5) { width: 15%; }
+
+.template-style-vintage .table th:nth-child(6),
+.template-style-vintage .table td:nth-child(6) { width: 15%; }
+
+.template-style-vintage .table td:nth-child(2) {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  line-height: 1.25;
+}

@@ -173,3 +173,25 @@ section{
   justify-content: center;
   flex-direction: column;
 }
+
+/* ====== Ajustes para quebra de linha sem cortar colunas ====== */
+table {
+  table-layout: fixed;          /* respeita as larguras definidas */
+  width: 100%;
+}
+
+table th:nth-child(1), table td:nth-child(1) { width: 6%;  }
+table th:nth-child(2), table td:nth-child(2) { width: 46%; } /* Descrição/Nome do item */
+table th:nth-child(3), table td:nth-child(3) { width: 10%; }
+table th:nth-child(4), table td:nth-child(4) { width: 8%;  }
+table th:nth-child(5), table td:nth-child(5) { width: 15%; }
+table th:nth-child(6), table td:nth-child(6) { width: 15%; }
+
+/* Permitir quebra de linha e de palavras longas na coluna da descrição */
+table td:nth-child(2) {
+  white-space: normal;
+  overflow-wrap: anywhere;  /* quebra palavras muito longas */
+  word-break: break-word;   /* compatibilidade ampla */
+  hyphens: auto;            /* hifeniza quando possível */
+  line-height: 1.25;
+}
