@@ -1,38 +1,37 @@
 import re
-from babel.numbers import format_currency
 
-from babel.numbers import format_decimal, format_currency
-
-def parse_valor(valor_str: str) -> float:
+def formatar_dinheiro_brl(valor, casas: int = 4) -> str:
     """
-    Converte strings numéricas com vírgula ou ponto para float.
-    Ex: "1234,56" -> 1234.56
-        "1.234,56" -> 1234.56
-        "1234.56" -> 1234.56
+    Formata número no padrão brasileiro:
+    - Ponto para milhar
+    - Vírgula para decimais
+    - 'casas' casas decimais fixas (default=4)
     """
-    valor_str = valor_str.strip()
 
-    if "," in valor_str and "." in valor_str:
-        valor_str = valor_str.replace(".", "").replace(",", ".")
-    elif "," in valor_str:
-        valor_str = valor_str.replace(",", ".")
-    return float(valor_str)
-
-
-def formatar_dinheiro_brl(valor, casas: int = 4, incluir_simbolo: bool = True) -> str:
-    """
-    Formata número para BRL no padrão:
-    xxx.xxx.xxx,xxxx
-    """
+    print(f"[DEBUG] formatar_dinheiro_brl chamado com valor={valor}, casas={casas}")
+    # Se for string, normaliza para float
     if isinstance(valor, str):
-        valor = parse_valor(valor)
+        valor = valor.strip()
+        if "," in valor and "." in valor:
+            valor = valor.replace(".", "").replace(",", ".")
+        elif "," in valor:
+            valor = valor.replace(",", ".")
+        valor = float(valor)
 
-    pattern = "#,##0." + "0" * casas  # garante casas fixas
+    # Força arredondamento e casas fixas
+    inteiro, decimal = divmod(abs(valor), 1)
+    decimal_str = f"{decimal:.{casas}f}"[2:]  # pega só os dígitos após o ponto
 
-    if incluir_simbolo:
-        return format_currency(valor, "BRL", locale="pt_BR", format="¤ " + pattern)
-    else:
-        return format_decimal(valor, locale="pt_BR", format=pattern)
+    # Parte inteira com separador de milhar
+    inteiro_str = f"{int(inteiro):,}".replace(",", ".")
+
+    # Junta com vírgula
+    resultado = f"{'-' if valor < 0 else ''}{inteiro_str},{decimal_str}"
+
+    print(f"[DEBUG] formatar_dinheiro_brl resultado: {resultado}")
+
+    return resultado
+
 
 
 def formatar_cnpj(cnpj: str) -> str:       # :contentReference[oaicite:6]{index=6}
