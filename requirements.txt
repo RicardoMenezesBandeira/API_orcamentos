@@ -3,5 +3,5 @@ weasyprint
 pyjwt
 flask-cors
 tinydb
-weasyprint
 Babel==2.12.1
+gunicorn

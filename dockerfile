@@ -18,6 +18,8 @@ WORKDIR /app
 COPY . /app
 
 # Antes do pip install
+RUN pip install gunicorn
+
 RUN pip install --upgrade pip setuptools wheel \
  && pip install --no-cache-dir --default-timeout=100 -r requirements.txt
 
