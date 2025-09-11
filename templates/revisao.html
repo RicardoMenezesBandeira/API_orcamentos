@@ -96,7 +96,7 @@
         {% for campo in ['dias_entrega','dias_validade','dias_pagamento'] %}
         <div class="form-group">
           <label>{{ campo.replace('_',' ').capitalize() }}:</label>
-          <input type="number" name="{{ campo }}" value="{{ dados[campo] }}">
+          <input type="text" name="{{ campo }}" value="{{ dados[campo] }}">
         </div>
         {% endfor %}
 
