@@ -9,11 +9,39 @@ from login import token_required, clean_tolkens, create_token, logon,logout
 from cadastra import cadastrar
 from functools import wraps
 from weasyprint import HTML
-from babel.numbers import format_currency
 
-def formatar_dinheiro_brl(valor: float, casas: int = 4) -> str:
-    fmt = '¤#,##0.' + '0' * casas
-    return format_currency(valor, 'BRL', locale='pt_BR', format=fmt)
+
+def formatar_dinheiro_brl(valor, casas: int = 4) -> str:
+    """
+    Formata número no padrão brasileiro:
+    - Ponto para milhar
+    - Vírgula para decimais
+    - 'casas' casas decimais fixas (default=4)
+    """
+
+    print(f"[DEBUG] formatar_dinheiro_brl chamado com valor={valor}, casas={casas}")
+    # Se for string, normaliza para float
+    if isinstance(valor, str):
+        valor = valor.strip()
+        if "," in valor and "." in valor:
+            valor = valor.replace(".", "").replace(",", ".")
+        elif "," in valor:
+            valor = valor.replace(",", ".")
+        valor = float(valor)
+
+    # Força arredondamento e casas fixas
+    inteiro, decimal = divmod(abs(valor), 1)
+    decimal_str = f"{decimal:.{casas}f}"[2:]  # pega só os dígitos após o ponto
+
+    # Parte inteira com separador de milhar
+    inteiro_str = f"{int(inteiro):,}".replace(",", ".")
+
+    # Junta com vírgula
+    resultado = f"{'-' if valor < 0 else ''}{inteiro_str},{decimal_str}"
+
+    print(f"[DEBUG] formatar_dinheiro_brl resultado: {resultado}")
+
+    return resultado
 
 def formatar_cnpj(cnpj):
     cnpj = re.sub(r'\D', '', cnpj)  # Remove tudo que não for dígito
@@ -268,8 +296,10 @@ def preview_template(user_data):
             rows = []
             valor_total = 0.0
             for item in p:
-                q = float(item.get('quantidade') or 0)
-                v = float(item.get('valor_unitario') or 0)
+                quantidade_item = item.get('quantidade', '0').replace(',', '.')
+                q = float(quantidade_item or 0)
+                valor_unit = item.get('valor_unitario', '0').replace(',', '.')
+                v = float(valor_unit or 0)
                 total = q * v
                 valor_total += total
                 rows.append(
@@ -278,12 +308,12 @@ def preview_template(user_data):
                     f'<td>{item.get("produto")}</td>'
                     f'<td>{q}</td>'
                     f'<td>{item.get("unidade")}</td>'
-                    f'<td>{format_currency(v, "BRL", locale="pt_BR", format="¤#,##0.0000")}</td>'
-                    f'<td>{format_currency(total, "BRL", locale="pt_BR", format="¤#,##0.0000")}</td>'
+                    f'<td>{formatar_dinheiro_brl(v)}</td>'
+                    f'<td>{formatar_dinheiro_brl(total)}</td>'
                     '</tr>'
                 )
             novo['produtos']    = ''.join(rows)
-            novo['valor_total'] = format_currency(valor_total, "BRL", locale="pt_BR", format="¤#,##0.0000")
+            novo['valor_total'] = formatar_dinheiro_brl(valor_total)
             print(f"[DEBUG] Reconstrução de produtos OK")
         except Exception as e:
             print(f"[ERROR] Falha ao reconstruir produtos: {e}")
@@ -397,13 +427,15 @@ def download_orcamento(user_data, orcamento_id, template):
         rows = []
         valor_total = 0.0
         for item in produtos:
-            q = float(item.get('quantidade', 0) or 0)
-            v = float(item.get('valor_unitario', 0) or 0)
+            quantidade_item = item.get('quantidade', '0').replace(',', '.')
+            q = float(quantidade_item or 0)
+            valor_unit = item.get('valor_unitario', '0').replace(',', '.')
+            v = float(valor_unit or 0)
             total_local = q * v
             valor_total += total_local
 
-            v_fmt = format_currency(v, "BRL", locale="pt_BR", format="¤#,##0.0000")
-            t_fmt = format_currency(total_local, "BRL", locale="pt_BR", format="¤#,##0.0000")
+            v_fmt = formatar_dinheiro_brl(v)
+            t_fmt = formatar_dinheiro_brl(total_local)
 
             rows.append(
                 "<tr>"
@@ -417,7 +449,7 @@ def download_orcamento(user_data, orcamento_id, template):
             )
 
         data['produtos']    = "".join(rows)
-        data['valor_total'] = format_currency(valor_total, "BRL", locale="pt_BR", format="¤#,##0.0000")
+        data['valor_total'] = formatar_dinheiro_brl(valor_total)
 
     # 4) Injeta no HTML de placeholders
     tpl_file = os.path.join('template-PDF', f"{tpl_lower}_placeholders.html")
