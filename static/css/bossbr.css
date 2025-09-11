@@ -181,9 +181,9 @@ table {
 }
 
 table th:nth-child(1), table td:nth-child(1) { width: 6%;  }
-table th:nth-child(2), table td:nth-child(2) { width: 46%; } /* Descrição/Nome do item */
+table th:nth-child(2), table td:nth-child(2) { width: 42%; } /* Descrição/Nome do item */
 table th:nth-child(3), table td:nth-child(3) { width: 10%; }
-table th:nth-child(4), table td:nth-child(4) { width: 8%;  }
+table th:nth-child(4), table td:nth-child(4) { width: 12%;  }
 table th:nth-child(5), table td:nth-child(5) { width: 15%; }
 table th:nth-child(6), table td:nth-child(6) { width: 15%; }
 
@@ -195,3 +195,37 @@ table td:nth-child(2) {
   hyphens: auto;            /* hifeniza quando possível */
   line-height: 1.25;
 }
+
+/* Flexibiliza TODAS as colunas e impede sobreposição */
+table, .table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th, table td,
+.table th, .table td {
+  white-space: normal;         /* permite quebrar em várias linhas */
+  overflow-wrap: anywhere;     /* quebra URLs, códigos e palavras longas */
+  word-break: break-word;      /* compatibilidade ampla */
+  hyphens: auto;               /* hífen quando possível */
+  min-width: 0;                /* evita “estouro” por conteúdo interno */
+  box-sizing: border-box;      /* padding conta na largura */
+  vertical-align: top;         /* conteúdo multi-linha alinha bonitinho */
+  /* se houver números que você não quer quebrar, remova overflow-wrap/word-break 
+     apenas na(s) coluna(s) desejada(s) usando uma classe .nowrap (exemplo abaixo) */
+}
+
+/* Opcional: alinhar números à direita, mantendo quebra se necessário */
+table td:nth-last-child(1),
+table td:nth-last-child(2),
+.table td:nth-last-child(1),
+.table td:nth-last-child(2) {
+  text-align: right;
+}
+
+/* Utilitário opcional: aplique class="nowrap" em células que NÃO devem quebrar */
+.nowrap { white-space: nowrap; overflow-wrap: normal; word-break: normal; hyphens: manual; }
+
+/* Evita que uma linha de item seja quebrada entre páginas na impressão/PDF */
+table tr, .table tr { page-break-inside: avoid; }
