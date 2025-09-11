@@ -1,30 +1,28 @@
-# Imagem base com Python e dependências do WeasyPrint
-FROM python:3.11-slim
-ENV PYTHONUNBUFFERED=1
+FROM python:3.11-slim-bookworm
 
-# Instala dependências do sistema necessárias para o WeasyPrint
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
     libcairo2 \
-    libgdk-pixbuf2.0-0 \
+    libgdk-pixbuf-2.0-0 \
     libffi-dev \
     shared-mime-info \
+    fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/*
-
-# Diretório de trabalho
+# ------------------------------------------------------------
+#  Código da aplicação
+# ------------------------------------------------------------
 WORKDIR /app
 
-# Copia os arquivos da API para dentro do container
 COPY . /app
 
-# Instala as dependências Python
-RUN pip install --no-cache-dir -r requirements.txt
+# Antes do pip install
+RUN pip install --upgrade pip setuptools wheel \
+ && pip install --no-cache-dir --default-timeout=100 -r requirements.txt
 
-# Expõe a porta da API
+# ------------------------------------------------------------
+#  Porta exposta e comando de entrada
+# ------------------------------------------------------------
 EXPOSE 8000
-
-# Comando para iniciar a API
-CMD ["python", "api.py"]
-
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "wsgi:app"]
