@@ -178,7 +178,7 @@ document.getElementById('add-produto').addEventListener('click', () => {
     <div class="flex-row">
       <div class="form-group">
         <label>Quantidade:</label>
-        <input type="number" name="qtd[]">
+        <input type="text" name="qtd[]">
       </div>
       <div class="form-group">
         <label>Unidade:</label>
@@ -299,10 +299,9 @@ function recalcularResumo() {
     const unitInput  = linha.querySelector('input[name="valor_unitario[]"]');
     const totalInput = linha.querySelector('input[name="total_local[]"]');
 
-    const qtd  = parseFloat(qtdInput.value)   || 0;
-    const unit = parseFloat(unitInput.value)  || 0;
+    const qtd  = parseFloat(qtdInput.value.toString().replace(',', '.'))   || 0;
+    const unit = parseFloat(unitInput.value.toString().replace(',', '.'))  || 0;
     const total = qtd * unit;
-
     // atualiza total da linha
     totalInput.value = formatarDinheiro(total);
 

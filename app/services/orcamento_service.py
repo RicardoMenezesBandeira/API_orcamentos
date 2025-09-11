@@ -138,14 +138,17 @@ def preview_template(user_data):
 
     # 5) Reconstrói produtos apenas se vieram como lista válida
     p = novo.get('produtos')
+
     if isinstance(p, list):
         try:
             print(f"[DEBUG] Reconstruindo lista de produtos, {len(p)} itens")
             rows = []
             valor_total = 0.0
             for item in p:
-                q = float(item.get('quantidade') or 0)
-                v = float(item.get('valor_unitario') or 0)
+                quantidade_item = item.get('quantidade', '0').replace(',', '.')
+                q = float(quantidade_item or 0)
+                valor_unit = item.get('valor_unitario', '0').replace(',', '.')
+                v = float(valor_unit or 0)
                 total = q * v
                 valor_total += total
                 rows.append(
@@ -154,12 +157,12 @@ def preview_template(user_data):
                     f'<td>{item.get("produto")}</td>'
                     f'<td>{q}</td>'
                     f'<td>{item.get("unidade")}</td>'
-                    f'<td>{formatar_dinheiro_brl(v,  fmt="¤#,##0.0000")}</td>'
-                    f'<td>{formatar_dinheiro_brl(total,  fmt="¤#,##0.0000")}</td>'
+                    f'<td>{formatar_dinheiro_brl(v)}</td>'
+                    f'<td>{formatar_dinheiro_brl(total)}</td>'
                     '</tr>'
                 )
             novo['produtos']    = ''.join(rows)
-            novo['valor_total'] = formatar_dinheiro_brl(valor_total,  fmt="¤#,##0.0000")
+            novo['valor_total'] = formatar_dinheiro_brl(valor_total)
             print(f"[DEBUG] Reconstrução de produtos OK")
         except Exception as e:
             print(f"[ERROR] Falha ao reconstruir produtos: {e}")
@@ -270,13 +273,15 @@ def download_orcamento(user_data, orcamento_id, template):
         rows = []
         valor_total = 0.0
         for item in produtos:
-            q = float(item.get('quantidade', 0) or 0)
-            v = float(item.get('valor_unitario', 0) or 0)
+            quantidade_item = item.get('quantidade', '0').replace(',', '.')
+            q = float(quantidade_item or 0)
+            valor_unit = item.get('valor_unitario', '0').replace(',', '.')
+            v = float(valor_unit or 0)
             total_local = q * v
             valor_total += total_local
 
-            v_fmt = formatar_dinheiro_brl(v, fmt="¤#,##0.0000")
-            t_fmt = formatar_dinheiro_brl(total_local,  fmt="¤#,##0.0000")
+            v_fmt = formatar_dinheiro_brl(v)
+            t_fmt = formatar_dinheiro_brl(total_local)
 
             rows.append(
                 "<tr>"
@@ -290,7 +295,7 @@ def download_orcamento(user_data, orcamento_id, template):
             )
 
         data['produtos']    = "".join(rows)
-        data['valor_total'] = formatar_dinheiro_brl(valor_total,  fmt="¤#,##0.0000")
+        data['valor_total'] = formatar_dinheiro_brl(valor_total)
 
     # 4) Injeta no HTML de placeholders
     tpl_file = os.path.join('template-PDF', f"{tpl_lower}_placeholders.html")

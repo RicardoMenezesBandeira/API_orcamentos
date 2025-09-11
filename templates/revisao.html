@@ -62,7 +62,7 @@
             <div class="flex-row">
               <div class="form-group">
                 <label>Quantidade:</label>
-                <input type="number" name="qtd[]" value="{{ item.quantidade }}">
+                <input type="text" name="qtd[]" value="{{ item.quantidade }}">
               </div>
               <div class="form-group">
                 <label>Unidade:</label>
@@ -72,7 +72,7 @@
             <div class="flex-row">
               <div class="form-group">
                 <label>Valor Unitário (R$):</label>
-                <input type="text" step="0.01" name="valor_unitario[]" value="{{ item.valor_unitario }}">
+                <input type="text" name="valor_unitario[]" value="{{ item.valor_unitario }}">
               </div>
               <div class="form-group">
                 <input type="hidden" name="total_local[]" value="{{ item.total_local }}">
@@ -260,7 +260,7 @@
         '<div class="flex-row">',
           '<div class="form-group">',
             '<label>Quantidade:</label>',
-            '<input type="number" name="qtd[]">',
+            '<input type="text" step="0.01" name="qtd[]">',
           '</div>',
           '<div class="form-group">',
             '<label>Unidade:</label>',
@@ -270,7 +270,7 @@
         '<div class="flex-row">',
           '<div class="form-group">',
             '<label>Valor Unitário (R$):</label>',
-            '<input type="number" step="0.01" name="valor_unitario[]">',
+            '<input type="text" step="0.01" name="valor_unitario[]">',
           '</div>',
         '</div>',
         // campo oculto para total_local[], usado pelo recalcResumo()
