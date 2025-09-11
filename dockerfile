@@ -1,24 +1,15 @@
-# ------------------------------------------------------------
-#  Base – Python + libs do WeasyPrint
-# ------------------------------------------------------------
-FROM python:3.11-slim
-ENV PYTHONUNBUFFERED=1
+FROM python:3.11-slim-bookworm
 
-
-
-# Dependências de sistema para o WeasyPrint
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    libcairo2 \
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
+    libcairo2 \
     libgdk-pixbuf-2.0-0 \
     libffi-dev \
     shared-mime-info \
-    fonts-dejavu \
-    fonts-liberation \
- && rm -rf /var/lib/apt/lists/*
-
+    fonts-dejavu-core \
+    && rm -rf /var/lib/apt/lists/*
 # ------------------------------------------------------------
 #  Código da aplicação
 # ------------------------------------------------------------
