@@ -34,7 +34,7 @@
 
         <!-- Dados Gerais -->
         <div class="section-title">Dados Gerais</div>
-        {% for campo in ['id','cliente','cnpj','responsavel','endereco','cidade','data'] %}
+        {% for campo in ['numero','vendedor','responsavel','cliente','cnpj','responsavel','endereco','email','cidade','data'] %}
         <div class="form-group">
           <label>{{ campo.replace('_',' ').capitalize() }}:</label>
           <input type="text"
@@ -55,7 +55,8 @@
               </div>
               <div class="form-group">
                 <label>Produto:</label>
-                <input type="text" name="produto[]" value="{{ item.produto }}">
+                <textarea name="produto[]" required rows="1" oninput="autoGrow(this)">{{ item.produto }}</textarea>
+
               </div>
             </div>
             <div class="flex-row">
@@ -82,14 +83,12 @@
           {% endfor %}
         </div>
         <button type="button" id="add-produto">+ Adicionar Produto</button>
-        <!-- Condições Comerciais -->
+       <!-- Condições Comerciais -->
         <div class="section-title">Condições Comerciais</div>
-        {% for campo in ['dias_pagamento_comercial','valor_pagamento_comercial','obs_pagamento_comercial'] %}
         <div class="form-group">
-          <label>{{ campo.replace('_',' ').capitalize() }}:</label>
-          <input type="text" name="{{ campo }}" value="{{ dados[campo] }}">
+          <label>Obs:</label>
+                  <textarea name="obs" required rows="1" oninput="autoGrow(this)">{{dados['obs']}}</textarea>
         </div>
-        {% endfor %}
 
         <!-- Condições Gerais -->
         <div class="section-title">Condições Gerais</div>
@@ -99,6 +98,7 @@
           <input type="text" name="{{ campo }}" value="{{ dados[campo] }}">
         </div>
         {% endfor %}
+       
 
         <div class="form-actions">
           <button type="button" id="preview-btn">Aplicar Correções</button>
@@ -108,7 +108,6 @@
   </div>
 
   <div class="botoes">
-  <!-- <button id="download-pdf" class="btn btn-primary" onclick="download()">Baixar PDF</button>-->
     <button id="save-next" class="btn btn-primary">Aprovar e Continuar</button>
     <a href="/postTemplate" class="btn btn-secondary">Voltar ao Início</a>
   </div>
@@ -185,7 +184,7 @@
         maximumFractionDigits: 4
       }).format(valor);
     }
-  
+ 
     // percorre cada produto, calcula total local, atualiza total de itens e valor total
     function recalcResumo() {
       const container = document.getElementById('produtos-container');
@@ -199,7 +198,7 @@
   
         const quantidade = parseFloat(qtdInput.value.toString().replace(',', '.')) || 0;
         const valorUnit = parseFloat(valInput.value.toString().replace(',', '.')) || 0;
-        const totalLocal = quantidade * valorUnit;
+         const totalLocal = quantidade * valorUnit;
   
         totalItens++;
         totalValor += totalLocal;
@@ -304,7 +303,7 @@
         }
       });
   
-      // Salvar e avançar
+     // Salvar e avançar
       saveNextBtn.addEventListener('click', async () => {
         const body = formDataToJson(new FormData(form));
         const resp = await fetch('/verification/update', {
@@ -321,7 +320,7 @@
       });
     })();
   
-    // Função de download que não esta sendo usada mais.
+     // Função de download que não esta sendo usada mais.
     async function download() {
       const id = '{{id}}';
       const template = '{{ template_nome }}';
@@ -355,6 +354,11 @@
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('preview-btn').click();
     })
+
+      function autoGrow(element) {
+  element.style.height = "auto";
+  element.style.height = (element.scrollHeight) + "px";
+}
   </script>
 </body>
 </html>
