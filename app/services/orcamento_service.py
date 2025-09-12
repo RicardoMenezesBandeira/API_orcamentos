@@ -256,10 +256,13 @@ def download_orcamento(user_data, orcamento_id, template):
     # 1) Monta paths possíveis
     path_edicoes = os.path.join('bd', 'edicoes', tpl_lower, f'{orcamento_id}.json')
     path_base    = os.path.join('bd', 'json_preenchimento', f'{orcamento_id}.json')
+    print(f"[DEBUG] Tentando carregar JSON de {path_edicoes} ou {path_base}")
     if os.path.exists(path_edicoes):
         json_path = path_edicoes
+        print(f"[DEBUG] Usando JSON editado: {json_path}")
     elif os.path.exists(path_base):
         json_path = path_base
+        print(f"[DEBUG] Usando JSON base: {json_path}")
     else:
         return jsonify({'erro': 'JSON não encontrado em edicoes nem em json_preenchimento'}), 404
 
