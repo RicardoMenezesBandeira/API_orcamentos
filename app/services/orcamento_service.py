@@ -256,7 +256,7 @@ def download_orcamento(user_data, orcamento_id, template):
     # 1) Monta paths possíveis
     path_edicoes = os.path.join('bd', 'edicoes', tpl_lower, f'{orcamento_id}.json')
     path_base    = os.path.join('bd', 'json_preenchimento', f'{orcamento_id}.json')
-    print(f"[DEBUG] Tentando carregar JSON de {path_edicoes} ou {path_base}")
+    print(f"[DEBUG] Tentando carregar JSON de {path_edicoes} ou {path_base} \n\n\n\n\n")
     if os.path.exists(path_edicoes):
         json_path = path_edicoes
         print(f"[DEBUG] Usando JSON editado: {json_path}")
