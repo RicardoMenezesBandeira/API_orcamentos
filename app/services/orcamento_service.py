@@ -18,6 +18,21 @@ BD_EDICOES = Path('bd/edicoes')
 TPL_DIR    = Path('template-PDF')
 
 
+def normalizar_template(template_name):
+    """Normaliza o nome do template para o case correto"""
+    if not template_name:
+        return template_name
+
+    template_map = {
+        'bossbr': 'BossBR',
+        'pcasallas': 'PCasallas',
+        'construcom': 'Construcom',
+        'big': 'Big'
+    }
+    return template_map.get(template_name.lower(), template_name)
+
+
+
 def receber_orcamento(user_data):
     print(f"[INFO] receber_orcamento called by user: {user_data.get('nome')}")
     if request.method == 'GET':
@@ -84,7 +99,7 @@ def preview_template(user_data):
     print(f"[INFO] preview_template called by user: {user_data.get('nome')}")
     correcoes = request.get_json(force=True)
     print(f"[DEBUG] Correções recebidas keys: {list(correcoes.keys())}")
-    tpl       = correcoes.get('template')
+    tpl       = normalizar_template(correcoes.get('template'))
     json_file = correcoes.get('json_file')
     print(f"[DEBUG] Preview for template={tpl}, json_file={json_file}")
 
@@ -195,7 +210,7 @@ def preview_template(user_data):
 def atualiza_orcamento(user_data):
     print(f"[INFO] atualiza_orcamento called by user: {user_data.get('nome')}")
     correcoes = request.get_json(force=True)
-    tpl = correcoes.get('template')
+    tpl = normalizar_template(correcoes.get('template'))
     json_file = correcoes.get('json_file')
     print(f"[DEBUG] Received corrections for template={tpl}, json_file={json_file}")
 
@@ -251,10 +266,10 @@ def atualiza_orcamento(user_data):
 
 
 def download_orcamento(user_data, orcamento_id, template):
-    tpl_lower = template.lower()
-
+    template = normalizar_template(template)
+    
     # 1) Monta paths possíveis
-    path_edicoes = os.path.join('bd', 'edicoes', tpl_lower, f'{orcamento_id}.json')
+    path_edicoes = os.path.join('bd', 'edicoes', template, f'{orcamento_id}.json')
     path_base    = os.path.join('bd', 'json_preenchimento', f'{orcamento_id}.json')
     print(f"[DEBUG] Tentando carregar JSON de {path_edicoes} ou {path_base} \n\n\n\n\n")
     if os.path.exists(path_edicoes):
@@ -301,7 +316,7 @@ def download_orcamento(user_data, orcamento_id, template):
         data['valor_total'] = formatar_dinheiro_brl(valor_total)
 
     # 4) Injeta no HTML de placeholders
-    tpl_file = os.path.join('template-PDF', f"{tpl_lower}_placeholders.html")
+    tpl_file = os.path.join('template-PDF', f"{template}_placeholders.html")
     if not os.path.exists(tpl_file):
         return jsonify({'erro': 'Template de placeholders não encontrado'}), 404
 
