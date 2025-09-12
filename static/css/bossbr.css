@@ -127,9 +127,13 @@ table td {
 .condi{
   width: 45%;
 }
-
+.table-light tr th{
+  font-size: 0.8em;
+ 
+}
 .intens{
   margin-top: 20px;
+  font-size: 0.8rem;
 }
 .assin{
   text-align: center;
@@ -162,10 +166,6 @@ section{
   padding: 15px;
 }
 
-.b2 {
-  font-size: 0.9em;
-  background-color: rgb(255, 255, 255);
-}
 
 .align-items-center_nao-quebrar_header{
   display: block;
