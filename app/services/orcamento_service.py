@@ -19,7 +19,8 @@ TPL_DIR    = Path('template-PDF')
 
 
 def normalizar_template(template_name):
-    """Normaliza o nome do template para o case correto"""
+    """Normaliza o nome do template para o case correto
+    IMPORTANTE: Resolve problema de case-sensitivity no Linux"""
     if not template_name:
         return template_name
 
@@ -27,7 +28,7 @@ def normalizar_template(template_name):
         'bossbr': 'BossBR',
         'pcasallas': 'PCasallas',
         'construcom': 'Construcom',
-        'big': 'Big'
+        'big': 'Big'  # Adicionado suporte para template Big
     }
     return template_map.get(template_name.lower(), template_name)
 
@@ -99,7 +100,10 @@ def preview_template(user_data):
     print(f"[INFO] preview_template called by user: {user_data.get('nome')}")
     correcoes = request.get_json(force=True)
     print(f"[DEBUG] Correções recebidas keys: {list(correcoes.keys())}")
-    tpl       = correcoes.get('template')
+    
+    # CORREÇÃO: Normaliza template para garantir case correto
+    tpl = normalizar_template(correcoes.get('template'))
+    
     json_file = correcoes.get('json_file')
     print(f"[DEBUG] Preview for template={tpl}, json_file={json_file}")
 
@@ -210,7 +214,10 @@ def preview_template(user_data):
 def atualiza_orcamento(user_data):
     print(f"[INFO] atualiza_orcamento called by user: {user_data.get('nome')}")
     correcoes = request.get_json(force=True)
-    tpl = correcoes.get('template')
+    
+    # CORREÇÃO: Normaliza template para garantir case correto ao salvar
+    tpl = normalizar_template(correcoes.get('template'))
+    
     json_file = correcoes.get('json_file')
     print(f"[DEBUG] Received corrections for template={tpl}, json_file={json_file}")
 
@@ -242,6 +249,7 @@ def atualiza_orcamento(user_data):
     print(f"[INFO] Updated base JSON edicoes at: {base_path}")
 
     # Prepara diretório de edições e salva JSON editado
+    # IMPORTANTE: Usa o template normalizado para criar diretório com case correto
     edit_dir = os.path.join('bd/edicoes', tpl)
     os.makedirs(edit_dir, exist_ok=True)
     edit_path = os.path.join(edit_dir, json_file)
@@ -266,9 +274,10 @@ def atualiza_orcamento(user_data):
 
 
 def download_orcamento(user_data, orcamento_id, template):
-
+    # CORREÇÃO CRÍTICA: Normaliza template ANTES de usar nos paths
+    template = normalizar_template(template)
     
-    # 1) Monta paths possíveis
+    # 1) Monta paths possíveis - usa template normalizado (case correto)
     path_edicoes = os.path.join('bd', 'edicoes', template, f'{orcamento_id}.json')
     path_base    = os.path.join('bd', 'json_preenchimento', f'{orcamento_id}.json')
     print(f"[DEBUG] Tentando carregar JSON de {path_edicoes} ou {path_base} \n\n\n\n\n")
@@ -316,7 +325,8 @@ def download_orcamento(user_data, orcamento_id, template):
         data['valor_total'] = formatar_dinheiro_brl(valor_total)
 
     # 4) Injeta no HTML de placeholders
-    tpl_file = os.path.join('template-PDF', f"{template}_placeholders.html")
+    # CORREÇÃO: Usa template.lower() pois os arquivos HTML estão em lowercase
+    tpl_file = os.path.join('template-PDF', f"{template.lower()}_placeholders.html")
     if not os.path.exists(tpl_file):
         return jsonify({'erro': 'Template de placeholders não encontrado'}), 404
 
