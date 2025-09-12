@@ -46,6 +46,7 @@ def update(user_data):
 @token_required
 def download(user_data, orcamento_id: int, template: str):
     """Gera o PDF final para download."""
+    print(f"[DEBUG] download chamado com orcamento_id={orcamento_id}, template={template}")
     return svc.download_orcamento(user_data, orcamento_id, template)
 
 
