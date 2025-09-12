@@ -99,7 +99,7 @@ def preview_template(user_data):
     print(f"[INFO] preview_template called by user: {user_data.get('nome')}")
     correcoes = request.get_json(force=True)
     print(f"[DEBUG] Correções recebidas keys: {list(correcoes.keys())}")
-    tpl       = normalizar_template(correcoes.get('template'))
+    tpl       = correcoes.get('template')
     json_file = correcoes.get('json_file')
     print(f"[DEBUG] Preview for template={tpl}, json_file={json_file}")
 
@@ -210,7 +210,7 @@ def preview_template(user_data):
 def atualiza_orcamento(user_data):
     print(f"[INFO] atualiza_orcamento called by user: {user_data.get('nome')}")
     correcoes = request.get_json(force=True)
-    tpl = normalizar_template(correcoes.get('template'))
+    tpl = correcoes.get('template')
     json_file = correcoes.get('json_file')
     print(f"[DEBUG] Received corrections for template={tpl}, json_file={json_file}")
 
@@ -266,7 +266,7 @@ def atualiza_orcamento(user_data):
 
 
 def download_orcamento(user_data, orcamento_id, template):
-    template = normalizar_template(template)
+
     
     # 1) Monta paths possíveis
     path_edicoes = os.path.join('bd', 'edicoes', template, f'{orcamento_id}.json')
