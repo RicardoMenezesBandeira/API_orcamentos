@@ -1,0 +1,79 @@
+@font-face {
+    font-family: 'Unna';
+    src: url('../font/big/Unna/Unna-Regular.ttf') format('truetype');
+    font-weight: normal;
+  }
+  @font-face {
+    font-family: 'Unna';
+    src: url('../font/big/Unna/Unna-Bold.ttf') format('truetype');
+    font-weight : bold;
+  }
+  
+  * {
+  
+    
+    font-family: 'Unna';
+  }
+  .container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between
+  }
+  
+  .n7,.n8{
+  border: 1px  solid rgba(0, 0, 0, 0.517);
+  padding: 5px;
+  }
+  .n1,.n2,.n4,.n5 {
+    flex-grow: 1;
+  }
+  
+  .n3,.n8,.n7,.n6{
+    width: 100%;
+  }
+  .n4,.n5{
+    max-width: 48%;
+  }
+  .n7{
+  
+    display: flex;
+    justify-content: space-between; /* espaço entre os itens */
+    gap: 20px; /* opcional: adiciona um espaço fixo entre eles */
+    padding: 10px 7px;
+  ;
+  }
+  
+  .info {
+    white-space: nowrap; /* evita quebra de linha */
+  }
+  .n8{
+      text-align: center;
+      
+  }
+  img{
+      width:200px;
+  }
+  .n2{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .n2 >div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .n3 >div{
+   
+      width: 100%;
+      display: flex
+  ;
+      justify-content: space-between;
+  }
+  .n9{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
