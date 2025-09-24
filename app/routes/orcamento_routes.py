@@ -103,10 +103,32 @@ def verificar_template(user_data):
     if json_file not in arquivos:
         json_file = arquivos[-1]
 
-    # Carrega dados
-    path = os.path.join(json_dir, json_file)
-    with open(path, encoding='utf-8') as f:
-        dados = json.load(f)
+    # Carrega dados - verifica se existe versão editada para o template atual
+    orcamento_id = json_file.split('.')[0]
+    template_idx = int(request.args.get('template_idx', 0))
+
+    # Carrega dados base primeiro para saber quais templates existem
+    path_base = os.path.join(json_dir, json_file)
+    with open(path_base, encoding='utf-8') as f:
+        dados_base = json.load(f)
+
+    # Determina qual template estamos editando
+    templates = dados_base.get('templates', [])
+    if template_idx < len(templates):
+        template_nome = templates[template_idx].lower()
+        path_editado = os.path.join('bd/edicoes', template_nome, json_file)
+
+        # Se existe versão editada para este template específico, carrega ela
+        if os.path.exists(path_editado):
+            print(f"[DEBUG] Carregando versão editada: {path_editado}")
+            with open(path_editado, encoding='utf-8') as f:
+                dados = json.load(f)
+        else:
+            print(f"[DEBUG] Carregando versão base para primeira edição: {path_base}")
+            dados = dados_base
+    else:
+        print(f"[DEBUG] Template index inválido, carregando versão base: {path_base}")
+        dados = dados_base
 
     # Reaplica parsing de produtos se for string
     raw = dados.get('produtos', '')
