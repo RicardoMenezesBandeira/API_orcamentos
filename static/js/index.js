@@ -1,6 +1,21 @@
   let orcamento  = []
-  
+
   let url =window.location.origin
+
+  // Função centralizada para verificar compatibilidade de templates
+  function templatExiste(templates, tipoTemplate) {
+    // Mapeamento para compatibilidade entre formatos antigo e novo
+    const mapeamento = {
+      'BossBR': 'bossbr',
+      'PCasallas': 'pcasallas',
+      'Construcom': 'construcom',
+      'Big': 'big'
+    };
+
+    return templates.includes(tipoTemplate) ||  // formato exato
+           templates.includes(mapeamento[tipoTemplate]) ||  // formato novo (lowercase)
+           templates.includes(Object.keys(mapeamento).find(k => mapeamento[k] === tipoTemplate.toLowerCase())); // formato antigo
+  }
   function novoOrcamento(){
     // Redireciona para a página principal
     window.location.href = "/preencher";
@@ -34,11 +49,10 @@
         let templates = dado.templates || [];
         let id = dado.id;
         let circulos = '';
-        const tipos = ['BossBR', 'PCasallas', 'Construcom','Big'];
-
+        const tipos = ['BossBR', 'PCasallas', 'Construcom', 'Big']; // N MUDAR, N OBEDECE A PADRONIZAÇAO DO CODIGO EM LOWER CASE@!!!!! IMPORTANTE !!!!
         tipos.forEach(tipo => {
-          if (templates.includes(tipo)) {
-            circulos += `<div><button class='btn btn-danger btn-sm' onclick='download(${id}, "${tipo}")'>${tipo}</button></div>`;
+          if (templatExiste(templates, tipo)) {
+            circulos += `<div><button class='btn btn-danger btn-sm' onclick='download(${id}, "${tipo.toLowerCase()}")'>${tipo}</button></div>`;
           } else {
             circulos += "<div>⚪</div>";
           }
@@ -159,10 +173,10 @@ function filtrarOrcamentos(valor) {
     let templates = dado.templates || [];
     let id = dado.id;
     let circulos = '';
-    const tipos = ['BossBR', 'PCasallas', 'Construcom','Big'];
+    const tipos = ['bossbr', 'pcasallas', 'construcom', 'big'];
 
     tipos.forEach(tipo => {
-      if (templates.includes(tipo)) {
+      if (templatExiste(templates, tipo)) {
         circulos += `<div><button class='btn btn-danger btn-sm' onclick='download(${id}, "${tipo}")'>${tipo}</button></div>`;
       } else {
         circulos += "<div>⚪</div>";

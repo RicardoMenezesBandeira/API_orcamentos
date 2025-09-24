@@ -18,24 +18,8 @@ BD_EDICOES = Path('bd/edicoes')
 TPL_DIR    = Path('template-PDF')
 
 
-def normalizar_template(template_name):
-    """Normaliza o nome do template para o case correto
-    IMPORTANTE: Resolve problema de case-sensitivity no Linux"""
-    if not template_name:
-        return template_name
-
-    template_map = {
-        'bossbr': 'BossBR',
-        'pcasallas': 'PCasallas',
-        'construcom': 'Construcom',
-        'big': 'Big'
-    }
-    return template_map.get(template_name.lower(), template_name)
-
-
-def get_template_filename(template_name):
-    """Retorna nome do arquivo template em lowercase para arquivos HTML"""
-    return template_name.lower() if template_name else template_name
+# REMOVIDO: Funções de normalização não são mais necessárias
+# Todos os templates agora usam lowercase consistentemente
 
 
 
@@ -107,7 +91,7 @@ def preview_template(user_data):
     print(f"[DEBUG] Correções recebidas keys: {list(correcoes.keys())}")
     
     # CORREÇÃO: Normaliza template para garantir case correto
-    tpl = normalizar_template(correcoes.get('template'))
+    tpl = correcoes.get('template').lower()
     
     json_file = correcoes.get('json_file')
     print(f"[DEBUG] Preview for template={tpl}, json_file={json_file}")
@@ -195,7 +179,7 @@ def preview_template(user_data):
         print("[DEBUG] Produto permanece como string HTML (não era lista)")
 
     # 6) Injeta no template e retorna HTML
-    placeholder = os.path.join('template-PDF', f"{get_template_filename(tpl)}_placeholders.html")
+    placeholder = os.path.join('template-PDF', f"{tpl}_placeholders.html")
     if len(novo.get('cnpj')) == 14:
         novo['cnpj'] = formatar_cnpj(novo['cnpj'])
     else:
@@ -221,7 +205,7 @@ def atualiza_orcamento(user_data):
     correcoes = request.get_json(force=True)
     
     # CORREÇÃO: Normaliza template para garantir case correto ao salvar
-    tpl = normalizar_template(correcoes.get('template'))
+    tpl = correcoes.get('template').lower()
     
     json_file = correcoes.get('json_file')
     print(f"[DEBUG] Received corrections for template={tpl}, json_file={json_file}")
@@ -270,7 +254,7 @@ def atualiza_orcamento(user_data):
 
     # Gera HTML atualizado para o template editado
     tpl_dir = 'template-PDF'
-    placeholder_file = os.path.join(tpl_dir, f"{get_template_filename(tpl)}_placeholders.html")
+    placeholder_file = os.path.join(tpl_dir, f"{tpl}_placeholders.html")
     if not os.path.exists(placeholder_file):
         print(f"[WARNING] Placeholder file not found: {placeholder_file}")
 
@@ -281,10 +265,9 @@ def atualiza_orcamento(user_data):
 def download_orcamento(user_data, orcamento_id, template):
     print(f"[DEBUG] download_orcamento called: ID={orcamento_id}, template='{template}'")
 
-    # CORREÇÃO CRÍTICA: Normaliza template ANTES de usar nos paths
-    template_original = template
-    template = normalizar_template(template)
-    print(f"[DEBUG] Template normalizado: '{template_original}' -> '{template}'")
+    # Template já deve estar em lowercase - apenas garantindo
+    template = template.lower()
+    print(f"[DEBUG] Template em lowercase: '{template}'")
 
     # 1) Monta paths possíveis - usa template normalizado (case correto)
     path_edicoes = os.path.join('bd', 'edicoes', template, f'{orcamento_id}.json')
@@ -334,8 +317,8 @@ def download_orcamento(user_data, orcamento_id, template):
         data['valor_total'] = formatar_dinheiro_brl(valor_total)
 
     # 4) Injeta no HTML de placeholders
-    # CORREÇÃO: Usa get_template_filename() para consistência
-    tpl_file = os.path.join('template-PDF', f"{get_template_filename(template)}_placeholders.html")
+    # Template já em lowercase - sem conversão
+    tpl_file = os.path.join('template-PDF', f"{template}_placeholders.html")
     if not os.path.exists(tpl_file):
         return jsonify({'erro': 'Template de placeholders não encontrado'}), 404
 

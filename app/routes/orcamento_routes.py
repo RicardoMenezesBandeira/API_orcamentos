@@ -137,9 +137,8 @@ def verificar_template(user_data):
 
     emp = templates[idx]
     base_id = int(json_file.split('.')[0])
-    # CORREÇÃO: Usar get_template_filename para consistency
-    from ..services.orcamento_service import get_template_filename
-    iframe_src = f"/template-PDF/orcamento_{str(base_id).zfill(3)}_{get_template_filename(emp)}.html"
+    # Template já em lowercase - sem necessidade de conversão
+    iframe_src = f"/template-PDF/orcamento_{str(base_id).zfill(3)}_{emp.lower()}.html"
 
     return render_template(
         'revisao.html',
