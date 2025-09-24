@@ -50,7 +50,14 @@ def download(user_data, orcamento_id: int, template: str):
     return svc.download_orcamento(user_data, orcamento_id, template)
 
 
-@bp.route("/orcamento", methods=["GET"])    
+@bp.route("/delete/<int:orcamento_id>", methods=["DELETE"])
+@token_required
+def delete_orcamento(user_data, orcamento_id: int):
+    """Remove um orçamento do sistema."""
+    return svc.delete_orcamento(user_data, orcamento_id)
+
+
+@bp.route("/orcamento", methods=["GET"])
 @token_required
 def listar_orcamentos(user_data):
     print("aqui")
@@ -130,7 +137,9 @@ def verificar_template(user_data):
 
     emp = templates[idx]
     base_id = int(json_file.split('.')[0])
-    iframe_src = f"/template-PDF/orcamento_{str(base_id).zfill(3)}_{emp.lower()}.html"
+    # CORREÇÃO: Usar get_template_filename para consistency
+    from ..services.orcamento_service import get_template_filename
+    iframe_src = f"/template-PDF/orcamento_{str(base_id).zfill(3)}_{get_template_filename(emp)}.html"
 
     return render_template(
         'revisao.html',

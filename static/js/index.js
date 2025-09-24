@@ -82,34 +82,33 @@
 }
 
   async function download(id,template) {
-    console.log("Baixando PDF para o orçamento com ID:", id);
-    
-  
+    console.log("Baixando PDF para o orçamento com ID:", id, "Template:", template);
+
     fetch(url+`/download/${id}/${template}`, {
       method: "GET",
+      credentials: 'include'
     })
       .then(response => {
+        console.log("Response status:", response.status);
         if (!response.ok) {
-          throw new Error("Erro ao gerar PDF.");
+          throw new Error(`Erro ao gerar PDF. Status: ${response.status}`);
         }
         return response.blob();
       })
       .then(blob => {
-        const url = window.URL.createObjectURL(blob);
+        console.log("PDF gerado com sucesso, tamanho:", blob.size);
+        const downloadUrl = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
-        a.href = url;
-        a.download = "orcamento.pdf";
+        a.href = downloadUrl;
+        a.download = `orcamento_${id}_${template}.pdf`;
         document.body.appendChild(a);
         a.click();
         a.remove();
+        window.URL.revokeObjectURL(downloadUrl);
       })
       .catch(error => {
-        console.error("Erro:", error);
-        alert("Não foi possível gerar o PDF.");
-      })
-      .finally(() => {
-        btn.innerHTML = "Baixar PDF";
-        btn.disabled = false;
+        console.error("Erro no download:", error);
+        alert(`Não foi possível gerar o PDF: ${error.message}`);
       });
   }
   window.onload = function() {
@@ -200,17 +199,22 @@ function filtrarOrcamentos(valor) {
 }
 
 function deleteOrcamento(id) {
+  console.log("DEBUG: Deletando orçamento ID:", id);
   const href = url+"/delete/" + id;
+  console.log("DEBUG: URL de delete:", href);
+
   fetch(href, {
     method: 'DELETE',
     credentials: 'include',
   })
   .then(response => {
+    console.log("DEBUG: Response status:", response.status);
+    console.log("DEBUG: Response ok:", response.ok);
     if (response.ok) {
       console.log("Orçamento deletado com sucesso.");
       atualizaOrcamento(); // Certifique-se de que essa função exista
     } else {
-      console.error("Erro ao deletar o orçamento.");
+      console.error("Erro ao deletar o orçamento. Status:", response.status);
     }
   })
   .catch(error => {

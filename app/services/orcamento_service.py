@@ -28,9 +28,14 @@ def normalizar_template(template_name):
         'bossbr': 'BossBR',
         'pcasallas': 'PCasallas',
         'construcom': 'Construcom',
-        'big': 'Big'  # Adicionado suporte para template Big
+        'big': 'Big'
     }
     return template_map.get(template_name.lower(), template_name)
+
+
+def get_template_filename(template_name):
+    """Retorna nome do arquivo template em lowercase para arquivos HTML"""
+    return template_name.lower() if template_name else template_name
 
 
 
@@ -190,7 +195,7 @@ def preview_template(user_data):
         print("[DEBUG] Produto permanece como string HTML (não era lista)")
 
     # 6) Injeta no template e retorna HTML
-    placeholder = os.path.join('template-PDF', f"{tpl.lower()}_placeholders.html")
+    placeholder = os.path.join('template-PDF', f"{get_template_filename(tpl)}_placeholders.html")
     if len(novo.get('cnpj')) == 14:
         novo['cnpj'] = formatar_cnpj(novo['cnpj'])
     else:
@@ -265,7 +270,7 @@ def atualiza_orcamento(user_data):
 
     # Gera HTML atualizado para o template editado
     tpl_dir = 'template-PDF'
-    placeholder_file = os.path.join(tpl_dir, f"{tpl.lower()}_placeholders.html")
+    placeholder_file = os.path.join(tpl_dir, f"{get_template_filename(tpl)}_placeholders.html")
     if not os.path.exists(placeholder_file):
         print(f"[WARNING] Placeholder file not found: {placeholder_file}")
 
@@ -274,13 +279,17 @@ def atualiza_orcamento(user_data):
 
 
 def download_orcamento(user_data, orcamento_id, template):
+    print(f"[DEBUG] download_orcamento called: ID={orcamento_id}, template='{template}'")
+
     # CORREÇÃO CRÍTICA: Normaliza template ANTES de usar nos paths
+    template_original = template
     template = normalizar_template(template)
-    
+    print(f"[DEBUG] Template normalizado: '{template_original}' -> '{template}'")
+
     # 1) Monta paths possíveis - usa template normalizado (case correto)
     path_edicoes = os.path.join('bd', 'edicoes', template, f'{orcamento_id}.json')
     path_base    = os.path.join('bd', 'json_preenchimento', f'{orcamento_id}.json')
-    print(f"[DEBUG] Tentando carregar JSON de {path_edicoes} ou {path_base} \n\n\n\n\n")
+    print(f"[DEBUG] Paths: edicoes='{path_edicoes}', base='{path_base}'")
     if os.path.exists(path_edicoes):
         json_path = path_edicoes
         print(f"[DEBUG] Usando JSON editado: {json_path}")
@@ -325,8 +334,8 @@ def download_orcamento(user_data, orcamento_id, template):
         data['valor_total'] = formatar_dinheiro_brl(valor_total)
 
     # 4) Injeta no HTML de placeholders
-    # CORREÇÃO: Usa template.lower() pois os arquivos HTML estão em lowercase
-    tpl_file = os.path.join('template-PDF', f"{template.lower()}_placeholders.html")
+    # CORREÇÃO: Usa get_template_filename() para consistência
+    tpl_file = os.path.join('template-PDF', f"{get_template_filename(template)}_placeholders.html")
     if not os.path.exists(tpl_file):
         return jsonify({'erro': 'Template de placeholders não encontrado'}), 404
 
@@ -347,6 +356,66 @@ def download_orcamento(user_data, orcamento_id, template):
         f'attachment; filename=orcamento_{str(orcamento_id).zfill(3)}.pdf'
     )
     return response
+
+
+def delete_orcamento(user_data, orcamento_id):
+    """
+    Remove um orçamento do sistema (bd/json_preenchimento e bd/edicoes).
+    """
+    from flask import jsonify
+
+    print(f"[DEBUG] delete_orcamento called with ID: {orcamento_id}")
+    print(f"[DEBUG] User: {user_data.get('user') if user_data else 'None'}")
+
+    try:
+        removed_files = []
+
+        # Remove JSON base
+        base_file = f"bd/json_preenchimento/{orcamento_id}.json"
+        print(f"[DEBUG] Checking base file: {base_file}")
+        if os.path.exists(base_file):
+            os.remove(base_file)
+            removed_files.append(base_file)
+            print(f"[INFO] Removed base JSON: {base_file}")
+        else:
+            print(f"[DEBUG] Base file not found: {base_file}")
+
+        # Remove todas as edições de templates
+        templates_dir = "bd/edicoes"
+        print(f"[DEBUG] Checking templates directory: {templates_dir}")
+        if os.path.exists(templates_dir):
+            template_dirs = os.listdir(templates_dir)
+            print(f"[DEBUG] Found template directories: {template_dirs}")
+
+            for template_dir in template_dirs:
+                template_path = os.path.join(templates_dir, template_dir)
+                if os.path.isdir(template_path):
+                    edit_file = os.path.join(template_path, f"{orcamento_id}.json")
+                    print(f"[DEBUG] Checking edit file: {edit_file}")
+                    if os.path.exists(edit_file):
+                        os.remove(edit_file)
+                        removed_files.append(edit_file)
+                        print(f"[INFO] Removed edit JSON: {edit_file}")
+                    else:
+                        print(f"[DEBUG] Edit file not found: {edit_file}")
+
+        print(f"[DEBUG] Total files removed: {len(removed_files)}")
+        print(f"[DEBUG] Removed files: {removed_files}")
+
+        if removed_files:
+            return jsonify({
+                "mensagem": f"Orçamento {orcamento_id} removido com sucesso.",
+                "arquivos_removidos": removed_files
+            }), 200
+        else:
+            print(f"[WARNING] No files found for orçamento {orcamento_id}")
+            return jsonify({"erro": f"Orçamento {orcamento_id} não encontrado."}), 404
+
+    except Exception as e:
+        print(f"[ERROR] Erro ao deletar orçamento {orcamento_id}: {str(e)}")
+        import traceback
+        print(f"[ERROR] Traceback: {traceback.format_exc()}")
+        return jsonify({"erro": f"Erro ao deletar orçamento: {str(e)}"}), 500
 
 
 def orcamento(user_data):
