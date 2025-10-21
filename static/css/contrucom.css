@@ -16,6 +16,7 @@
       } }
 body {
   font-family: 'Georgia', serif;
+  font-size: medium;
 }
 
 img {
@@ -83,10 +84,10 @@ table th, table td {
 }
 
 .template-style-vintage .table th:nth-child(1),
-.template-style-vintage .table td:nth-child(1) { width: 6%;  }
+.template-style-vintage .table td:nth-child(1) { width: 8%;  }
 
 .template-style-vintage .table th:nth-child(2),
-.template-style-vintage .table td:nth-child(2) { width: 42%; } /* Item/Descrição */
+.template-style-vintage .table td:nth-child(2) { width: 40%; } /* Item/Descrição */
 
 .template-style-vintage .table th:nth-child(3),
 .template-style-vintage .table td:nth-child(3) { width: 10%; }
