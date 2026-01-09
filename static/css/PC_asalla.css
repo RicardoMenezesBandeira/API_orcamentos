@@ -115,4 +115,4 @@ table td:nth-last-child(2),
 .nowrap { white-space: nowrap; overflow-wrap: normal; word-break: normal; hyphens: manual; }
 
 /* Evita que uma linha de item seja quebrada entre páginas na impressão/PDF */
-table tr, .table tr { page-break-inside: avoid; }
+/* table tr, .table tr { page-break-inside: avoid; }
