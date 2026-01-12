@@ -10,10 +10,20 @@
     
     .pagina {
       page-break-after: auto;
-      page-break-inside: avoid;
     }
 
-    
+    /* Permite que a tabela de produtos quebre entre páginas */
+    .produtos {
+      page-break-inside: auto;
+    }
+
+    .produtos .table tbody {
+      page-break-inside: auto;
+    }
+
+    .produtos .table tbody tr {
+      page-break-inside: avoid;
+    }
   </style>
 </head>
 <body>
