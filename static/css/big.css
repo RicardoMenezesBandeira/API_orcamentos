@@ -77,3 +77,65 @@
     display: flex;
     justify-content: center;
   }
+
+/* ======== CORREÇÕES PARA TABELAS: Evita corte de números com 11 dígitos ======== */
+@page {
+  size: A4;
+  margin: 0.5cm;
+}
+
+/* Força layout fixo e previne que conteúdo estoure */
+.table, table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Colunas da tabela: Item(8%), Descrição(32%), Qtd(10%), Un(10%), Preço Unit.(20%), Total(20%) */
+.table th:nth-child(1), .table td:nth-child(1),
+table th:nth-child(1), table td:nth-child(1) { width: 8%; }
+
+.table th:nth-child(2), .table td:nth-child(2),
+table th:nth-child(2), table td:nth-child(2) { width: 32%; }
+
+.table th:nth-child(3), .table td:nth-child(3),
+table th:nth-child(3), table td:nth-child(3) { width: 10%; }
+
+.table th:nth-child(4), .table td:nth-child(4),
+table th:nth-child(4), table td:nth-child(4) { width: 10%; }
+
+.table th:nth-child(5), .table td:nth-child(5),
+table th:nth-child(5), table td:nth-child(5) { width: 20%; }
+
+.table th:nth-child(6), .table td:nth-child(6),
+table th:nth-child(6), table td:nth-child(6) { width: 20%; }
+
+/* Permite quebra de texto e números longos em todas as células */
+table th, table td,
+.table th, .table td {
+  white-space: normal;         /* permite quebrar em várias linhas */
+  overflow-wrap: break-word;   /* quebra palavras/números longos */
+  word-break: break-word;      /* compatibilidade ampla */
+  hyphens: auto;               /* hífen quando possível */
+  word-wrap: break-word;       /* compatibilidade com navegadores antigos */
+  min-width: 0;                /* evita "estouro" por conteúdo interno */
+  box-sizing: border-box;      /* padding conta na largura */
+  vertical-align: top;
+  padding: 4px;
+  font-size: 0.9rem;
+}
+
+/* Alinha números à direita */
+table td:nth-child(3),
+table td:nth-child(5),
+table td:nth-child(6),
+.table td:nth-child(3),
+.table td:nth-child(5),
+.table td:nth-child(6) {
+  text-align: right;
+}
+
+/* Evita que uma linha de item seja quebrada entre páginas */
+table tbody tr, .table tbody tr {
+  page-break-inside: avoid;
+}
