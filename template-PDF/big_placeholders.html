@@ -20,11 +20,8 @@
       
     }
 
-    .nao-quebrar {
-      page-break-inside: avoid;
-    }
     *{
-     font-size: 10px; 
+     font-size: 12px; 
     }
      </style>
     <title>Big Supply</title>
@@ -53,7 +50,7 @@
     
   </div>
 </div>
-<div class="item n9"></divclass>
+<div class="item n9"></div>
   <div class="proposta-box nao-quebrar">
     <h3 class="text-center">Proposta Comercial</h3>
     <p class="text-center">Orçamento nº {numero}</p>
@@ -70,13 +67,10 @@
 
       </div>
     </div>
-   
-     
-    
-    
-    
+</div>
 
-
+<!-- ======= TABELA FORA DO FLEXBOX - QUEBRA DE PÁGINA NATURAL ======= -->
+<div class="tabela-produtos">
 <table class="table table-bordered mt-3">
 
 <thead class="table-light">
@@ -89,8 +83,9 @@
 </tbody>
 </table>
 </div>
-<div class="item n4 nao-quebrar">
-<div class="proposta-box nao-quebrar">
+<!-- ======= FIM DA TABELA ======= -->
+<div class="item n4">
+<div class="proposta-box">
       <p>
           <strong>Razão social:</strong> {cliente}<br>
           <strong>Endereço:</strong> {endereco}<br>
@@ -100,8 +95,8 @@
     
   </div>
 </div>
-<div class="item n5 nao-quebrar">
-<div class="proposta-box nao-quebrar">
+<div class="item n5">
+<div class="proposta-box">
     <p>
 <strong>Email:</strong> {email}<br>
 <strong>Nome fantasia:</strong> {nome}<br>
@@ -111,20 +106,20 @@
   
 </div>
 </div>
-<div class="item n6 linha-escrita nao-quebrar">
+<div class="item n6 linha-escrita">
   <strong>OBS:</strong> {obs}
 </div>
-<div class="item n7 nao-quebrar">
+<div class="item n7">
   <div class="info"><strong>Prazo para pagamento:</strong> {dias_pagamento}</div>
   <div class="info"><strong>Previsão de entrega:</strong> {dias_entrega}</div>
   <div class="info"><strong>Validade da proposta:</strong> {dias_validade}</div>
 </div>
-<div class="item n8 nao-quebrar">
+<div class="item n8">
    
-    <p class="total mt-3 nao-quebrar">Total do orçamento: <strong> {valor_total}</strong></p>
-    <div class="nao-quebrar">
+    <p class="total mt-3">Total do orçamento: <strong> {valor_total}</strong></p>
+    <div>
       Atensiosamente, <br>Departamento de vendas
-      <p class="assin nao-quebrar">_____________________________________________________<br>Assinatura do cliente</p>
+      <p class="assin">_____________________________________________________<br>Assinatura do cliente</p>
     </div>
 
   </div>

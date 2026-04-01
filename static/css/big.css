@@ -72,6 +72,43 @@
   ;
       justify-content: space-between;
   }
+
+  /* ========= FIX: Remove flexbox da área da tabela ========= */
+  .n3 {
+    display: block !important;
+    flex-basis: 100%;
+    width: 100%;
+  }
+
+  /* ========= TABELA FORA DO FLEXBOX ========= */
+  .tabela-produtos {
+    display: block;
+    width: 100%;
+    page-break-after: auto;
+    page-break-before: auto;
+    page-break-inside: auto;
+    margin-top: 20px;
+  }
+
+  .tabela-produtos table {
+    width: 100%;
+    page-break-inside: auto;
+    break-inside: auto;
+  }
+
+  .tabela-produtos table thead {
+    display: table-header-group;
+  }
+
+  .tabela-produtos table tbody {
+    display: table-row-group;
+  }
+
+  .tabela-produtos table tbody tr {
+    page-break-inside: auto;
+    break-inside: auto;
+  }
+
   .n9{
     width: 100%;
     display: flex;
@@ -84,11 +121,11 @@
   margin: 0.5cm;
 }
 
-/* Força layout fixo e previne que conteúdo estoure */
 .table, table {
   table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
+  page-break-inside: auto;
 }
 
 /* Colunas da tabela: Item(8%), Descrição(32%), Qtd(10%), Un(10%), Preço Unit.(20%), Total(20%) */
@@ -135,7 +172,8 @@ table td:nth-child(6),
   text-align: right;
 }
 
-/* Evita que uma linha de item seja quebrada entre páginas */
+/* Permite que linhas da tabela quebrem naturalmente entre páginas */
 table tbody tr, .table tbody tr {
-  page-break-inside: avoid;
+  page-break-inside: auto;
+  break-inside: auto;
 }
